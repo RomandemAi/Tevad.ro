@@ -1,0 +1,27 @@
+{
+  "name": "tevad-ro",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Te Văd — Romania's open-source political accountability platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "scrape:cdep": "tsx packages/scraper/src/cdep.ts",
+    "scrape:senat": "tsx packages/scraper/src/senat.ts",
+    "rss:watch": "tsx packages/rss-monitor/src/feed-watcher.ts",
+    "verify:run": "tsx packages/verifier/src/verify.ts",
+    "score:recalc": "tsx packages/verifier/src/score.ts"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.0.0"
+  }
+}
