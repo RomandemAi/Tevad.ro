@@ -1,0 +1,17 @@
+{
+  "name": "@tevad/scraper",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "cdep": "tsx src/cdep.ts",
+    "senat": "tsx src/senat.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "tsx": "^4.7.0",
+    "@types/node": "^20.0.0"
+  }
+}

@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #080c12;
+  --surface: #0d1320;
+  --surface2: #111827;
+  --border: #1e2d45;
+  --border2: #243550;
+  --accent: #1d6ef5;
+  --accent2: #0ea5e9;
+  --red: #f04545;
+  --green: #22c97a;
+  --amber: #f5a623;
+  --purple: #a78bfa;
+  --text: #e2eaf6;
+  --text2: #7a94b8;
+  --text3: #3d5070;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Mono utility */
+.font-mono { font-family: var(--font-mono), monospace; }
+
+/* Score colors */
+.score-high  { color: var(--green); }
+.score-mid   { color: var(--amber); }
+.score-low   { color: var(--red); }
+
+/* Status colors */
+.status-true    { color: var(--green); }
+.status-false   { color: var(--red); }
+.status-partial { color: var(--amber); }
+.status-pending { color: var(--text3); }
+
+/* Pulse animation */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.pulse { animation: pulse-dot 2s infinite; }
+
+/* Fade up */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fade-up 0.2s ease both; }

@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Next.js
+.next/
+out/
+build/
+
+# Turbo
+.turbo/
+
+# TypeScript
+*.tsbuildinfo
+dist/
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*
+.vercel
+
+# Claude Code internal
+.claude/
+
+# Local working data
+user-data/
