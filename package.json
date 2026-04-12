@@ -2,6 +2,7 @@
   "name": "tevad-ro",
   "version": "0.2.0",
   "private": true,
+  "packageManager": "npm@10.9.7",
   "description": "Te Văd — Romania's open-source political accountability platform",
   "workspaces": [
     "apps/*",
@@ -9,14 +10,22 @@
   ],
   "scripts": {
     "dev": "turbo run dev",
+    "dev:clean": "npm run dev:clean -w web",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "scrape:cdep": "tsx packages/scraper/src/cdep.ts",
     "scrape:senat": "tsx packages/scraper/src/senat.ts",
+    "scrape:gov": "tsx packages/scraper/src/gov.ts",
+    "scrape:bec": "tsx packages/scraper/src/bec.ts",
+    "scrape:ani": "tsx packages/scraper/src/ani.ts",
+    "scrape:datagov": "tsx packages/scraper/src/datagov.ts",
     "rss:watch": "tsx packages/rss-monitor/src/feed-watcher.ts",
     "verify:run": "tsx packages/verifier/src/verify.ts",
-    "score:recalc": "tsx packages/verifier/src/score.ts"
+    "score:recalc": "tsx packages/verifier/src/score.ts",
+    "verify:pilot": "npm run verify:pilot -w @tevad/verifier",
+    "verify:contradict": "tsx packages/verifier/src/contradict.ts",
+    "seed-program": "npm run seed-program -w @tevad/scraper"
   },
   "devDependencies": {
     "turbo": "^2.0.0",
