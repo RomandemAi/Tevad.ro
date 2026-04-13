@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { assertCronSecret } from '@/lib/cron-auth'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 120
+export const maxDuration = 60
 
 function assertRssEnv(): NextResponse | null {
   const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim()

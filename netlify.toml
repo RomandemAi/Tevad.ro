@@ -20,3 +20,12 @@
 
 [functions]
   directory = "netlify/functions"
+  # Ensure workspace packages are bundled with functions (monorepo).
+  included_files = ["packages/**"]
+
+[edge_functions]
+  directory = "netlify/edge-functions"
+
+[[edge_functions]]
+  path = "/api/cron/*"
+  function = "cron-handler"

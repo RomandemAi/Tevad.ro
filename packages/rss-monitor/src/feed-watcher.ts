@@ -189,9 +189,23 @@ export async function run() {
     ...TIER2_SOURCES.map(s => ({ ...s, tier: 2 as const })),
   ]
 
-  const results = await Promise.all(
-    allSources.map(s => fetchFeed(s.outlet, s.domain, s.rssUrl))
+  // Netlify/free-tier style limits: keep each run lightweight.
+  // Deterministic rotation by time window so repeated invocations distribute coverage.
+  const windowMs = 30 * 60 * 1000
+  const windowIndex = Math.floor(Date.now() / windowMs)
+  const batchSize = 2
+  const start = allSources.length ? windowIndex % allSources.length : 0
+  const selected = allSources.length
+    ? Array.from({ length: Math.min(batchSize, allSources.length) }, (_, i) => {
+        return allSources[(start + i) % allSources.length]!
+      })
+    : []
+
+  console.log(
+    `[rss] Fetching ${selected.length}/${allSources.length} sources (window=${windowIndex}, start=${start})...`
   )
+
+  const results = await Promise.all(selected.map(s => fetchFeed(s.outlet, s.domain, s.rssUrl)))
 
   let queued = 0
   for (const feed of results) {

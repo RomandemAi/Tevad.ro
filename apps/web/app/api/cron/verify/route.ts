@@ -6,7 +6,7 @@ import type { SourceLean } from '@tevad/rss-monitor/sources.config'
 import type { CrossCheckInput } from '@tevad/verifier/cross-check'
 
 export const dynamic = 'force-dynamic'
-export const maxDuration = 120
+export const maxDuration = 60
 
 /** Two Tier-0 official URLs so `passesSourceDiversityCheck` passes even when the article is Tier 2 only. */
 function officialContextSources(): CrossCheckInput['sources'] {
