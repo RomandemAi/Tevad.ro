@@ -1,16 +1,6 @@
-# Tevad.ro — Netlify (npm workspaces: install at repo root, Next app in apps/web).
-#
-# Build context: leave "Base directory" at the REPO ROOT (do not set it to apps/web), so
-# `npm ci` sees the root package-lock and workspaces. If Netlify offers a separate
-# "Package directory" / monorepo path for the Next app, set that to apps/web.
-#
-# Custom domain optional: URL is still set automatically (https://<site>.netlify.app or your domain).
-#
-# Env vars (Netlify UI): NEXT_PUBLIC_SUPABASE_*, SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY, CRON_SECRET, …
-
 [build]
-  # --include=dev: CI often has NODE_ENV=production; devDependencies include @netlify/plugin-nextjs.
   command = "npm ci --include=dev && npm run build -w web"
+  publish = "apps/web/.next"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -19,13 +9,4 @@
   package = "@netlify/plugin-nextjs"
 
 [functions]
-  directory = "netlify/functions"
-  # Ensure workspace packages are bundled with functions (monorepo).
   included_files = ["packages/**"]
-
-[edge_functions]
-  directory = "netlify/edge-functions"
-
-[[edge_functions]]
-  path = "/api/cron/*"
-  function = "cron-handler"
