@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
     // Heavy scraping should run in GitHub Actions.
     const url = 'https://www.senat.ro/FisaSenatori.aspx'
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'Tevad.ro cron (light)' },
+      headers: { 'User-Agent': 'Tevad.org cron (light)' },
       signal: AbortSignal.timeout(8_000),
     })
     const html = res.ok ? await res.text() : ''

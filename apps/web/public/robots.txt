@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Sitemap: https://tevadorg.netlify.app/sitemap.xml
+Sitemap: https://tevad.org/sitemap.xml
 

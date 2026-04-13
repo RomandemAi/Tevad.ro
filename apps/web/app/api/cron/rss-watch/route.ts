@@ -106,7 +106,7 @@ export async function GET(req: NextRequest) {
 
     const res = await fetch(chosen.rssUrl, {
       headers: {
-        'User-Agent': 'Tevad.ro RSS Monitor (cron)',
+        'User-Agent': 'Tevad.org RSS Monitor (cron)',
         Accept: 'application/rss+xml, application/xml, text/xml',
       },
       signal: AbortSignal.timeout(8_000),

@@ -17,7 +17,7 @@ export default async function BrokenPage() {
 
   const breadcrumb = (
     <>
-      <span className="text-[var(--gray-500)]">TEVAD.RO /</span>{' '}
+      <span className="text-[var(--gray-500)]">TEVAD.ORG /</span>{' '}
       <span className="text-[var(--red)]">PROMISIUNI FALSE</span>
     </>
   )

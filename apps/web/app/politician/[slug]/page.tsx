@@ -59,9 +59,9 @@ export async function generateMetadata({ params }: Props) {
     .select('name, role, party')
     .eq('slug', params.slug)
     .single()
-  if (!pol) return { title: 'Politician — Tevad.ro' }
+  if (!pol) return { title: 'Politician — Tevad.org' }
   return {
-    title: `${pol.name} · ${pol.role} — Tevad.ro`,
+    title: `${pol.name} · ${pol.role} — Tevad.org`,
     description: `Urmărește promisiunile, declarațiile și voturile lui ${pol.name} (${pol.party}).`,
   }
 }

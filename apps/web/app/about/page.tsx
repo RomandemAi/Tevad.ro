@@ -12,11 +12,11 @@ import {
 const GH_REPO = 'https://github.com/RomandemAi/Tevad.ro' as const
 
 export const metadata: Metadata = {
-  title: 'Despre proiect — Tevad.ro',
+  title: 'Despre proiect — Tevad.org',
   description:
-    'Tevad.ro: platformă deschisă de responsabilitate politică în România — promisiuni, surse, verificare AI.',
+    'Tevad.org: platformă deschisă de responsabilitate politică în România — promisiuni, surse, verificare AI.',
   openGraph: {
-    title: 'Despre proiect — Tevad.ro',
+    title: 'Despre proiect — Tevad.org',
     description: 'Transparență, surse și neutralitate prin design.',
     images: [{ url: '/images/about-bg.jpg', width: 1200, height: 630 }],
   },

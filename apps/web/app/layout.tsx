@@ -20,7 +20,7 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Tevad.ro — Te Văd · România',
+  title: 'Tevad.org — Te Văd · România',
   description:
     '"Te văd." — Romania\'s open-source political accountability platform. Every promise tracked. Every vote recorded. Every statement verified. AI-powered. Source-cited. Neutral by design.',
   keywords: [
@@ -32,16 +32,16 @@ export const metadata: Metadata = {
     'romania politica',
   ],
   openGraph: {
-    title: 'Tevad.ro — Te Văd · România',
+    title: 'Tevad.org — Te Văd · România',
     description: '"Te văd." — Romania\'s political accountability platform.',
-    url: 'https://tevad.ro',
-    siteName: 'Tevad.ro',
+    url: 'https://tevad.org',
+    siteName: 'Tevad.org',
     locale: 'ro_RO',
     type: 'website',
     images: [{ url: '/images/about-bg.jpg', width: 1200, height: 630 }],
   },
   robots: { index: true, follow: true },
-  metadataBase: new URL('https://tevad.ro'),
+  metadataBase: new URL('https://tevad.org'),
 }
 
 export default function RootLayout({

@@ -12,7 +12,7 @@ export default function GlobalError({
       <body style={{ margin: 0, backgroundColor: '#080c12', color: '#e2eaf6', fontFamily: 'system-ui, sans-serif' }}>
         <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 py-16 text-center">
           <p style={{ color: '#3d5070', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Tevad.ro — eroare critică
+            Tevad.org — eroare critică
           </p>
           <p style={{ color: '#7a94b8', maxWidth: 420, fontSize: 14, lineHeight: 1.6 }}>
             {error.message || 'Layout-ul aplicației nu s-a putut încărca.'}

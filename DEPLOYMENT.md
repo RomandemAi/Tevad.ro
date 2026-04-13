@@ -1,4 +1,4 @@
-# Deployment Checklist — Tevad.ro
+# Deployment Checklist — Tevad.org
 
 ## Phase 02 Pre-Launch
 
@@ -16,7 +16,7 @@
 - [ ] Set `NEXT_PUBLIC_APP_URL` to `https://tevad.ro`
 - [ ] Enable Edge Network
 
-### DNS (tevad.ro)
+### DNS (tevad.org)
 - [ ] Point A record to Vercel
 - [ ] Add www CNAME
 - [ ] Verify SSL certificate issued

@@ -28,7 +28,7 @@ export default async function PromisesPage() {
 
   const breadcrumb = (
     <>
-      <span className="text-[var(--gray-500)]">TEVAD.RO /</span> TOATE PROMISIUNILE
+      <span className="text-[var(--gray-500)]">TEVAD.ORG /</span> TOATE PROMISIUNILE
     </>
   )
 
