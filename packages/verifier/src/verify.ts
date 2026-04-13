@@ -20,6 +20,38 @@ export type { BlindPayload, BlindSource, ModelResult, StatementType, Verdict } f
 export { buildBlindPayload } from './blind-payload'
 export { saveCrossCheckResult } from './cross-check'
 
+import { existsSync, readFileSync } from 'fs'
+import { resolve } from 'path'
+
+function loadEnvFiles(): void {
+  const candidates = [
+    resolve(process.cwd(), '.env'),
+    resolve(process.cwd(), '.env.local'),
+    resolve(process.cwd(), 'apps/web/.env.local'),
+    resolve(process.cwd(), '..', '.env'),
+    resolve(process.cwd(), '..', '..', '.env'),
+    resolve(process.cwd(), 'packages/verifier', '.env'),
+  ]
+  for (const p of candidates) {
+    if (!existsSync(p)) continue
+    const text = readFileSync(p, 'utf8')
+    for (const line of text.split(/\r?\n/)) {
+      const t = line.trim()
+      if (!t || t.startsWith('#')) continue
+      const i = t.indexOf('=')
+      if (i <= 0) continue
+      const k = t.slice(0, i).trim()
+      let v = t.slice(i + 1).trim()
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+        v = v.slice(1, -1)
+      }
+      if (process.env[k] === undefined) process.env[k] = v
+    }
+    console.log('[verify] Loaded env from', p)
+    return
+  }
+}
+
 export interface VerificationInput {
   politicianName: string
   politicianId: string
@@ -104,6 +136,7 @@ export async function saveVerification(
 }
 
 async function demo() {
+  loadEnvFiles()
   console.log('[verify] Running BLIND dual-model demo (--demo)...\n')
 
   const testInput: VerificationInput = {

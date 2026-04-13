@@ -2,7 +2,11 @@ import Anthropic from '@anthropic-ai/sdk'
 import { loadNeutralitySystemPrompt } from './neutrality-prompt'
 import type { ModelResult } from './blind-types'
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+function getClient(): Anthropic {
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  // Don't throw here; callers already handle failures and downgrade to pending.
+  return new Anthropic({ apiKey: apiKey || undefined })
+}
 
 export interface ModelRunOutput {
   parsed: ModelResult | null
@@ -15,6 +19,7 @@ export async function runVerificationModel(
   systemPrompt: string
 ): Promise<ModelRunOutput | null> {
   try {
+    const anthropic = getClient()
     const response = await anthropic.messages.create({
       model,
       max_tokens: 500,
