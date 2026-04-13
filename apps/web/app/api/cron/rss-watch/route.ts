@@ -69,12 +69,18 @@ function parseRss(xml: string): RssItem[] {
 
 async function pickNextFeed(supabase: ReturnType<typeof getServiceSupabase>) {
   const allSources = [...TIER1_SOURCES, ...TIER2_SOURCES]
-  const { data } = await supabase.from('cron_state').select('value').eq('key', 'rss_watch_index').maybeSingle()
+  const { data, error } = await supabase
+    .from('cron_state')
+    .select('value')
+    .eq('key', 'rss_watch_index')
+    .maybeSingle()
   const idx = Number(data?.value ?? 0) || 0
   const nextIdx = allSources.length ? (idx + 1) % allSources.length : 0
-  await supabase
-    .from('cron_state')
-    .upsert({ key: 'rss_watch_index', value: String(nextIdx), updated_at: new Date().toISOString() })
+  if (!error) {
+    await supabase
+      .from('cron_state')
+      .upsert({ key: 'rss_watch_index', value: String(nextIdx), updated_at: new Date().toISOString() })
+  }
   const chosen = allSources.length ? allSources[idx % allSources.length]! : null
   return { chosen, idx, total: allSources.length }
 }
