@@ -235,6 +235,9 @@ export async function saveCrossCheckResult(
       ai_confidence: result.primaryConfidence,
       ai_reasoning: result.primaryReasoning,
       ai_model: result.primaryModel,
+      ai_can_be_decided: !result.forcedPending,
+      ai_requires_more_sources: result.forcedPending,
+      ai_models_agreed: result.modelsAgreed,
       ai_verified_at: new Date().toISOString(),
       date_verified: new Date().toISOString(),
     })
@@ -242,30 +245,40 @@ export async function saveCrossCheckResult(
 
   if (error) throw error
 
-  const { error: insErr } = await supabase.from('verdict_audit_logs').insert({
+  const auditInsert = {
     record_id: recordId,
     politician_id: politicianId,
-    verdict: result.finalVerdict,
+
+    model_primary: result.primaryModel,
+    model_secondary: result.secondaryModel,
+
+    final_verdict: result.finalVerdict,
+    verdict_primary: result.primaryVerdict,
+    verdict_secondary: result.secondaryVerdict,
+
     confidence: result.primaryConfidence,
     reasoning: result.primaryReasoning,
-    model_version: result.primaryModel,
-    blind_verified: result.blindVerified,
-    secondary_model_version: result.secondaryModel,
-    secondary_verdict: result.secondaryVerdict,
-    secondary_confidence: result.secondaryConfidence,
+
     models_agreed: result.modelsAgreed,
+    flagged_for_review: result.flaggedForReview,
+    blind_verified: result.blindVerified,
+
+    prompt_version: 'v1.0.0',
+    blind_payload: result.blindPayload,
     sources_fed: sourcesFed,
+    response_primary: result.responsePrimaryRaw,
+    response_secondary: result.responseSecondaryRaw,
+
     can_be_decided: !result.forcedPending,
     requires_more_sources: result.forcedPending,
     diversity_check_passed: diversityCheck.passes,
     diversity_check_reason: diversityCheck.reason ?? null,
-    system_prompt_version: 'v1.0.0',
-    blind_payload: result.blindPayload,
-    response_primary: result.responsePrimaryRaw,
-    response_secondary: result.responseSecondaryRaw,
-    prompt_version: 'v1.0.0',
-    flagged_for_review: result.flaggedForReview,
-  } as any)
+    source_diversity_flag: !diversityCheck.passes,
+
+    processing_time_ms: null as number | null,
+  }
+
+  const { error: insErr } = await supabase.from('verdict_audit_logs').insert(auditInsert as any)
 
   if (insErr) throw insErr
 

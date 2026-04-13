@@ -22,6 +22,8 @@ export { saveCrossCheckResult } from './cross-check'
 
 import { existsSync, readFileSync } from 'fs'
 import { resolve } from 'path'
+import { createClient } from '@supabase/supabase-js'
+import { getLean, getSourceTier } from '../../rss-monitor/src/sources.config'
 
 function loadEnvFiles(): void {
   const candidates = [
@@ -50,6 +52,19 @@ function loadEnvFiles(): void {
     console.log('[verify] Loaded env from', p)
     return
   }
+}
+
+function getServiceSupabaseUrl(): string {
+  return process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+}
+
+function getServiceSupabase() {
+  const url = getServiceSupabaseUrl()
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) {
+    throw new Error('Missing SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL) or SUPABASE_SERVICE_ROLE_KEY')
+  }
+  return createClient<any, 'public', any>(url, key, { auth: { persistSession: false } })
 }
 
 export interface VerificationInput {
@@ -176,9 +191,128 @@ async function demo() {
   console.log(JSON.stringify(result, null, 2))
 }
 
+async function runPending(): Promise<void> {
+  loadEnvFiles()
+
+  if (!process.env.ANTHROPIC_API_KEY?.trim()) {
+    throw new Error('Missing ANTHROPIC_API_KEY')
+  }
+
+  const supabase = getServiceSupabase()
+  const { recalcScore, saveScore } = await import('./score')
+
+  const limitRaw = process.env.VERIFY_LIMIT
+  const limit = Math.min(50, Math.max(1, Number(limitRaw) || 10))
+
+  const { data: records, error: rErr } = await supabase
+    .from('records')
+    .select('id, politician_id, slug, type, text, date_made, status')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: true })
+    .limit(limit)
+
+  if (rErr) throw new Error(`Fetch pending records: ${rErr.message}`)
+
+  if (!records || records.length === 0) {
+    console.log('[verify] No pending records.')
+    return
+  }
+
+  console.log(`[verify] Processing ${records.length} pending record(s)...`)
+
+  const results: Array<{ slug: string; verdict: string; confidence: number }> = []
+
+  for (const rec of records) {
+    const recordId = rec.id as string
+    const politicianId = rec.politician_id as string
+    const slug = (rec.slug as string) || recordId
+
+    const { data: pol, error: pErr } = await supabase
+      .from('politicians')
+      .select('id, name, role')
+      .eq('id', politicianId)
+      .maybeSingle()
+    if (pErr || !pol) {
+      console.warn('[verify] skip (politician missing):', slug, pErr?.message)
+      continue
+    }
+
+    const { data: srcRows, error: sErr } = await supabase
+      .from('sources')
+      .select('outlet, url, tier, title, published_at')
+      .eq('record_id', recordId)
+
+    if (sErr) {
+      console.warn('[verify] skip (sources query failed):', slug, sErr.message)
+      continue
+    }
+
+    const sources = (srcRows ?? []).map((s: any) => {
+      const url = String(s.url || '')
+      const inferredTier = getSourceTier(url)
+      const tierNum =
+        typeof inferredTier === 'number'
+          ? inferredTier
+          : s.tier === '0' || s.tier === '1' || s.tier === '2'
+            ? Number(s.tier)
+            : 2
+      const lean = (getLean(url) ?? undefined) as SourceLean | undefined
+      return {
+        outlet: String(s.outlet || 'Source'),
+        url,
+        tier: tierNum,
+        lean,
+        title: s.title ?? undefined,
+        publishedAt: s.published_at ? String(s.published_at) : undefined,
+      }
+    })
+
+    const input: VerificationInput = {
+      politicianName: pol.name,
+      politicianId: pol.id,
+      politicianRole: pol.role ?? '',
+      statementText: rec.text as string,
+      statementDate: String(rec.date_made),
+      statementType: rec.type as StatementType,
+      sources,
+    }
+
+    console.log('\n[verify] ──', slug)
+    const cc = await crossCheckVerify({
+      politicianName: input.politicianName,
+      politicianId: input.politicianId,
+      statementText: input.statementText,
+      statementDate: input.statementDate,
+      statementType: input.statementType,
+      sources: input.sources,
+    })
+
+    await saveCrossCheckResult(recordId, politicianId, cc, input.sources)
+
+    const components = await recalcScore(politicianId)
+    await saveScore(politicianId, components, 'pending_record_verified', recordId, {
+      skipReasonExplain: true,
+    })
+
+    results.push({ slug, verdict: cc.finalVerdict, confidence: cc.primaryConfidence })
+    console.log(`[verify] ✓ ${slug} → ${cc.finalVerdict} (${cc.primaryConfidence}%)`)
+  }
+
+  console.log('\n[verify] Done.')
+  console.log(`[verify] Verified: ${results.length}`)
+  for (const r of results) console.log(`[verify] - ${r.slug}: ${r.verdict} (${r.confidence}%)`)
+}
+
 if (process.argv[2] === '--demo') {
   demo().catch(e => {
     console.error('[verify] Demo failed:', e)
+    process.exit(1)
+  })
+}
+
+if (process.argv.includes('--run-pending')) {
+  runPending().catch(e => {
+    console.error('[verify] runPending failed:', e)
     process.exit(1)
   })
 }
