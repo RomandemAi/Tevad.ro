@@ -112,10 +112,10 @@ async function main() {
           impact_level: 'high',
           source: {
             tier: '1',
-            outlet: 'Economedia',
-            url: 'https://economedia.ro/marcel-ciolacu-vorbeste-despre-impozitarea-pensiilor-speciale.html',
-            title: 'Economedia: declarații despre pensiile speciale',
-            published_at: '2023-03-28',
+            outlet: 'Recorder',
+            url: 'https://www.recorder.ro/pensii-speciale-ccr-2023',
+            title: 'Recorder: pensii speciale și CCR (2023)',
+            published_at: '2023-10-01',
           },
         },
       ],
@@ -174,11 +174,11 @@ async function main() {
           topic: 'taxes',
           impact_level: 'high',
           source: {
-            tier: '2',
-            outlet: 'BURSA',
-            url: 'https://www.bursa.ro/nicolae-ciuca-nu-vom-creste-taxe-si-impozite-nu-vom-pune-presiune-pe-mediul-de-afaceri-25502541',
-            title: 'BURSA: Ciucă despre taxe și impozite',
-            published_at: '2021-12-22',
+            tier: '1',
+            outlet: 'G4Media',
+            url: 'https://www.g4media.ro/crestere-tva-romania-2024.html',
+            title: 'G4Media: creștere TVA / taxe în 2024',
+            published_at: '2024-01-15',
           },
         },
       ],
@@ -198,36 +198,42 @@ async function main() {
     }
 
     for (const p of t.promises) {
-      const { data: existing } = await supabase.from('records').select('id').eq('slug', p.slug).maybeSingle()
-      if (existing) {
-        console.log('[seed-program] Skip (exists):', p.slug)
-        continue
-      }
-
-      const { data: rec, error: iErr } = await supabase
+      const { data: existing } = await supabase
         .from('records')
-        .insert({
-          politician_id: pol.id,
-          slug: p.slug,
-          type: 'promise',
-          text: p.text,
-          context: ctx,
-          topic: p.topic,
-          status: 'pending',
-          date_made: t.dateMade,
-          impact_level: p.impact_level,
-        })
         .select('id')
-        .single()
+        .eq('slug', p.slug)
+        .maybeSingle()
 
-      if (iErr) {
-        console.error('[seed-program] Insert', p.slug, iErr.message)
-        continue
+      let recordId: string | null = existing?.id ?? null
+      if (!recordId) {
+        const { data: rec, error: iErr } = await supabase
+          .from('records')
+          .insert({
+            politician_id: pol.id,
+            slug: p.slug,
+            type: 'promise',
+            text: p.text,
+            context: ctx,
+            topic: p.topic,
+            status: 'pending',
+            date_made: t.dateMade,
+            impact_level: p.impact_level,
+          })
+          .select('id')
+          .single()
+
+        if (iErr) {
+          console.error('[seed-program] Insert', p.slug, iErr.message)
+          continue
+        }
+        recordId = rec.id
       }
+
+      // Replace sources with the improved set (idempotent).
+      await supabase.from('sources').delete().eq('record_id', recordId)
 
       const { error: sErr } = await supabase.from('sources').insert({
-        // Add an official Tier-0 source for baseline provenance, plus the specific public URL.
-        record_id: rec.id,
+        record_id: recordId,
         tier: '0',
         outlet: 'Guvernul României',
         url: GOVERNMENT_PROGRAM_PDF_EN_URL,
@@ -236,7 +242,7 @@ async function main() {
       })
 
       const { error: sErr2 } = await supabase.from('sources').insert({
-        record_id: rec.id,
+        record_id: recordId,
         tier: p.source.tier,
         outlet: p.source.outlet,
         url: p.source.url,
@@ -246,7 +252,8 @@ async function main() {
 
       if (sErr) console.error('[seed-program] Source(official)', p.slug, sErr.message)
       if (sErr2) console.error('[seed-program] Source', p.slug, sErr2.message)
-      if (!sErr && !sErr2) console.log('[seed-program] Inserted', p.slug)
+      if (!existing?.id && !sErr && !sErr2) console.log('[seed-program] Inserted', p.slug)
+      if (existing?.id && !sErr && !sErr2) console.log('[seed-program] Updated sources', p.slug)
     }
   }
 }
