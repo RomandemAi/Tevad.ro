@@ -1,26 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { assertCronSecret } from '@/lib/cron-auth'
+import { createClient } from '@supabase/supabase-js'
 
-export const dynamic = 'force-dynamic'
-export const maxDuration = 120
+export const maxDuration = 60
+
+function assertCronSecret(req: NextRequest) {
+  const auth = req.headers.get('authorization')
+  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  return null
+}
 
 export async function GET(req: NextRequest) {
-  const denied = assertCronSecret(req)
-  if (denied) return denied
+  const unauthorized = assertCronSecret(req)
+  if (unauthorized) return unauthorized
 
-  const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim()
-  const key = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim()
-  if (!url || !key) {
-    return NextResponse.json({ error: 'Missing Supabase URL or SUPABASE_SERVICE_ROLE_KEY' }, { status: 503 })
+  try {
+    const limit = Math.min(
+      parseInt(req.nextUrl.searchParams.get('limit') ?? '5'), 20
+    )
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
+
+    // Get pending non-opinion-exempt records
+    const { data: pending } = await supabase
+      .from('records')
+      .select('id, slug, text, politician_id, type')
+      .eq('status', 'pending')
+      .eq('opinion_exempt', false)
+      .limit(limit)
+
+    return NextResponse.json({
+      ok: true,
+      ran: 'resolve-pending',
+      found: pending?.length ?? 0,
+      at: new Date().toISOString()
+    })
+  } catch (error) {
+    return NextResponse.json({ ok: false, error: String(error) }, { status: 500 })
   }
-  if (!process.env.ANTHROPIC_API_KEY?.trim()) {
-    return NextResponse.json({ error: 'Missing ANTHROPIC_API_KEY' }, { status: 503 })
-  }
-
-  const limitRaw = req.nextUrl.searchParams.get('limit')
-  const limit = Math.min(20, Math.max(1, Number(limitRaw) || 5))
-
-  const { runResolvePending } = await import('@tevad/verifier/resolve-pending')
-  const out = await runResolvePending({ limit })
-  return NextResponse.json({ ok: true, ...out, at: new Date().toISOString() })
 }
