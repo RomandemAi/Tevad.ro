@@ -3,6 +3,7 @@
 import Sidebar from './Sidebar'
 import TopBar from './TopBar'
 import MobileBottomNav from './MobileBottomNav'
+import MobileAppNotices from './MobileAppNotices'
 import Footer from './Footer'
 
 interface AppShellProps {
@@ -20,6 +21,7 @@ export default function AppShell({ children, breadcrumb, topBarRight }: AppShell
         id="main-content"
         className="relative flex min-h-screen min-w-0 flex-1 flex-col scroll-mt-0 md:ml-[240px] md:pb-0 pb-[calc(4rem+env(safe-area-inset-bottom))]"
       >
+        <MobileAppNotices />
         {breadcrumb !== undefined && <TopBar right={topBarRight}>{breadcrumb}</TopBar>}
         {children}
         <Footer />

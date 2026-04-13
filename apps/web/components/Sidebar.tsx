@@ -205,6 +205,10 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
             Sistem activ
           </span>
         </div>
+        <p className="mt-3 font-sans text-[10px] leading-relaxed text-[rgba(255,255,255,0.42)]">
+          Urmărirea responsabilității pornește de la lansare. Completăm registrul în fiecare zi, cu informații
+          verificabile și surse publice.
+        </p>
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
