@@ -8,6 +8,7 @@ type RecordType   = 'promise' | 'statement' | 'vote'
 
 interface RecordData {
   id: string
+  slug?: string
   type: RecordType
   text: string
   status: RecordStatus
@@ -16,6 +17,7 @@ interface RecordData {
   likes: number
   dislikes: number
   ai_confidence?: number
+  opinion_exempt?: boolean
   sources: any[]
 }
 

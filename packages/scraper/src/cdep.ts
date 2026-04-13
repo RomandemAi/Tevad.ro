@@ -141,7 +141,7 @@ function mergeDeputyInputs(a: DeputyInput, b: DeputyInput): DeputyInput {
   }
 }
 
-function dedupeDeputiesByNameIdentity(deputies: DeputyInput[]): DeputyInput[] {
+export function dedupeDeputiesByNameIdentity(deputies: DeputyInput[]): DeputyInput[] {
   const m = new Map<string, DeputyInput>()
   for (const d of deputies) {
     const sig = nameIdentitySignature(d.name)
@@ -340,8 +340,8 @@ async function loadFromDataGov(): Promise<DeputyInput[]> {
           seen.add(key)
           deputies.push(d)
         }
-        if (deputies.length >= 280) {
-          console.log(`[cdep] data.gov.ro: collected ${deputies.length} deputy rows (cap)`)
+        if (deputies.length >= 330) {
+          console.log(`[cdep] data.gov.ro: collected ${deputies.length} deputy rows (cap ~Camera Deputaților)`)
           return deputies
         }
       } catch (e) {
@@ -352,7 +352,8 @@ async function loadFromDataGov(): Promise<DeputyInput[]> {
   return deputies
 }
 
-async function loadFromOpenPolitics(): Promise<DeputyInput[]> {
+/** Current deputy rows from parlament.openpolitics.ro CSV (good cross-check for legislature-sized lists). */
+export async function fetchOpenPoliticsDeputyRoster(): Promise<DeputyInput[]> {
   const headers: Record<string, string> = {
     'User-Agent': UA,
     Accept: 'text/csv,text/plain,*/*',
@@ -383,7 +384,7 @@ async function loadFromOpenPolitics(): Promise<DeputyInput[]> {
   return []
 }
 
-function makeSlug(name: string, used: Set<string>): string {
+export function makeSlug(name: string, used: Set<string>): string {
   let s = slugify(name) || 'deputat'
   if (!used.has(s)) {
     used.add(s)
@@ -406,7 +407,7 @@ export async function fetchDeputyRoster(): Promise<DeputyRosterResult> {
   let source = 'data.gov.ro'
   if (list.length < 80) {
     console.warn(`[cdep] data.gov.ro yielded only ${list.length} rows — merging OpenPolitics fallback`)
-    const extra = await loadFromOpenPolitics()
+    const extra = await fetchOpenPoliticsDeputyRoster()
     const seen = new Set(list.map(d => nameIdentitySignature(d.name)))
     for (const e of extra) {
       const ks = nameIdentitySignature(e.name)
@@ -418,7 +419,7 @@ export async function fetchDeputyRoster(): Promise<DeputyRosterResult> {
     source = 'data.gov.ro+openpolitics'
   }
   if (list.length === 0) {
-    list = await loadFromOpenPolitics()
+    list = await fetchOpenPoliticsDeputyRoster()
     source = 'openpolitics'
   }
   const deputies = dedupeDeputiesByNameIdentity(list)

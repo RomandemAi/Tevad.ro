@@ -23,6 +23,7 @@ interface PoliticianRecord {
   likes: number
   dislikes: number
   ai_confidence?: number
+  opinion_exempt?: boolean
   sources: Source[]
 }
 
@@ -145,6 +146,16 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
       >
         {record.text}
       </p>
+      {record.opinion_exempt && (
+        <p className="mt-3 rounded-lg border border-[var(--gray-200)] bg-[var(--gray-50)] px-3 py-2 font-mono text-[10px] leading-relaxed text-[var(--gray-600)]">
+          Declarație politică — verdictul nu se aplică opiniilor
+        </p>
+      )}
+      {record.status === 'pending' && record.type === 'promise' && !record.opinion_exempt && (
+        <p className="mt-3 rounded-lg border border-[rgba(29,110,245,0.25)] bg-[var(--blue-light)] px-3 py-2 font-mono text-[10px] leading-relaxed text-[var(--blue)]">
+          Promisiune în curs de verificare — verdict disponibil după implementare
+        </p>
+      )}
       {shouldTruncate && (
         <button
           type="button"

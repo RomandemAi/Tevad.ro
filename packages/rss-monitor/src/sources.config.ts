@@ -51,6 +51,13 @@ export const TIER1_SOURCES: SourceConfig[] = [
     description: 'Politics, justice, corruption. Investigative. Non-partisan.',
     lean: 'center',
   },
+  {
+    outlet: 'Newsweek România',
+    domain: 'newsweek.ro',
+    rssUrl: 'https://newsweek.ro/feed',
+    description: 'Politics and policy reporting (RO edition).',
+    lean: 'center',
+  },
 ]
 
 // ============================================================

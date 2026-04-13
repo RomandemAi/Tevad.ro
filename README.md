@@ -183,7 +183,7 @@ Requires `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL`) and `SUPABASE_SERVICE_RO
 npm run audit:parliament -w @tevad/scraper
 ```
 
-Use `--json` for JSON output. See [SOURCES.md](SOURCES.md) for interpreting results and manual corrections.
+Use `--json` for JSON output (includes fuzzy `suggestion` on many `not_in_roster` rows). Optional `--full-deputy-roster` skips OpenPolitics narrowing of the deputy list. See [SOURCES.md](SOURCES.md).
 
 ---
 

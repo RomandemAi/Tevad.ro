@@ -47,6 +47,21 @@ function extractImgUrl(blockInner: string): string | null {
   return absolutizeUrl(im[1])
 }
 
+/** Reject nav/UI blocks mistaken for person names (gov.ro page chrome). */
+export function isLikelyCabinetPersonName(name: string): boolean {
+  const n = name
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+  if (n.length < 6) return false
+  if (/\bgalerie\b/.test(n)) return false
+  if (/\bcabinetul\b/.test(n)) return false
+  const words = name.trim().split(/\s+/).filter(Boolean)
+  if (words.length < 2) return false
+  return true
+}
+
 /**
  * Parse current gov.ro cabinet markup (PM block uses .ministrii.w100p + .pageImage;
  * ministers use .ministriiBox + .ministriimage).
@@ -64,6 +79,7 @@ export function parseCabinetHtml(html: string): CabinetMember[] {
     const name = (m[3] ?? '').replace(/\s+/g, ' ').trim()
     const roleRaw = (m[4] ?? '').replace(/\s+/g, ' ').trim()
     if (name.length < 4) continue
+    if (!isLikelyCabinetPersonName(name)) continue
 
     const rl = roleRaw.toLowerCase()
     if (!/(prim-ministru|viceprim|ministrul|ministru)/i.test(rl)) continue

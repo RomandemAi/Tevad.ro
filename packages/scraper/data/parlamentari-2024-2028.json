@@ -1,0 +1,3261 @@
+{
+  "source": "ro.wikipedia.org — Legislatura 2024-2028 (Camera Deputaților) + (Senat), tables cite BEC; regenerate: node scripts/build-parlamentari-from-wikipedia.mjs",
+  "mandate_start": "2024-12-01",
+  "entries": [
+    {
+      "county": "Alba",
+      "chamber": "deputat",
+      "name": "Florin Roman",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Alba",
+      "chamber": "deputat",
+      "name": "Călin-Gheorghe Matieș",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Alba",
+      "chamber": "deputat",
+      "name": "Voicu Vușcan",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Alba",
+      "chamber": "deputat",
+      "name": "Nicolae-Adrian Bara",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Alba",
+      "chamber": "deputat",
+      "name": "Bianca-Eugenia Gavrilă",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Arad",
+      "chamber": "deputat",
+      "name": "Mihai-Viorel Fifor",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Arad",
+      "chamber": "deputat",
+      "name": "Simona-Geanina Pistru-Popa",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Arad",
+      "chamber": "deputat",
+      "name": "Răzvan-Olimpiu Cadar",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Arad",
+      "chamber": "deputat",
+      "name": "Adrian Wiener",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Arad",
+      "chamber": "deputat",
+      "name": "Dan Artimon",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Arad",
+      "chamber": "deputat",
+      "name": "Cosmin Pascariu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Arad",
+      "chamber": "deputat",
+      "name": "Vasile Nagy",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Simona Bucura-Oprescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Remus-Gabriel Mihalcea",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Cătălin-Viorel Mîndroc",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Alina Gorghiu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Liviu-Ionuț Moșteanu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Bogdan Velcescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Cristina Butură",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Dorin Popa",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "deputat",
+      "name": "Tudor Ionescu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Mircea Fechet",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Teodor Lazăr",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Diana Enache",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Robert Alecu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Costel-Neculai Dunava",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Vasile Budacă",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Lucian-Gabriel Bogdănel",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "George-Adrian Popa",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Radu-Mihail Ionescu",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "deputat",
+      "name": "Nini-Alexandru Pascalini",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Mihail Neamțu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Ödön Szabó",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Rozália-Ibolya Biró",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Patricia-Simina Arina Moș",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Dumitru Țiplea",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Călin-Grațian Gal",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Gabriela-Corina Ene",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Vlad-Andrei Vidra",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "deputat",
+      "name": "Cristian-Emanuel Cîmpan",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Bistrița-Năsăud",
+      "chamber": "deputat",
+      "name": "Tiberiu Boșutar",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Bistrița-Năsăud",
+      "chamber": "deputat",
+      "name": "Vasile-Daniel Suciu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bistrița-Năsăud",
+      "chamber": "deputat",
+      "name": "Bogdan-Gruia Ivan",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bistrița-Năsăud",
+      "chamber": "deputat",
+      "name": "Robert-Ionatan Sighiartău",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Bistrița-Năsăud",
+      "chamber": "deputat",
+      "name": "Andrei Csillag",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "deputat",
+      "name": "Eduard-Tatian Mititelu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "deputat",
+      "name": "Ariadna Cîrligeanu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "deputat",
+      "name": "Elisabeta Lipă",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "deputat",
+      "name": "Marius-Constantin Budăi",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "deputat",
+      "name": "Alexandrin Moiseev",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "deputat",
+      "name": "Gheorghe-Petru Pîclișan",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Allen Coliban",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Ovidiu-Romulus Paraschivescu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Ariana-Oana Bucur",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Augustin-Florin Hagiu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Dan Tanasă",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Sebastian-Mihai Rusu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Gabriel Andronache",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Ionel Goidescu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "deputat",
+      "name": "Cristian-Alexandru Popa",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Brăila",
+      "chamber": "deputat",
+      "name": "Florin Cîrligea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Brăila",
+      "chamber": "deputat",
+      "name": "Doinița Ciocan",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Brăila",
+      "chamber": "deputat",
+      "name": "Florin Mircea",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Brăila",
+      "chamber": "deputat",
+      "name": "Alexandru Popa",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Brăila",
+      "chamber": "deputat",
+      "name": "Andra-Claudia Constantinescu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "deputat",
+      "name": "Adrian Mocanu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "deputat",
+      "name": "Sorin-Titus Muncaciu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "deputat",
+      "name": "Marius-Nicolae Alecsandru",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "deputat",
+      "name": "Ion-Marcel Ciolacu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "deputat",
+      "name": "Petre-Emanoil Neagu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "deputat",
+      "name": "Romeo-Daniel Lungu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "deputat",
+      "name": "Rodica Plopeanu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Caraș-Severin",
+      "chamber": "deputat",
+      "name": "Samuel Miclău",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Caraș-Severin",
+      "chamber": "deputat",
+      "name": "Ion-Marcel Vela",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Caraș-Severin",
+      "chamber": "deputat",
+      "name": "Marius-Adrian Isac",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Caraș-Severin",
+      "chamber": "deputat",
+      "name": "Silvia-Claudia Mihalcea",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Caraș-Severin",
+      "chamber": "deputat",
+      "name": "Andrei George Plujar",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Călărași",
+      "chamber": "deputat",
+      "name": "Dragoș-Florin Coman",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Călărași",
+      "chamber": "deputat",
+      "name": "Mihai-Claudiu Gheorghe",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Călărași",
+      "chamber": "deputat",
+      "name": "Ion Samoilă",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Călărași",
+      "chamber": "deputat",
+      "name": "Ciprian Pandea",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Răzvan-Iulian Ciortea",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Remus-Gabriel Lăpușan",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Oana Murariu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Ciprian-Doru Rigman",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Radu-Marin Moisin",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Ovidiu-Vasile Cîmpean",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Ramona-Ioana Bruynseels",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Ilie-Alin Coleșa",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Botond Csoma",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "deputat",
+      "name": "Aurora-Tasica Simu",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Stelian-Cristian Ion",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "George Gima",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Gheorghe-Daniel Georgescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Mirela-Florența Matichescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Bogdan-Iulian Huțucă",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Marian Crușoveanu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Murad Mohammad",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Titus Păunescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Cosmin Hristu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Mădălin-Laurențiu Făget",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "deputat",
+      "name": "Maria Cernit",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Covasna",
+      "chamber": "deputat",
+      "name": "Zoltán Miklós",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Covasna",
+      "chamber": "deputat",
+      "name": "Károly Gál",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Covasna",
+      "chamber": "deputat",
+      "name": "József Kulcsár-Terza",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Covasna",
+      "chamber": "deputat",
+      "name": "Csaba Könczei",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "deputat",
+      "name": "Victor-Viorel Ponta",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "deputat",
+      "name": "Laurențiu-Adrian Neculaescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "deputat",
+      "name": "Georgeta-Carmen Holban",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "deputat",
+      "name": "Daniel-Codruț Blaga",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "deputat",
+      "name": "Valeriu Munteanu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "deputat",
+      "name": "Ilie-Aurelian Cotinescu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "deputat",
+      "name": "Lucian-Nicolae Andrușcă",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Cosmin Iosub",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Ionel Gheorghe",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Adrian Câciu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Aurora-Adela Geamănu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Radu Marinescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Eliza-Mădălina Peta",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Irina-Florentina Stoenică",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Cezar-Mihail Drăgoescu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Ștefan-Bucur Stoica",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "deputat",
+      "name": "Gabriela Porumboiu",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "Bogdan-Ionel Rodeanu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "Viorica Sandu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "Mitică-Marius Mărgărit",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "Liviu-Bogdan Ciucă",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "Alexandru Bordian",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "Dorel Vulpoiu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "George Scarlat",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "Iosif-Florin Jianu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Galați",
+      "chamber": "deputat",
+      "name": "Ecaterina-Mariana Szőke",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Giurgiu",
+      "chamber": "deputat",
+      "name": "Marian Mina",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Giurgiu",
+      "chamber": "deputat",
+      "name": "Alexandru-Ioan Andrei",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Giurgiu",
+      "chamber": "deputat",
+      "name": "Aneta Matei",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Giurgiu",
+      "chamber": "deputat",
+      "name": "Gheorghe Piperea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Gorj",
+      "chamber": "deputat",
+      "name": "Mihai Weber",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Gorj",
+      "chamber": "deputat",
+      "name": "Claudiu Manta",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Gorj",
+      "chamber": "deputat",
+      "name": "Radu-Dinel Miruță",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Gorj",
+      "chamber": "deputat",
+      "name": "Ion Iordache",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Gorj",
+      "chamber": "deputat",
+      "name": "Ionelia Priescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Harghita",
+      "chamber": "deputat",
+      "name": "Hunor Kelemen",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Harghita",
+      "chamber": "deputat",
+      "name": "Gábor Hajdu",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Harghita",
+      "chamber": "deputat",
+      "name": "Sándor Bende",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Harghita",
+      "chamber": "deputat",
+      "name": "László-Zsolt Ladányi",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Harghita",
+      "chamber": "deputat",
+      "name": "Zoltán Zakarias",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "deputat",
+      "name": "Natalia-Elena Intotero",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "deputat",
+      "name": "Ilie Toma",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "deputat",
+      "name": "Tiberiu-Claudiu Barstan",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "deputat",
+      "name": "Pollyanna-Hanellore Hangan",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "deputat",
+      "name": "Vetuța Stănescu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "deputat",
+      "name": "Anamaria Gavrilă",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Ialomița",
+      "chamber": "deputat",
+      "name": "Ștefan Țintă",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Ialomița",
+      "chamber": "deputat",
+      "name": "Silviu Oancea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Ialomița",
+      "chamber": "deputat",
+      "name": "Florin Caragață",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Ialomița",
+      "chamber": "deputat",
+      "name": "Sorin-George Oltenașu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Iulian-Alexandru Muraru",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Sorin-Alexandru Afloarei",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Ștefan Tanasă",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Monica Berescu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Alexandru Rafila",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Petru-Bogdan Cojocaru",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Maricel Popa",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Ciprian Paraschiv",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Silviu Gurlui",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Cristina-Emanuela Dascălu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Simona-Elena Macovei Ilie",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Iași",
+      "chamber": "deputat",
+      "name": "Ancuța-Florina Irimia",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Ilfov",
+      "chamber": "deputat",
+      "name": "Daniel Gheorghe",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Ilfov",
+      "chamber": "deputat",
+      "name": "Ioan Vulpescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Ilfov",
+      "chamber": "deputat",
+      "name": "Dumitru Văduva",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Ilfov",
+      "chamber": "deputat",
+      "name": "Gianina Șerban",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Ilfov",
+      "chamber": "deputat",
+      "name": "Sergiu-Lucian Matei",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "deputat",
+      "name": "Ionel-Ovidiu Bogdan",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "deputat",
+      "name": "Crina-Fiorela Chilat",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "deputat",
+      "name": "Lucian-Ioan-Titus Morar",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "deputat",
+      "name": "Brigitta-Eva Zahoranszki",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "deputat",
+      "name": "Daniel Ciornei",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "deputat",
+      "name": "Brian Cristian",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "deputat",
+      "name": "Călin-Florin Groza",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Mehedinți",
+      "chamber": "deputat",
+      "name": "Virgil-Alin Chirilă",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Mehedinți",
+      "chamber": "deputat",
+      "name": "Ion-Alin Tomoescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Mehedinți",
+      "chamber": "deputat",
+      "name": "Eduard Koler",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Mehedinți",
+      "chamber": "deputat",
+      "name": "Mihai Culeafă",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "deputat",
+      "name": "Răzvan Biro",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "deputat",
+      "name": "Adrian Giurgiu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "deputat",
+      "name": "Dumitrița Gliga",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "deputat",
+      "name": "Ciprian-Minodor Dobre",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "deputat",
+      "name": "Éva-Andrea Csép",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "deputat",
+      "name": "Levente Vass",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "deputat",
+      "name": "Attila-Gabor Markó",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "deputat",
+      "name": "Anquetil-Károly Kolcsár",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "deputat",
+      "name": "Iulian Bulai",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "deputat",
+      "name": "Ciprian-Constantin Șerban",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "deputat",
+      "name": "Paul-Claudiu Cotîrleț",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "deputat",
+      "name": "Adrian-Virgil Ciobanu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "deputat",
+      "name": "Dumitrina Mitrea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "deputat",
+      "name": "Andreea Neacșu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "deputat",
+      "name": "Monica Ionescu",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "deputat",
+      "name": "Ciprian Ciubuc",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Olt",
+      "chamber": "deputat",
+      "name": "Mugur Mihăescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Olt",
+      "chamber": "deputat",
+      "name": "Gigel-Sorinel Știrbu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Olt",
+      "chamber": "deputat",
+      "name": "Marius-Ionel Iancu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Olt",
+      "chamber": "deputat",
+      "name": "Florin-Ionuț Barbu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Olt",
+      "chamber": "deputat",
+      "name": "Bogdan-Florian Mihuți",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Olt",
+      "chamber": "deputat",
+      "name": "Mihai-Adrian Țiu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "George-Nicolae Marussi",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Marius-Felix Bulearcă",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Adrian Axinia",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Ștefan Avrămescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Bogdan-Andrei Toader",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Grațiela-Leocadia Gavrilescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Alexandru Rogobete",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Mircea Roșca",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "George-Cătălin Șerban",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Dan-Mihai Nicolae",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "deputat",
+      "name": "Andrei Gușă",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Satu Mare",
+      "chamber": "deputat",
+      "name": "Loránd-Bálint Magyar",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Satu Mare",
+      "chamber": "deputat",
+      "name": "Szabolcs Nagy",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Satu Mare",
+      "chamber": "deputat",
+      "name": "Mircea Govor",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Satu Mare",
+      "chamber": "deputat",
+      "name": "Monica Iagăr",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Satu Mare",
+      "chamber": "deputat",
+      "name": "Adrian-Felician Cozma",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Sălaj",
+      "chamber": "deputat",
+      "name": "Lucian Mușat",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Sălaj",
+      "chamber": "deputat",
+      "name": "Dénes Seres",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Sălaj",
+      "chamber": "deputat",
+      "name": "Lucian Bode",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Sălaj",
+      "chamber": "deputat",
+      "name": "Ionel Ciunt",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "deputat",
+      "name": "Bogdan Trif",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "deputat",
+      "name": "Raluca Turcan",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "deputat",
+      "name": "Fabian-Cristian Radu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "deputat",
+      "name": "Adrian Echert",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "deputat",
+      "name": "Nicolae-Mirel Ion",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "deputat",
+      "name": "Sebastian-Andrei Kroncsiș",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Ioan Balan",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Eugen Bejinariu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Mirela Adomnicăi",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Petru-Gabriel Negrea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Lucian-Florin Pușcașu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Veronica Grosu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Emanuel Ungureanu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Alexandru Băișanu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Ioan Lăzăroi",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "deputat",
+      "name": "Gheorghe-Valentin Răducea",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Teleorman",
+      "chamber": "deputat",
+      "name": "Gabriel-Florinel Florea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Teleorman",
+      "chamber": "deputat",
+      "name": "Dumitru Tilea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Teleorman",
+      "chamber": "deputat",
+      "name": "Nelu-Valentin Badea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Teleorman",
+      "chamber": "deputat",
+      "name": "George-Mădălin Borș",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Teleorman",
+      "chamber": "deputat",
+      "name": "Vlad-Florentin Drinceanu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Mihai-Bogdan Negoescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Florin-Cornel Popovici",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Cătălin Drulă",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Paula-Ana Romocean",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Marilen Pirtea",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Andrei Molnar",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Sorin Grindeanu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Sebastian Răducanu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Ana-Marcela Baș",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "deputat",
+      "name": "Codruța-Maria Corcheș",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Tulcea",
+      "chamber": "deputat",
+      "name": "Sergiu-Mircea Constantinescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Tulcea",
+      "chamber": "deputat",
+      "name": "Elena Doboș",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Tulcea",
+      "chamber": "deputat",
+      "name": "Cosmin Andrei",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Tulcea",
+      "chamber": "deputat",
+      "name": "Elena-Laura Toader",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "deputat",
+      "name": "Mihai-Cătălin Botez",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "deputat",
+      "name": "Laura Gherasim",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "deputat",
+      "name": "Boglárka Kántor",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "deputat",
+      "name": "Adrian Solomon",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "deputat",
+      "name": "Ana-Smaranda Rinder",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "deputat",
+      "name": "Andrei-Ionuț Teslariu",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "deputat",
+      "name": "Raisa Enachi",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Vâlcea",
+      "chamber": "deputat",
+      "name": "Nicolae Mîndrescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Vâlcea",
+      "chamber": "deputat",
+      "name": "Antonio-Gabi Popescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Vâlcea",
+      "chamber": "deputat",
+      "name": "Ștefan-Ovidiu Popa",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Vâlcea",
+      "chamber": "deputat",
+      "name": "Eugen Neață",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Vâlcea",
+      "chamber": "deputat",
+      "name": "Andrei-Florin Gheorghiu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Vâlcea",
+      "chamber": "deputat",
+      "name": "Cristian Buican",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Vrancea",
+      "chamber": "deputat",
+      "name": "Georgel Badiu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Vrancea",
+      "chamber": "deputat",
+      "name": "Dragoș-Fănică Ciobotaru",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Vrancea",
+      "chamber": "deputat",
+      "name": "Angel Tîlvăr",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Vrancea",
+      "chamber": "deputat",
+      "name": "Corina Atanasiu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Vrancea",
+      "chamber": "deputat",
+      "name": "Verginia Vedinaș",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "George Simion",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "George Becali",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Mihai Enache",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Lidia Vadim-Tudor",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Sebastian Burduja",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Romică-Andrei Baciu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Ionuț-Marian Stroe",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Octavian Oprea",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Răzvan-Sorin Prișcă",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Claudiu Năsui",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Cristina Prună",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Radu Mihaiu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Diana Buzoianu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Diana Stoica",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Oana-Silvia Țoiu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Alexandru-Paul Dimitriu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Alin-Bogdan Stoica",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Alexandru-Mihai Ghigiu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Rodica Nassar",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Marian Neacșu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Florin Manole",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Adriana-Diana Tușa",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Andrei Dolineaschi",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Mirela Furtună",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Ioan Mihalcea",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Dumitru Coarnă",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Mariana Vârgă",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Răzvan-Mirel Chiriță",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "București",
+      "chamber": "deputat",
+      "name": "Daniel Grofu",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Varol Amet",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Ștefan Bouda",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Ognean Crîstici",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Silviu Feodor",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Iulius Marian Firczak",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Ovidiu-Victor Ganț",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Giureci-Slobodan Ghera",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Ioana Grosaru",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Iusein Ibram",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Ghervazen Longher",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Adrian-Miroslav Merka",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Gheorghe Nacov",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Varujan Pambuccian",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Nicolae Păun",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Nicolae-Miroslav Petrețchi",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Ionel Stancu",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Bogdan-Alin Stoica",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Silviu Vexler",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Minorități",
+      "chamber": "deputat",
+      "name": "Dragoș-Gabriel Zisopol",
+      "partyShort": "MIN",
+      "party": "Minorități"
+    },
+    {
+      "county": "Diaspora",
+      "chamber": "deputat",
+      "name": "Ștefan-Iulian Lőrincz",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Diaspora",
+      "chamber": "deputat",
+      "name": "Ramona Lovin",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Diaspora",
+      "chamber": "deputat",
+      "name": "Andreea-Petronela Cîmpianu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Diaspora",
+      "chamber": "deputat",
+      "name": "Dumitrița Albu",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Alba",
+      "chamber": "senator",
+      "name": "Claudiu-Vasile Răcuci",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Alba",
+      "chamber": "senator",
+      "name": "Andrei Dîrlău",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Arad",
+      "chamber": "senator",
+      "name": "Glad-Aurel Varga",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Arad",
+      "chamber": "senator",
+      "name": "Razvan-Paul Anghel",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Arad",
+      "chamber": "senator",
+      "name": "Teofil Parasca",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "senator",
+      "name": "Ovidiu Puiu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "senator",
+      "name": "Mihai Coteț",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "senator",
+      "name": "Ion-Narcis Mircescu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Argeș",
+      "chamber": "senator",
+      "name": "Mircia Chelaru",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "senator",
+      "name": "Cătălin-Daniel Fenechiu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "senator",
+      "name": "Sebastian Cernic",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "senator",
+      "name": "Daniela Ștefănescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Bacău",
+      "chamber": "senator",
+      "name": "Ionel Floroiu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "senator",
+      "name": "Attila-Zoltan Cseke",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "senator",
+      "name": "Ilie-Gavril Bolojan",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "senator",
+      "name": "Gheorghe-Ioan Bota",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Bihor",
+      "chamber": "senator",
+      "name": "Aurel-George Mohan",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bistrița-Năsăud",
+      "chamber": "senator",
+      "name": "Nicolae Moldovan",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Bistrița-Năsăud",
+      "chamber": "senator",
+      "name": "Liviu Sorin Robe",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "senator",
+      "name": "Ovidiu Jitaru",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "senator",
+      "name": "Cătălin Silegeanu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Botoșani",
+      "chamber": "senator",
+      "name": "Doina-Elena Federovici",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "senator",
+      "name": "Ambrozie-Irineu Darău",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "senator",
+      "name": "Marius-Alexandru Dunca",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "senator",
+      "name": "Dorina Barcari",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Brașov",
+      "chamber": "senator",
+      "name": "Mihail Veștea",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Brăila",
+      "chamber": "senator",
+      "name": "Sorin Moise",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Brăila",
+      "chamber": "senator",
+      "name": "Dorin-Silviu Petrea",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "senator",
+      "name": "Valentin Roman",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "senator",
+      "name": "Lucian Romașcanu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Buzău",
+      "chamber": "senator",
+      "name": "Carmen Orban",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Caraș-Severin",
+      "chamber": "senator",
+      "name": "Luca Mălăiescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Caraș-Severin",
+      "chamber": "senator",
+      "name": "Gheorghe Vela",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Călărași",
+      "chamber": "senator",
+      "name": "Daniela Mihai",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Călărași",
+      "chamber": "senator",
+      "name": "Ioan-Cristian Rusu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "senator",
+      "name": "Vasile-Ciprian Rus",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "senator",
+      "name": "Mircea Abrudean",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "senator",
+      "name": "Eugen-Cristian Șipoș",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Cluj",
+      "chamber": "senator",
+      "name": "Istvan-Szilard Tasnadi",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "senator",
+      "name": "Eugen-Remus Negoi",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "senator",
+      "name": "Felix Stroe",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "senator",
+      "name": "Silviu-Iulian Coșa",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "senator",
+      "name": "Nicolae Vlahu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Constanța",
+      "chamber": "senator",
+      "name": "Clement Sava",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Covasna",
+      "chamber": "senator",
+      "name": "László-Ödön Fejér",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Covasna",
+      "chamber": "senator",
+      "name": "Ágota Kondor",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "senator",
+      "name": "Titus Corlățean",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "senator",
+      "name": "Elena-Adelina Dobra",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Dâmbovița",
+      "chamber": "senator",
+      "name": "Ciprian Iacob",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "senator",
+      "name": "Marian Vasile",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "senator",
+      "name": "Alexandra Presură",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "senator",
+      "name": "Alina-Elena Tănăsescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Dolj",
+      "chamber": "senator",
+      "name": "Nicolae-Ionel Ciucă",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Galați",
+      "chamber": "senator",
+      "name": "Gheorghe Ștefănache",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Galați",
+      "chamber": "senator",
+      "name": "Marius Humelnicu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Galați",
+      "chamber": "senator",
+      "name": "Rodica Constantinescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Galați",
+      "chamber": "senator",
+      "name": "Olga Onea",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Giurgiu",
+      "chamber": "senator",
+      "name": "Maria-Gabriela Horga",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Gorj",
+      "chamber": "senator",
+      "name": "Ion-Cristinel Rujan",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Gorj",
+      "chamber": "senator",
+      "name": "Mircea-Ionuț Sandu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Harghita",
+      "chamber": "senator",
+      "name": "Barna Tánczos",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Harghita",
+      "chamber": "senator",
+      "name": "István-Loránt Antal",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "senator",
+      "name": "Cornel-Cristian Resmeriță",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "senator",
+      "name": "Vasilică Potecă",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Hunedoara",
+      "chamber": "senator",
+      "name": "Călin-Petru Marian",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Ialomița",
+      "chamber": "senator",
+      "name": "Grigore-Adrian Peiu",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Iași",
+      "chamber": "senator",
+      "name": "Petrică Lucian Rusu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Iași",
+      "chamber": "senator",
+      "name": "Marius Bodea",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Iași",
+      "chamber": "senator",
+      "name": "Dan Cașcaval",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Iași",
+      "chamber": "senator",
+      "name": "Claudiu Târziu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Iași",
+      "chamber": "senator",
+      "name": "Dumitru Manea",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Ilfov",
+      "chamber": "senator",
+      "name": "Nicoleta Pauliuc",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Ilfov",
+      "chamber": "senator",
+      "name": "Ana-Cynthia-Ioana Păun",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "senator",
+      "name": "Cristian-Augustin Niculescu-Țâgârlaș",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "senator",
+      "name": "Sorin Vlașin",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Maramureș",
+      "chamber": "senator",
+      "name": "Costache Chertif",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Mehedinți",
+      "chamber": "senator",
+      "name": "Liviu-Lucian Mazilu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Mehedinți",
+      "chamber": "senator",
+      "name": "Oana-Constantina Buzatu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "senator",
+      "name": "Cristian Vântu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "senator",
+      "name": "Lucian Mărginean",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "senator",
+      "name": "Levente Novak",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Mureș",
+      "chamber": "senator",
+      "name": "Károly-Zsolt Császár",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "senator",
+      "name": "Răducu-Adrian Păduraru",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "senator",
+      "name": "Sorin Lavric",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Neamț",
+      "chamber": "senator",
+      "name": "Daniel-Paul-Romeo Gheorghe",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Olt",
+      "chamber": "senator",
+      "name": "Cezar Petre",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Olt",
+      "chamber": "senator",
+      "name": "Paul Stănescu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Olt",
+      "chamber": "senator",
+      "name": "Robert-Daniel Ghiță",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "senator",
+      "name": "Aurel Oprinoiu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "senator",
+      "name": "Laurențiu Plăeșu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "senator",
+      "name": "Florin-Nicolae Jianu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "senator",
+      "name": "Marian-Cătălin Predoiu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Prahova",
+      "chamber": "senator",
+      "name": "Ninel Peia",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Satu Mare",
+      "chamber": "senator",
+      "name": "Lóránd Turos",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Satu Mare",
+      "chamber": "senator",
+      "name": "Maté Kovács",
+      "partyShort": "UDMR",
+      "party": "UDMR"
+    },
+    {
+      "county": "Sălaj",
+      "chamber": "senator",
+      "name": "Liviu-Iulian Fodoca",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Sălaj",
+      "chamber": "senator",
+      "name": "Paul-Ciprian Pintea",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "senator",
+      "name": "Nicolae Neagu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "senator",
+      "name": "Luminița Păucean-Fernandes",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Sibiu",
+      "chamber": "senator",
+      "name": "Ruxandra Cibu Deaconu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "senator",
+      "name": "Gheorghe Flutur",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "senator",
+      "name": "Ioan Stan",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "senator",
+      "name": "Virgiliu-George Vlăescu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Suceava",
+      "chamber": "senator",
+      "name": "Rodica Cușnir",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Teleorman",
+      "chamber": "senator",
+      "name": "Claudiu-Daniel Catană",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Teleorman",
+      "chamber": "senator",
+      "name": "Ionuț-Ciprian Ciuperceanu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "senator",
+      "name": "Ciprian-Titi Stoica",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "senator",
+      "name": "Sorin-Gheorghe Șipoș",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "senator",
+      "name": "Vasile Blaga",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "Timiș",
+      "chamber": "senator",
+      "name": "Eugen Dogariu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Tulcea",
+      "chamber": "senator",
+      "name": "Ștefan Borțun",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Tulcea",
+      "chamber": "senator",
+      "name": "Ionel Carp",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "senator",
+      "name": "Cătălin-Emil Mîndru",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "senator",
+      "name": "Victoria Stoiciu",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Vaslui",
+      "chamber": "senator",
+      "name": "Cristian Bem",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "Vâlcea",
+      "chamber": "senator",
+      "name": "Dumitru Spau",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Vâlcea",
+      "chamber": "senator",
+      "name": "Andra Bică",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "Vrancea",
+      "chamber": "senator",
+      "name": "Corneliu Negru",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "Vrancea",
+      "chamber": "senator",
+      "name": "Cătălin Graur",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Petrișor Peiu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Niculina Stelea",
+      "partyShort": "AUR",
+      "party": "AUR"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Sorin Cîmpeanu",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Monica Anisie",
+      "partyShort": "PNL",
+      "party": "PNL"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Elena-Simona Spătaru",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Cristian Ghinea",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Ștefan Pălărie",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Violeta Alexandru",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Adrian Streinu-Cercel",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Robert Cazanciuc",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Daniel-Cătălin Zamfir",
+      "partyShort": "PSD",
+      "party": "PSD"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Diana Șoșoacă",
+      "partyShort": "SOS",
+      "party": "SOS"
+    },
+    {
+      "county": "București",
+      "chamber": "senator",
+      "name": "Mariana-Vali Aldea",
+      "partyShort": "POT",
+      "party": "POT"
+    },
+    {
+      "county": "Diaspora",
+      "chamber": "senator",
+      "name": "George-Cătălin Bochileanu",
+      "partyShort": "USR",
+      "party": "USR"
+    },
+    {
+      "county": "Diaspora",
+      "chamber": "senator",
+      "name": "Ștefan Geamănu",
+      "partyShort": "AUR",
+      "party": "AUR"
+    }
+  ]
+}

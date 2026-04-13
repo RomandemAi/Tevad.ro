@@ -97,23 +97,29 @@ If a source URL goes dead, the archived version is used. If no archive exists, t
 
 ## Politician roster audit (data quality)
 
-Active `politicians` rows (deputat / senator / cabinet) can be checked **read-only** against the same official lists used by the scrapers (data.gov.ro + OpenPolitics for deputies, senat.ro for senators, gov.ro for cabinet). This does **not** modify the database.
+Read-only check of active `politicians` (deputat / senator / cabinet) against the same official lists as the scrapers:
 
 ```bash
 npm run audit:parliament -w @tevad/scraper
 ```
 
-Add `--json` for machine-readable output. Rows flagged `not_in_roster` or `name_mismatch` need a **manual** fix in Supabase (update `name` / `slug`, merge duplicate rows, or set `is_active = false` if the mandate ended).
+Use `--json` for structured output (includes optional `suggestion` with closest roster name + score).
 
-**Example — wrong deputy name:** the USR deputy in Parliament is **Iulian Bulai**; do not conflate with other public figures with a similar surname. After running the audit, locate the bad row by `slug` or `id`, then update e.g.:
+**Wrong or mixed-up identities:** RSS and fuzzy attribution can create rows whose **display name is not the real officeholder** (similar surnames, wrong first name, or someone who is not in that chamber). Treat `not_in_roster` plus a **high `suggestion` score** (same surname, different first name) as the primary queue for manual Supabase fixes: update `politicians.name` / `slug`, merge duplicates, set `is_active = false` for ended mandates, and re-point `records.politician_id` if needed. The deputat roster used in the audit is narrowed with **OpenPolitics** when the CKAN merge would otherwise be huge (`+audit-openpolitics-intersect` or `openpolitics-audit-primary` in the printed source). Use `--full-deputy-roster` only when debugging.
 
-```sql
-UPDATE public.politicians
-SET name = 'Iulian Bulai', slug = 'iulian-bulai'
-WHERE id = '<uuid-from-audit-output>';
+**Iulian Bulai (USR, deputat):** do not use “Alfred / Alfredo Bulai” for the sitting deputy. Migration `018_fix_iulian_bulai_politician.sql` corrects matching rows and re-points `records` when a canonical Iulian Bulai row already exists (`supabase db push` / deploy migrations).
+
+### BEC / legislatura 2024–2028 — bulk import (465 MPs)
+
+Canonical machine-readable roster: [`packages/scraper/data/parlamentari-2024-2028.json`](packages/scraper/data/parlamentari-2024-2028.json), generated from the Romanian Wikipedia tables for [Camera Deputaților](https://ro.wikipedia.org/wiki/Legislatura_2024-2028_(Camera_Deputa%C8%9Bilor)) and [Senat](https://ro.wikipedia.org/wiki/Legislatura_2024-2028_(Senat)) (BEC-cited). The digest on [România Curată](https://www.romaniacurata.ro/lista-parlamentari-mandat-2024-2028/) matches almost entirely but omitted one deputy in the per-county list (Hunedoara); Wikipedia’s table aligns with the 331 + 134 seat totals.
+
+```bash
+npm run build:parlamentari-json -w @tevad/scraper      # refresh JSON from Wikipedia API
+npm run import:bec-2024:dry -w @tevad/scraper           # validate JSON + slugs only (no DB)
+npm run import:bec-2024 -w @tevad/scraper             # upsert into Supabase (service role)
 ```
 
-Re-point any `records.politician_id` if they were attached to a duplicate wrong row.
+Requires `SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`. Slugs use the same collision rules as the deputy scraper (`makeSlug`). This import does **not** deactivate other rows; you may still have extra active `deputat`/`senator` rows from older slug schemes until cleaned up.
 
 ---
 
