@@ -120,8 +120,8 @@ async function applyCabinetPhotosToList(
   console.log(`[gov] Cabinet photos applied to ${n} politician row(s).`)
 }
 
-export async function run(): Promise<{ synced: number; errors: number }> {
-  const supabase = createServiceClient()
+/** Current cabinet from gov.ro HTML — same members as `run()` upserts, no DB writes. */
+export async function fetchCabinetRoster(): Promise<CabinetMember[]> {
   let html = ''
   let lastErr: Error | null = null
   for (const url of CABINET_URLS) {
@@ -145,8 +145,12 @@ export async function run(): Promise<{ synced: number; errors: number }> {
     }
   }
   if (!html) throw lastErr ?? new Error('gov.ro: no cabinet HTML')
+  return parseCabinetHtml(html)
+}
 
-  const list = parseCabinetHtml(html)
+export async function run(): Promise<{ synced: number; errors: number }> {
+  const supabase = createServiceClient()
+  const list = await fetchCabinetRoster()
   console.log(`[gov] Parsed ${list.length} cabinet rows`)
   let ok = 0
   let errors = 0

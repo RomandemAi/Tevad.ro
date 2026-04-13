@@ -114,7 +114,8 @@ export async function parseSenatorsFromHtml(html: string): Promise<Omit<SenatorR
   return senators
 }
 
-async function fetchSenatorList(): Promise<Omit<SenatorRow, 'mandateStart'>[]> {
+/** Current senator list from senat.ro (no detail pages, no DB writes). */
+export async function fetchSenatorRoster(): Promise<Omit<SenatorRow, 'mandateStart'>[]> {
   let lastErr: Error | null = null
   for (const url of LIST_URLS) {
     try {
@@ -192,7 +193,7 @@ async function upsertSenator(row: SenatorRow, supabase: ReturnType<typeof create
 export async function run(): Promise<{ synced: number; errors: number }> {
   const supabase = createServiceClient()
   console.log('[senat] Starting Senat scrape...')
-  const baseList = await fetchSenatorList()
+  const baseList = await fetchSenatorRoster()
   const total = baseList.length
   const pad = Math.max(3, String(total).length)
   let ok = 0

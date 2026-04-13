@@ -20,6 +20,7 @@
     "ani": "tsx src/ani.ts",
     "datagov": "tsx src/datagov.ts",
     "count": "tsx src/count-politicians.ts",
+    "audit:parliament": "tsx src/audit-parliament-roster.ts",
     "seed-program": "tsx src/seed-government-program.ts",
     "scrape-parlament": "npm run senat && npm run gov && npm run cdep && npm run ani && npm run count",
     "scrape-ani-only": "npm run ani && npm run count",

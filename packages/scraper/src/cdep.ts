@@ -396,10 +396,12 @@ function makeSlug(name: string, used: Set<string>): string {
   return u.slice(0, 120)
 }
 
-export async function run(): Promise<{ synced: number; errors: number; source: string }> {
-  const supabase = createServiceClient()
-  console.log('[cdep] Camera Deputaților — data.gov.ro + OpenPolitics (no cdep.ro)')
+export type DeputyRosterResult = { deputies: DeputyInput[]; source: string }
 
+/**
+ * Current deputy roster from data.gov.ro (CKAN) with OpenPolitics fallback — same list as `run()` upserts, no DB writes.
+ */
+export async function fetchDeputyRoster(): Promise<DeputyRosterResult> {
   let list = await loadFromDataGov()
   let source = 'data.gov.ro'
   if (list.length < 80) {
@@ -419,8 +421,15 @@ export async function run(): Promise<{ synced: number; errors: number; source: s
     list = await loadFromOpenPolitics()
     source = 'openpolitics'
   }
+  const deputies = dedupeDeputiesByNameIdentity(list)
+  return { deputies, source }
+}
 
-  list = dedupeDeputiesByNameIdentity(list)
+export async function run(): Promise<{ synced: number; errors: number; source: string }> {
+  const supabase = createServiceClient()
+  console.log('[cdep] Camera Deputaților — data.gov.ro + OpenPolitics (no cdep.ro)')
+
+  const { deputies: list, source } = await fetchDeputyRoster()
 
   const usedSlugs = new Set<string>()
   let ok = 0

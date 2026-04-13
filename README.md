@@ -175,6 +175,16 @@ npx supabase db seed
 npm run dev
 ```
 
+### Politician roster audit (read-only)
+
+Requires `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL`) and `SUPABASE_SERVICE_ROLE_KEY` in the repo root `.env` (same as scrapers). Compares active politicians to official deputy, senator, and cabinet lists; does not write to the database.
+
+```bash
+npm run audit:parliament -w @tevad/scraper
+```
+
+Use `--json` for JSON output. See [SOURCES.md](SOURCES.md) for interpreting results and manual corrections.
+
 ---
 
 ## Contributing

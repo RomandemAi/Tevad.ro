@@ -95,5 +95,27 @@ If a source URL goes dead, the archived version is used. If no archive exists, t
 
 ---
 
+## Politician roster audit (data quality)
+
+Active `politicians` rows (deputat / senator / cabinet) can be checked **read-only** against the same official lists used by the scrapers (data.gov.ro + OpenPolitics for deputies, senat.ro for senators, gov.ro for cabinet). This does **not** modify the database.
+
+```bash
+npm run audit:parliament -w @tevad/scraper
+```
+
+Add `--json` for machine-readable output. Rows flagged `not_in_roster` or `name_mismatch` need a **manual** fix in Supabase (update `name` / `slug`, merge duplicate rows, or set `is_active = false` if the mandate ended).
+
+**Example — wrong deputy name:** the USR deputy in Parliament is **Iulian Bulai**; do not conflate with other public figures with a similar surname. After running the audit, locate the bad row by `slug` or `id`, then update e.g.:
+
+```sql
+UPDATE public.politicians
+SET name = 'Iulian Bulai', slug = 'iulian-bulai'
+WHERE id = '<uuid-from-audit-output>';
+```
+
+Re-point any `records.politician_id` if they were attached to a duplicate wrong row.
+
+---
+
 **Current version: v1.0.0**
 **Effective from: 2026-03-25**
