@@ -24,6 +24,97 @@ import { existsSync, readFileSync } from 'fs'
 import { resolve } from 'path'
 import { createClient } from '@supabase/supabase-js'
 import { getLean, getSourceTier } from '../../rss-monitor/src/sources.config'
+import Anthropic from '@anthropic-ai/sdk'
+
+type WebSearchEnrichment = {
+  statementDate: string | null
+  sources: Array<{ url: string; title?: string; publishedAt?: string | null }>
+}
+
+function extractJsonObject<T>(raw: string): T | null {
+  const trimmed = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '')
+  try {
+    return JSON.parse(trimmed) as T
+  } catch {
+    const m = trimmed.match(/\{[\s\S]*\}/)
+    if (!m) return null
+    try {
+      return JSON.parse(m[0]) as T
+    } catch {
+      return null
+    }
+  }
+}
+
+function isoDateOrNull(v: unknown): string | null {
+  if (typeof v !== 'string') return null
+  const t = v.trim()
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(t)) return null
+  return t
+}
+
+function makeWebQuery(politicianName: string, statementText: string, statementDate: string): string {
+  const year = /^\d{4}/.test(statementDate) ? statementDate.slice(0, 4) : new Date().getFullYear().toString()
+  const keyword = statementText
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 6)
+    .join(' ')
+  return `${politicianName} ${keyword} ${year} Romania`
+}
+
+async function enrichWithWebSearch(
+  politicianName: string,
+  statementText: string,
+  statementDate: string
+): Promise<WebSearchEnrichment> {
+  if (process.env.VERIFY_WEB_SEARCH !== '1') return { statementDate: null, sources: [] }
+  const apiKey = process.env.ANTHROPIC_API_KEY
+  if (!apiKey) return { statementDate: null, sources: [] }
+
+  const client = new Anthropic({ apiKey })
+  const query = makeWebQuery(politicianName, statementText, statementDate)
+
+  const resp = await client.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 700,
+    tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }] as any,
+    system:
+      'You help a Romanian political accountability system. Return JSON only. ' +
+      'Do not include politician names in any output fields.',
+    messages: [
+      {
+        role: 'user',
+        content:
+          `Use web search for: "${query}".\n\n` +
+          `Return JSON:\n` +
+          `{\n  "statementDate": "YYYY-MM-DD" | null,\n  "sources": [ { "url": "...", "title": "...", "publishedAt": "YYYY-MM-DD" | null } ]\n}\n\n` +
+          `Rules:\n- Up to 3 sources.\n- URLs must be public.\n- If you can infer the real promise date, set statementDate.\n`,
+      },
+    ],
+  })
+
+  const raw =
+    (resp.content ?? [])
+      .filter((b: any) => b?.type === 'text')
+      .map((b: any) => b.text)
+      .join('\n') || ''
+
+  const parsed = extractJsonObject<WebSearchEnrichment>(raw)
+  if (!parsed || !Array.isArray(parsed.sources)) return { statementDate: null, sources: [] }
+
+  return {
+    statementDate: isoDateOrNull((parsed as any).statementDate),
+    sources: (parsed.sources ?? [])
+      .map((s: any) => ({
+        url: typeof s?.url === 'string' ? s.url : '',
+        title: typeof s?.title === 'string' ? s.title : undefined,
+        publishedAt: isoDateOrNull(s?.publishedAt),
+      }))
+      .filter(s => !!s.url),
+  }
+}
 
 function loadEnvFiles(): void {
   const candidates = [
@@ -278,6 +369,37 @@ async function runPending(): Promise<void> {
     }
 
     console.log('\n[verify] ──', slug)
+    try {
+      const web = await enrichWithWebSearch(input.politicianName, input.statementText, input.statementDate)
+      if (web.sources.length) {
+        console.log(
+          '[verify] web_search sources:',
+          web.sources.map(s => s.url).slice(0, 3).join(' | ')
+        )
+      }
+      if (web.statementDate) input.statementDate = web.statementDate
+
+      for (const s of web.sources) {
+        const tier = getSourceTier(s.url)
+        if (tier !== 1) continue
+        const lean = (getLean(s.url) ?? undefined) as SourceLean | undefined
+        input.sources.push({
+          outlet: new URL(s.url).hostname.replace(/^www\./i, ''),
+          url: s.url,
+          tier: 1,
+          lean,
+          // omit title/excerpt to reduce identity leakage into the blind payload
+          publishedAt: s.publishedAt ?? undefined,
+        })
+      }
+      if (web.sources.length) {
+        const added = input.sources.filter(ss => web.sources.some(ws => ws.url === ss.url))
+        if (added.length) console.log('[verify] added Tier-1 sources:', added.map(a => a.url).join(' | '))
+      }
+    } catch (e) {
+      console.warn('[verify] web search enrichment failed:', (e as Error).message)
+    }
+
     const cc = await crossCheckVerify({
       politicianName: input.politicianName,
       politicianId: input.politicianId,

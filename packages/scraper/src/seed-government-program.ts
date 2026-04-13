@@ -112,10 +112,10 @@ async function main() {
           impact_level: 'high',
           source: {
             tier: '1',
-            outlet: 'HotNews',
-            url: 'https://www.hotnews.ro/',
-            title: 'HotNews — arhivă / referință (promisiune publică)',
-            published_at: '2024-11-01',
+            outlet: 'Economedia',
+            url: 'https://economedia.ro/marcel-ciolacu-vorbeste-despre-impozitarea-pensiilor-speciale.html',
+            title: 'Economedia: declarații despre pensiile speciale',
+            published_at: '2023-03-28',
           },
         },
       ],
@@ -133,10 +133,10 @@ async function main() {
           impact_level: 'high',
           source: {
             tier: '2',
-            outlet: 'Digi24',
-            url: 'https://www.digi24.ro/',
-            title: 'Digi24 — arhivă / referință (promisiune publică)',
-            published_at: '2024-11-01',
+            outlet: 'Mediafax',
+            url: 'https://www.mediafax.ro/politic/angajamentul-lui-george-simion-in-fata-mediului-de-afaceri-nu-vom-mari-taxele-importante-23551447',
+            title: 'Mediafax: angajament privind taxele',
+            published_at: '2024-05-15',
           },
         },
       ],
@@ -154,10 +154,10 @@ async function main() {
           impact_level: 'high',
           source: {
             tier: '1',
-            outlet: 'G4Media',
-            url: 'https://www.g4media.ro/',
-            title: 'G4Media — arhivă / referință (promisiune publică)',
-            published_at: '2024-11-01',
+            outlet: 'Adevărul',
+            url: 'https://adevarul.ro/economie/catalin-drula-la-preluarea-mandatului-2067319.html',
+            title: 'Adevărul: declarații la preluarea mandatului Transporturilor',
+            published_at: '2020-12-23',
           },
         },
       ],
@@ -175,10 +175,10 @@ async function main() {
           impact_level: 'high',
           source: {
             tier: '2',
-            outlet: 'ProTV',
-            url: 'https://stirileprotv.ro/',
-            title: 'Știrile ProTV — arhivă / referință (promisiune publică)',
-            published_at: '2024-11-01',
+            outlet: 'BURSA',
+            url: 'https://www.bursa.ro/nicolae-ciuca-nu-vom-creste-taxe-si-impozite-nu-vom-pune-presiune-pe-mediul-de-afaceri-25502541',
+            title: 'BURSA: Ciucă despre taxe și impozite',
+            published_at: '2021-12-22',
           },
         },
       ],
@@ -226,6 +226,16 @@ async function main() {
       }
 
       const { error: sErr } = await supabase.from('sources').insert({
+        // Add an official Tier-0 source for baseline provenance, plus the specific public URL.
+        record_id: rec.id,
+        tier: '0',
+        outlet: 'Guvernul României',
+        url: GOVERNMENT_PROGRAM_PDF_EN_URL,
+        title: 'Government Programme 2025–2028 (official PDF, EN)',
+        published_at: '2025-06-23',
+      })
+
+      const { error: sErr2 } = await supabase.from('sources').insert({
         record_id: rec.id,
         tier: p.source.tier,
         outlet: p.source.outlet,
@@ -234,8 +244,9 @@ async function main() {
         published_at: p.source.published_at ?? null,
       })
 
-      if (sErr) console.error('[seed-program] Source', p.slug, sErr.message)
-      else console.log('[seed-program] Inserted', p.slug)
+      if (sErr) console.error('[seed-program] Source(official)', p.slug, sErr.message)
+      if (sErr2) console.error('[seed-program] Source', p.slug, sErr2.message)
+      if (!sErr && !sErr2) console.log('[seed-program] Inserted', p.slug)
     }
   }
 }

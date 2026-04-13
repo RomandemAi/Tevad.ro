@@ -38,7 +38,7 @@ function badgeKey(v: string | null | undefined) {
 export default async function AuditPage({ params }: Props) {
   const supabase = createClient()
 
-  const { data: record } = await supabase
+  const byId = await supabase
     .from('records')
     .select(
       `
@@ -47,15 +47,30 @@ export default async function AuditPage({ params }: Props) {
     `
     )
     .eq('id', params.recordId)
-    .single()
+    .maybeSingle()
+
+  const bySlug = byId.data
+    ? null
+    : await supabase
+        .from('records')
+        .select(
+          `
+          id, slug, type, text, status, date_made, ai_confidence, ai_reasoning, ai_model,
+          ai_verified_at, politicians (*)
+        `
+        )
+        .eq('slug', params.recordId)
+        .maybeSingle()
+
+  const record = byId.data ?? bySlug?.data ?? null
 
   if (!record) notFound()
 
   const { data: auditLogs } = await supabase
     .from('verdict_audit_logs')
     .select('*')
-    .eq('record_id', params.recordId)
-    .order('recorded_at', { ascending: false })
+    .eq('record_id', record.id)
+    .order('created_at', { ascending: false })
 
   type JoinedPolitician = {
     id: string
