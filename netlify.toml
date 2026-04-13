@@ -9,4 +9,4 @@
   package = "@netlify/plugin-nextjs"
 
 [functions]
-  included_files = ["packages/**", "prompts/**"]
+  included_files = ["packages/**", "prompts/**", "apps/web/prompts/**"]
