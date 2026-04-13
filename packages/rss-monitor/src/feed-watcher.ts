@@ -2,19 +2,23 @@
  * packages/rss-monitor/src/feed-watcher.ts
  * Tevad.ro — RSS feed watcher
  *
- * Polls all Tier-1 and Tier-2 RSS feeds for new articles
- * mentioning tracked politicians. Flags potential records
- * for AI verification.
+ * Polls Tier-1 / Tier-2 feeds, classifies each new article (Haiku), queues
+ * high-confidence matches for verification.
  *
  * Run: npx tsx packages/rss-monitor/src/feed-watcher.ts
  * Cron: every 30 minutes
  */
 
 import { createClient } from '@supabase/supabase-js'
+import { classifyArticle } from '@tevad/verifier/models'
 import { TIER1_SOURCES, TIER2_SOURCES, getSourceTier } from './sources.config'
 
+function getServiceSupabaseUrl(): string {
+  return process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+}
+
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
+  getServiceSupabaseUrl(),
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
@@ -33,7 +37,11 @@ interface FeedResult {
   items: RssItem[]
 }
 
-// Simple RSS parser — no external deps
+interface PoliticianRow {
+  id: string
+  name: string
+}
+
 function parseRss(xml: string): RssItem[] {
   const items: RssItem[] = []
   const itemRegex = /<item[^>]*>([\s\S]*?)<\/item>/gi
@@ -42,15 +50,15 @@ function parseRss(xml: string): RssItem[] {
   while ((match = itemRegex.exec(xml)) !== null) {
     const block = match[1]
 
-    const title = block.match(/<title[^>]*><!\[CDATA\[(.*?)\]\]><\/title>/s)?.[1]
-      ?? block.match(/<title[^>]*>(.*?)<\/title>/s)?.[1]
+    const title = block.match(/<title[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/title>/i)?.[1]
+      ?? block.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]
       ?? ''
-    const link = block.match(/<link[^>]*>(.*?)<\/link>/s)?.[1]
+    const link = block.match(/<link[^>]*>([\s\S]*?)<\/link>/i)?.[1]
       ?? block.match(/<link[^>]*href="([^"]+)"/)?.[1]
       ?? ''
-    const pubDate = block.match(/<pubDate[^>]*>(.*?)<\/pubDate>/s)?.[1] ?? new Date().toISOString()
-    const description = block.match(/<description[^>]*><!\[CDATA\[(.*?)\]\]><\/description>/s)?.[1]
-      ?? block.match(/<description[^>]*>(.*?)<\/description>/s)?.[1]
+    const pubDate = block.match(/<pubDate[^>]*>([\s\S]*?)<\/pubDate>/i)?.[1] ?? new Date().toISOString()
+    const description = block.match(/<description[^>]*><!\[CDATA\[([\s\S]*?)\]\]><\/description>/i)?.[1]
+      ?? block.match(/<description[^>]*>([\s\S]*?)<\/description>/i)?.[1]
       ?? ''
 
     if (title && link) {
@@ -73,7 +81,7 @@ async function fetchFeed(outlet: string, domain: string, rssUrl: string): Promis
     const res = await fetch(rssUrl, {
       headers: {
         'User-Agent': 'Tevad.ro RSS Monitor (contact: open@tevad.ro)',
-        'Accept': 'application/rss+xml, application/xml, text/xml',
+        Accept: 'application/rss+xml, application/xml, text/xml',
       },
       signal: AbortSignal.timeout(10_000),
     })
@@ -93,85 +101,144 @@ async function fetchFeed(outlet: string, domain: string, rssUrl: string): Promis
   }
 }
 
-async function loadPoliticianNames(): Promise<Map<string, string>> {
-  const { data } = await supabase
-    .from('politicians')
-    .select('id, name')
-    .eq('is_active', true)
-
-  const map = new Map<string, string>()
-  for (const pol of data ?? []) {
-    // Index by last name for matching
-    const lastName = pol.name.split(' ').pop()?.toLowerCase() ?? ''
-    if (lastName.length > 3) map.set(lastName, pol.id)
-  }
-  return map
+async function loadPoliticians(): Promise<PoliticianRow[]> {
+  const { data } = await supabase.from('politicians').select('id, name').eq('is_active', true)
+  return data ?? []
 }
 
-function mentionsPolitician(text: string, names: Map<string, string>): string | null {
-  const lower = text.toLowerCase()
-  for (const [lastName, id] of names) {
-    if (lower.includes(lastName)) return id
+async function urlSeen(url: string): Promise<boolean> {
+  const { data: src } = await supabase.from('sources').select('id').eq('url', url).maybeSingle()
+  if (src) return true
+  const { data: q } = await supabase
+    .from('verification_queue')
+    .select('id')
+    .eq('article_url', url)
+    .maybeSingle()
+  return !!q
+}
+
+function resolvePoliticianId(rows: PoliticianRow[], matched: string | null): string | null {
+  if (!matched) return null
+  const t = matched.trim().toLowerCase()
+  for (const p of rows) {
+    if (p.name.trim().toLowerCase() === t) return p.id
+  }
+  for (const p of rows) {
+    const n = p.name.trim().toLowerCase()
+    if (t.includes(n) || n.includes(t)) return p.id
   }
   return null
 }
 
-async function flagForVerification(
-  item: RssItem,
-  outlet: string,
-  tier: number,
-  politicianId: string
-): Promise<void> {
-  // Check if we've already seen this URL
-  const { data: existing } = await supabase
-    .from('sources')
-    .select('id')
-    .eq('url', item.link)
-    .single()
-
-  if (existing) return // Already indexed
-
-  console.log(`[rss] Flagging: "${item.title.slice(0, 60)}..." — ${outlet} (Tier ${tier})`)
-
-  // In a full implementation, this would queue for AI verification
-  // For now, we log and could insert into a pending_verification table
-  // The verify.ts pipeline picks these up
+function normalizeRecordType(v: string | null): string | null {
+  if (!v || v === 'null') return null
+  if (v === 'promise' || v === 'statement' || v === 'vote') return v
+  return null
 }
 
-async function run() {
+async function queueArticle(
+  item: RssItem,
+  outlet: string,
+  tier: number | null,
+  politicianId: string,
+  recordType: string | null,
+  topic: string | null,
+  extractedQuote: string | null,
+  confidence: number
+): Promise<boolean> {
+  let pubDate: string | null = null
+  const d = new Date(item.pubDate)
+  if (!Number.isNaN(d.getTime())) pubDate = d.toISOString()
+
+  const { error } = await supabase.from('verification_queue').insert({
+    politician_id: politicianId,
+    article_url: item.link,
+    article_title: item.title,
+    outlet,
+    tier: tier ?? undefined,
+    record_type: recordType,
+    topic,
+    extracted_quote: extractedQuote,
+    confidence,
+    pub_date: pubDate,
+  })
+
+  if (error) {
+    if (error.code === '23505') return false
+    console.warn(`[rss] queue insert:`, error.message)
+    return false
+  }
+  console.log(`[rss] Queued (${confidence}%): "${item.title.slice(0, 70)}..." — ${outlet}`)
+  return true
+}
+
+export async function run() {
   console.log('[rss] Starting feed watch cycle...')
+
+  const politicians = await loadPoliticians()
+  const politicianNames = politicians.map(p => p.name)
+  console.log(`[rss] Loaded ${politicians.length} politicians for classifier.`)
+
+  if (!process.env.ANTHROPIC_API_KEY || politicianNames.length === 0) {
+    console.warn('[rss] ANTHROPIC_API_KEY or politicians missing — classification skipped.')
+    return
+  }
 
   const allSources = [
     ...TIER1_SOURCES.map(s => ({ ...s, tier: 1 as const })),
     ...TIER2_SOURCES.map(s => ({ ...s, tier: 2 as const })),
   ]
 
-  // Load politician names for mention matching
-  const politicianNames = await loadPoliticianNames()
-  console.log(`[rss] Loaded ${politicianNames.size} politician names for matching`)
-
-  // Fetch all feeds in parallel
   const results = await Promise.all(
     allSources.map(s => fetchFeed(s.outlet, s.domain, s.rssUrl))
   )
 
-  let flagged = 0
+  let queued = 0
   for (const feed of results) {
     for (const item of feed.items) {
-      const searchText = `${item.title} ${item.description ?? ''}`
-      const politicianId = mentionsPolitician(searchText, politicianNames)
+      if (await urlSeen(item.link)) continue
 
-      if (politicianId && feed.tier !== null) {
-        await flagForVerification(item, feed.outlet, feed.tier, politicianId)
-        flagged++
+      const excerpt = (item.description ?? '').slice(0, 1200)
+      let classified = {
+        matchedPolitician: null as string | null,
+        recordType: null as string | null,
+        topic: null as string | null,
+        extractedQuote: null as string | null,
+        confidence: 0,
       }
+
+      try {
+        classified = await classifyArticle(item.title, excerpt, politicianNames)
+      } catch (e) {
+        console.warn(`[rss] classifyArticle:`, (e as Error).message)
+        continue
+      }
+
+      if (classified.confidence <= 70) continue
+
+      const politicianId = resolvePoliticianId(politicians, classified.matchedPolitician)
+      if (!politicianId || feed.tier === null) continue
+
+      const ok = await queueArticle(
+        item,
+        feed.outlet,
+        feed.tier,
+        politicianId,
+        normalizeRecordType(classified.recordType),
+        classified.topic,
+        classified.extractedQuote,
+        classified.confidence
+      )
+      if (ok) queued++
     }
   }
 
-  console.log(`[rss] Cycle complete. ${flagged} items flagged for review.`)
+  console.log(`[rss] Cycle complete. ${queued} article(s) queued for verification.`)
 }
 
-run().catch(e => {
-  console.error('[rss] Fatal error:', e)
-  process.exit(1)
-})
+if (process.argv[1]?.replace(/\\/g, '/').includes('feed-watcher.ts')) {
+  run().catch(e => {
+    console.error('[rss] Fatal error:', e)
+    process.exit(1)
+  })
+}

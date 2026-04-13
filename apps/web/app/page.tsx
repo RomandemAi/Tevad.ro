@@ -1,39 +1,111 @@
 import { createClient } from '@/lib/supabase/server'
 import AppShell from '@/components/AppShell'
-import StatsRow from '@/components/StatsRow'
+import HomeHero from '@/components/HomeHero'
+import HomeHowItWorksSection from '@/components/HomeHowItWorksSection'
+import HomeNeutralitySection from '@/components/HomeNeutralitySection'
+import StatsBar from '@/components/StatsBar'
+import HomeSpotlightSection, {
+  type SpotlightPolitician,
+  type SpotlightPromise,
+} from '@/components/HomeSpotlightSection'
 import PoliticianList from '@/components/PoliticianList'
+import { dedupePoliticiansByNameIdentity } from '@/lib/dedupe-politicians'
 
-export const revalidate = 3600
+export const revalidate = 120
 
 export default async function HomePage() {
   const supabase = createClient()
 
-  const { data: politicians, error } = await supabase
-    .from('politicians')
-    .select('id, slug, name, role, party, party_short, chamber, score, score_promises, score_reactions, score_sources, score_consistency, total_records, records_true, records_false, records_partial, records_pending, avatar_color, avatar_text_color')
-    .eq('is_active', true)
-    .order('score', { ascending: false })
+  const [
+    politiciansRes,
+    promisesCountRes,
+    brokenPromisesRes,
+    stoppedDeclRes,
+    spotlightPoliticiansRes,
+    spotlightPromisesRes,
+  ] = await Promise.all([
+    supabase
+      .from('politicians')
+      // Use * so DBs without optional columns (e.g. before migration 013 avatar_url) still return rows.
+      .select('*')
+      .eq('is_active', true)
+      .order('score', { ascending: false }),
+    supabase.from('records').select('id', { count: 'exact', head: true }).eq('type', 'promise'),
+    supabase.from('records').select('id', { count: 'exact', head: true }).eq('type', 'promise').eq('status', 'false'),
+    supabase
+      .from('politicians')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true)
+      .eq('declaration_stopped_after_ccr', true),
+    supabase
+      .from('politicians')
+      .select('id, slug, name, role, party_short, score, chamber')
+      .eq('is_active', true)
+      .in('chamber', ['premier', 'president'])
+      .order('chamber', { ascending: true }),
+    supabase
+      .from('records')
+      .select('id, slug, text, status, date_made, politicians ( slug, name, party_short )')
+      .eq('type', 'promise')
+      .eq('impact_level', 'high')
+      .order('date_made', { ascending: false })
+      .limit(8),
+  ])
 
+  const { data: politicians, error } = politiciansRes
   if (error) console.error('Failed to load politicians:', error)
 
-  const list    = politicians ?? []
-  const total   = list.length
-  const broken  = list.reduce((a, p) => a + (p.records_false   ?? 0), 0)
-  const pending = list.reduce((a, p) => a + (p.records_pending ?? 0), 0)
-  const avgScore = total > 0
-    ? Math.round(list.reduce((a, p) => a + p.score, 0) / total)
-    : 0
+  if (promisesCountRes.error) console.error('Hero count (promises):', promisesCountRes.error.message)
+  if (brokenPromisesRes.error) console.error('Hero count (broken):', brokenPromisesRes.error.message)
+  if (stoppedDeclRes.error) console.error('Hero count (stopped decl):', stoppedDeclRes.error.message)
 
-  const breadcrumb = (
-    <>
-      TEVAD.RO <span className="text-[var(--text2)]">/</span> POLITICIENI{' '}
-      <span className="text-[var(--text2)]">/</span> ROMÂNIA
-    </>
-  )
+  const totalPromisesTracked = promisesCountRes.count ?? 0
+  const totalPromisesBroken = brokenPromisesRes.count ?? 0
+  const stoppedDeclarationsCount = stoppedDeclRes.count ?? 0
+
+  const list = dedupePoliticiansByNameIdentity(politicians ?? [])
+  const total = list.length
+  const scoreOf = (p: (typeof list)[number]) => Number(p.score ?? 0)
+  const broken = list.reduce((a, p) => a + (p.records_false ?? 0), 0)
+  const pending = list.reduce((a, p) => a + (p.records_pending ?? 0), 0)
+  const avgScore = total > 0 ? Math.round(list.reduce((a, p) => a + scoreOf(p), 0) / total) : 0
+
+  const spotlightPoliticians = (spotlightPoliticiansRes.data ?? []) as SpotlightPolitician[]
+  type JoinedPol = { slug: string; name: string; party_short: string | null }
+  const spotlightPromises: SpotlightPromise[] = (spotlightPromisesRes.data ?? [])
+    .map(row => {
+      const raw = row as {
+        id: string
+        slug: string
+        text: string
+        status: string
+        date_made: string
+        politicians: JoinedPol | JoinedPol[] | null
+      }
+      const pol = Array.isArray(raw.politicians) ? raw.politicians[0] : raw.politicians
+      if (!pol) return null
+      return {
+        id: raw.id,
+        slug: raw.slug,
+        text: raw.text,
+        status: raw.status,
+        date_made: raw.date_made,
+        politician: pol,
+      }
+    })
+    .filter((x): x is SpotlightPromise => x != null)
 
   return (
-    <AppShell breadcrumb={breadcrumb}>
-      <StatsRow total={total} broken={broken} pending={pending} avgScore={avgScore} />
+    <AppShell>
+      <HomeHero
+        totalPoliticiansMonitored={total}
+        totalBrokenPromises={totalPromisesBroken}
+        stoppedDeclarationsCount={stoppedDeclarationsCount}
+      />
+      <HomeNeutralitySection />
+      <HomeHowItWorksSection />
+      <StatsBar total={total} broken={broken} pending={pending} avgScore={avgScore} />
+      <HomeSpotlightSection politicians={spotlightPoliticians} promises={spotlightPromises} />
       <PoliticianList politicians={list} />
     </AppShell>
   )

@@ -12,9 +12,14 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
+import { explainScoreChange } from './models'
+
+function getServiceSupabaseUrl(): string {
+  return process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+}
 
 const supabase = createClient(
-  process.env.SUPABASE_URL!,
+  getServiceSupabaseUrl(),
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
@@ -54,13 +59,22 @@ async function calcReactions(politicianId: string): Promise<number> {
 
   if (!records || records.length === 0) return 50
 
+  const reactionSum = records.reduce(
+    (acc, r) => acc + (r.likes ?? 0) + (r.dislikes ?? 0),
+    0
+  )
+  if (reactionSum === 0) return 50
+
   const sentiments = records.map(r => {
     const total = (r.likes ?? 0) + (r.dislikes ?? 0)
-    if (total === 0) return 0.5
+    if (total === 0) return null
     return (r.likes ?? 0) / total
   })
 
-  const avg = sentiments.reduce((a, b) => a + b, 0) / sentiments.length
+  const withReactions = sentiments.filter((s): s is number => s !== null)
+  if (withReactions.length === 0) return 50
+
+  const avg = withReactions.reduce((a, b) => a + b, 0) / withReactions.length
   return Math.round(avg * 100)
 }
 
@@ -77,30 +91,31 @@ async function calcSources(politicianId: string): Promise<number> {
 
   const { data: sources } = await supabase
     .from('sources')
-    .select('record_id, tier')
+    .select('record_id, tier, outlet')
     .in('record_id', recordIds)
 
-  if (!sources || sources.length === 0) return 30
+  if (!sources || sources.length === 0) return 50
 
-  const byRecord = new Map<string, string[]>()
-  for (const s of sources) {
+  type Row = { record_id: string; tier: string; outlet: string }
+  const byRecord = new Map<string, Row[]>()
+  for (const s of sources as Row[]) {
     if (!byRecord.has(s.record_id)) byRecord.set(s.record_id, [])
-    byRecord.get(s.record_id)!.push(s.tier)
+    byRecord.get(s.record_id)!.push(s)
   }
 
   const recordScores = records.map(r => {
-    const tiers = byRecord.get(r.id) ?? []
-    if (tiers.length === 0) return 0.3
+    const rows = byRecord.get(r.id) ?? []
+    if (rows.length === 0) return 0.3
 
+    const tiers = rows.map(x => x.tier)
     let quality = 0.3
     if (tiers.some(t => t === '0')) quality = 1.0
     else if (tiers.some(t => t === '1')) quality = 1.0
     else if (tiers.some(t => t === '2')) quality = 0.6
 
-    const uniqueOutlets = new Set(tiers).size
-    if (uniqueOutlets >= 2) quality = Math.min(quality + 0.1, 1.0)
-
-    return quality
+    const distinctOutlets = new Set(rows.map(x => x.outlet).filter(Boolean)).size
+    const multiSourceBonus = distinctOutlets >= 2 ? 0.1 : 0
+    return Math.min(quality + multiSourceBonus, 1.0)
   })
 
   const avg = recordScores.reduce((a, b) => a + b, 0) / recordScores.length
@@ -128,8 +143,8 @@ async function calcConsistency(politicianId: string): Promise<number> {
   let contradictions = 0
   let totalTopics = 0
 
-  for (const [, topicRecords] of byTopic) {
-    if (topicRecords.length < 2) continue
+  Array.from(byTopic.values()).forEach(topicRecords => {
+    if (topicRecords.length < 2) return
     totalTopics++
 
     for (let i = 1; i < topicRecords.length; i++) {
@@ -143,7 +158,7 @@ async function calcConsistency(politicianId: string): Promise<number> {
         break
       }
     }
-  }
+  })
 
   if (totalTopics === 0) return 50
   const ratio = 1 - (contradictions / totalTopics)
@@ -169,15 +184,21 @@ export async function recalcScore(politicianId: string): Promise<ScoreComponents
   return { promises, reactions, sources, consistency, total }
 }
 
+export interface SaveScoreOptions {
+  /** If true, store `reason` verbatim in score_history (no Haiku paraphrase). */
+  skipReasonExplain?: boolean
+}
+
 export async function saveScore(
   politicianId: string,
   components: ScoreComponents,
   reason: string,
-  recordId?: string
+  recordId?: string,
+  options?: SaveScoreOptions
 ): Promise<void> {
   const { data: pol } = await supabase
     .from('politicians')
-    .select('score')
+    .select('score, name')
     .eq('id', politicianId)
     .single()
 
@@ -196,6 +217,26 @@ export async function saveScore(
 
   if (updateErr) throw updateErr
 
+  let reasonForHistory = reason
+  if (!options?.skipReasonExplain) {
+    let recordText: string | undefined
+    if (recordId) {
+      const { data: rec } = await supabase.from('records').select('text').eq('id', recordId).single()
+      recordText = rec?.text ?? undefined
+    }
+    try {
+      reasonForHistory = await explainScoreChange(
+        (pol as { name?: string })?.name ?? politicianId,
+        prevScore,
+        components.total,
+        reason,
+        recordText
+      )
+    } catch (e) {
+      console.warn('[score] explainScoreChange failed:', (e as Error).message)
+    }
+  }
+
   await supabase.from('score_history').insert({
     politician_id:         politicianId,
     score_prev:            prevScore,
@@ -204,14 +245,18 @@ export async function saveScore(
     score_reactions_new:   components.reactions,
     score_sources_new:     components.sources,
     score_consistency_new: components.consistency,
-    reason,
-    record_id: recordId ?? null,
+    reason:                reasonForHistory,
+    record_id:             recordId ?? null,
   })
 
   console.log(
     `[score] ${politicianId}: ${prevScore} → ${components.total} ` +
     `(P:${components.promises} R:${components.reactions} S:${components.sources} C:${components.consistency})`
   )
+}
+
+export async function run(): Promise<void> {
+  await recalcAll()
 }
 
 async function recalcAll() {
@@ -238,7 +283,7 @@ async function recalcAll() {
 }
 
 if (require.main === module) {
-  recalcAll().catch(e => {
+  run().catch(e => {
     console.error('[score] Fatal:', e)
     process.exit(1)
   })

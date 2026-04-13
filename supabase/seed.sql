@@ -1,6 +1,14 @@
 -- seed.sql — Development seed data
 -- Tevad.ro · Te Văd · Romania Political Accountability
 -- DO NOT RUN IN PRODUCTION
+--
+-- Demo narrative: rows below (Ciucă autostrăzi, Ciolacu pensii/deficit, Simion coaliție, etc.) are
+-- synthetic examples for UI/dev — they are NOT production fact-checks. For real sourcing and
+-- dual-model verification, use the curated manifest + CLI instead:
+--   packages/verifier/curated-pilot.manifest.json
+--   npm run verify:pilot -w @tevad/verifier
+-- Government programme rows (gov-program-*) cite the real gov.ro PDF; Tier-1 URLs in this file
+-- may be illustrative — replace with article-level URLs before treating as evidence.
 
 INSERT INTO public.politicians
   (slug, name, role, party, party_short, chamber, score, score_promises, score_reactions, score_sources, score_consistency, avatar_color, avatar_text_color)
@@ -65,3 +73,92 @@ SELECT r.id, '1', 'HotNews',
   'https://web.archive.org/web/2024/https://www.hotnews.ro/stiri-politic/ciuca-autostrazi-verificare',
   '2024-01-10'
 FROM public.records r WHERE r.slug = 'ciuca-autostrazi-2024';
+
+-- Government programme 2025–2028 (cited: official EN PDF on gov.ro; coalition RO text adopted 2025-06-23)
+INSERT INTO public.records (politician_id, slug, type, text, context, topic, status, date_made, impact_level, ai_confidence)
+SELECT p.id,
+  'gov-program-2025-06-deficit-reduction',
+  'promise',
+  'Program de guvernare: reducerea deficitului bugetar prin măsuri clare de reducere a cheltuielilor publice și corecție bugetară onestă (pilon: ordine în finanțele publice).',
+  'Sursă primară (PDF oficial, EN): https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf',
+  'economy',
+  'pending',
+  '2025-06-23',
+  'high',
+  NULL
+FROM public.politicians p
+WHERE p.slug = 'marcel-ciolacu'
+  AND NOT EXISTS (SELECT 1 FROM public.records r WHERE r.slug = 'gov-program-2025-06-deficit-reduction');
+
+INSERT INTO public.sources (record_id, tier, outlet, url, title, published_at)
+SELECT r.id, '0', 'Guvernul României (gov.ro)', 'https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf',
+  'Government Programme 2025–2028 (official PDF, EN)', '2025-06-23'
+FROM public.records r
+WHERE r.slug = 'gov-program-2025-06-deficit-reduction'
+  AND NOT EXISTS (SELECT 1 FROM public.sources s WHERE s.record_id = r.id AND s.url LIKE '%2025-2028-programme-for-government-en.pdf%');
+
+INSERT INTO public.records (politician_id, slug, type, text, context, topic, status, date_made, impact_level, ai_confidence)
+SELECT p.id,
+  'gov-program-2025-06-anaf-reform',
+  'promise',
+  'Program de guvernare: ANAF, Antifrauda și Vama reorganizate, scoase din influență politică, cu indicatori clari și digitalizare.',
+  'Sursă primară (PDF oficial, EN): https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf',
+  'taxes',
+  'pending',
+  '2025-06-23',
+  'high',
+  NULL
+FROM public.politicians p
+WHERE p.slug = 'marcel-ciolacu'
+  AND NOT EXISTS (SELECT 1 FROM public.records r WHERE r.slug = 'gov-program-2025-06-anaf-reform');
+
+INSERT INTO public.sources (record_id, tier, outlet, url, title, published_at)
+SELECT r.id, '0', 'Guvernul României (gov.ro)', 'https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf',
+  'Government Programme 2025–2028 (official PDF, EN)', '2025-06-23'
+FROM public.records r
+WHERE r.slug = 'gov-program-2025-06-anaf-reform'
+  AND NOT EXISTS (SELECT 1 FROM public.sources s WHERE s.record_id = r.id AND s.url LIKE '%2025-2028-programme-for-government-en.pdf%');
+
+INSERT INTO public.records (politician_id, slug, type, text, context, topic, status, date_made, impact_level, ai_confidence)
+SELECT p.id,
+  'gov-program-2025-06-good-governance',
+  'promise',
+  'Program de guvernare: bună guvernare — administrație eficientă, responsabilă, adaptată nevoilor actuale (reformă a statului).',
+  'Sursă primară (PDF oficial, EN): https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf',
+  'transparency',
+  'pending',
+  '2025-06-23',
+  'medium',
+  NULL
+FROM public.politicians p
+WHERE p.slug = 'marcel-ciolacu'
+  AND NOT EXISTS (SELECT 1 FROM public.records r WHERE r.slug = 'gov-program-2025-06-good-governance');
+
+INSERT INTO public.sources (record_id, tier, outlet, url, title, published_at)
+SELECT r.id, '0', 'Guvernul României (gov.ro)', 'https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf',
+  'Government Programme 2025–2028 (official PDF, EN)', '2025-06-23'
+FROM public.records r
+WHERE r.slug = 'gov-program-2025-06-good-governance'
+  AND NOT EXISTS (SELECT 1 FROM public.sources s WHERE s.record_id = r.id AND s.url LIKE '%2025-2028-programme-for-government-en.pdf%');
+
+INSERT INTO public.records (politician_id, slug, type, text, context, topic, status, date_made, impact_level, ai_confidence)
+SELECT p.id,
+  'gov-program-2025-06-citizen-respect',
+  'promise',
+  'Program de guvernare: respect pentru cetățeni — echitate, servicii publice de calitate, politici sociale oneste care susțin munca.',
+  'Sursă primară (PDF oficial, EN): https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf',
+  'social',
+  'pending',
+  '2025-06-23',
+  'medium',
+  NULL
+FROM public.politicians p
+WHERE p.slug = 'marcel-ciolacu'
+  AND NOT EXISTS (SELECT 1 FROM public.records r WHERE r.slug = 'gov-program-2025-06-citizen-respect');
+
+INSERT INTO public.sources (record_id, tier, outlet, url, title, published_at)
+SELECT r.id, '0', 'Guvernul României (gov.ro)', 'https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf',
+  'Government Programme 2025–2028 (official PDF, EN)', '2025-06-23'
+FROM public.records r
+WHERE r.slug = 'gov-program-2025-06-citizen-respect'
+  AND NOT EXISTS (SELECT 1 FROM public.sources s WHERE s.record_id = r.id AND s.url LIKE '%2025-2028-programme-for-government-en.pdf%');

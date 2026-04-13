@@ -1,11 +1,16 @@
 {
   "name": "@tevad/rss-monitor",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
+  "exports": {
+    "./feed-watcher": "./src/feed-watcher.ts",
+    "./sources.config": "./src/sources.config.ts"
+  },
   "scripts": {
     "watch": "tsx src/feed-watcher.ts"
   },
   "dependencies": {
+    "@tevad/verifier": "*",
     "@supabase/supabase-js": "^2.43.0"
   },
   "devDependencies": {

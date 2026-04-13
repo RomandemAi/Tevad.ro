@@ -1,0 +1,51 @@
+/**
+ * First paint: tokens + base chrome before Tailwind.
+ * Default link color applies only inside <main> so sidebar / mobile nav keep inherited contrast.
+ */
+:root {
+  --navy: #0f1f3d;
+  --gray-50: #f8fafc;
+  --gray-900: #0f172a;
+  --blue: #1d6ef5;
+  --gray-200: #e2e8f0;
+}
+
+html {
+  background-color: var(--gray-50);
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--gray-50);
+  color: var(--gray-900);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+main a:link,
+main a:visited {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+main a:hover {
+  text-decoration: underline;
+}
+
+/* Sidebar / bottom bar are outside <main> — no blue default; kill underline on hover */
+.te-sidebar a:hover,
+.te-mobile-nav a:hover {
+  text-decoration: none;
+}
+
+/* Card links: inherit text color */
+a.te-politician-card,
+a.te-politician-card:link,
+a.te-politician-card:visited {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+a.te-politician-card:hover {
+  text-decoration: none !important;
+}

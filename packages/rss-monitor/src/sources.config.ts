@@ -9,10 +9,9 @@
  * - Cannot generate a FALSE verdict alone
  *
  * SOURCE DIVERSITY (#5):
- * Each source carries an optional political lean tag (left/center/right/official).
- * If all sources for a FALSE verdict share the same lean, a third source from
- * a different lean is required — or the verdict defaults to PENDING.
- * This prevents ideologically one-sided take-downs.
+ * Tier-1 outlets tagged `center` may appear together (independent editorial consensus).
+ * If every Tier-1 source shares the same non-center lean, a FALSE verdict is blocked
+ * (pending) until perspectives diversify.
  *
  * See SOURCES.md for full policy and excluded sources list.
  */
@@ -136,10 +135,18 @@ export function getSourceLean(domain: string): SourceLean | null {
   return null
 }
 
+/** Alias: political lean for a source domain or URL host substring. */
+export function getLean(domainOrUrl: string): SourceLean | null {
+  return getSourceLean(domainOrUrl)
+}
+
 /**
- * Source diversity check (#5).
- * Returns true if sources are sufficiently diverse for a FALSE verdict.
- * If all Tier-1 sources share one lean, a third independent source is required.
+ * Source diversity check (#5) for FALSE verdicts.
+ * - Official (Tier 0 / lean official) always passes.
+ * - All Tier-1 tagged `center` passes (independent center outlets are acceptable).
+ * - At least two distinct leans among Tier 1 passes (e.g. center + left).
+ * - Fails only when every Tier-1 source has a lean and they are all the same **non-center** lean.
+ * Sources missing `lean` do not trigger a diversity block (avoid false negatives from incomplete metadata).
  */
 export function passesSourceDiversityCheck(
   sources: Array<{ tier: number; lean?: SourceLean }>
@@ -149,25 +156,30 @@ export function passesSourceDiversityCheck(
     return { passes: false, reason: 'Minimum 2 Tier-1 sources required' }
   }
 
-  // Official sources always pass diversity check
   if (tier1.some(s => s.lean === 'official')) {
     return { passes: true }
   }
 
-  const leans = tier1.map(s => s.lean).filter(Boolean) as SourceLean[]
-  const uniqueLeans = new Set(leans)
-
-  // If we have sources from at least 2 different leans, or 3+ sources — passes
-  if (uniqueLeans.size >= 2 || tier1.length >= 3) {
+  const tagged = tier1.filter((s): s is typeof s & { lean: SourceLean } => s.lean != null)
+  if (tagged.length < tier1.length) {
     return { passes: true }
   }
 
-  // All sources share the same lean
-  if (leans.length >= 2 && uniqueLeans.size === 1) {
-    const lean = [...uniqueLeans][0]
+  const leans = tagged.map(s => s.lean)
+  const uniqueLeans = new Set(leans)
+
+  if (uniqueLeans.size >= 2) {
+    return { passes: true }
+  }
+
+  if (uniqueLeans.size === 1) {
+    const lean = Array.from(uniqueLeans)[0]
+    if (lean === 'center') {
+      return { passes: true }
+    }
     return {
       passes: false,
-      reason: `All Tier-1 sources share the same lean (${lean}). Add a source from a different perspective or verdict defaults to PENDING.`,
+      reason: `All Tier-1 sources share the same non-center lean (${lean}). Add a center-balanced or other-perspective source; FALSE verdict defaults to PENDING.`,
     }
   }
 

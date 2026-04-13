@@ -1,9 +1,9 @@
 // lib/score-utils.ts
 
 export function scoreColor(score: number): string {
-  if (score >= 70) return '#22c97a'  // green
-  if (score >= 45) return '#f5a623'  // amber
-  return '#f04545'                    // red
+  if (score >= 70) return '#16a34a'
+  if (score >= 45) return '#d97706'
+  return '#dc2626'
 }
 
 export function scoreLabel(score: number): string {
@@ -14,7 +14,9 @@ export function scoreLabel(score: number): string {
 }
 
 export function credBadgeClass(score: number): string {
-  if (score >= 70) return 'bg-[rgba(34,201,122,0.1)] text-[#22c97a] border-[rgba(34,201,122,0.25)]'
-  if (score >= 45) return 'bg-[rgba(245,166,35,0.1)] text-[#f5a623] border-[rgba(245,166,35,0.25)]'
-  return 'bg-[rgba(240,69,69,0.1)] text-[#f04545] border-[rgba(240,69,69,0.25)]'
+  if (score >= 70)
+    return 'bg-[var(--green-bg)] text-[var(--green)] border border-[rgba(22,163,74,0.35)]'
+  if (score >= 45)
+    return 'bg-[var(--amber-bg)] text-[var(--amber)] border border-[rgba(217,119,6,0.35)]'
+  return 'bg-[var(--red-bg)] text-[var(--red)] border border-[rgba(220,38,38,0.35)]'
 }

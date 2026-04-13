@@ -28,11 +28,11 @@ const TYPE_LABELS: Record<string, string>   = { all: 'Toate', promise: 'Promisiu
 const STATUS_LABELS: Record<string, string> = { all: 'Toate', true: 'Adevărat', false: 'Fals', partial: 'Parțial', pending: 'Pending' }
 
 const STATUS_ACTIVE: Record<string, string> = {
-  true:    'border-[rgba(34,201,122,0.4)] text-[var(--green)] bg-[rgba(34,201,122,0.08)]',
-  false:   'border-[rgba(240,69,69,0.4)] text-[var(--red)] bg-[rgba(240,69,69,0.08)]',
-  partial: 'border-[rgba(245,166,35,0.4)] text-[var(--amber)] bg-[rgba(245,166,35,0.08)]',
-  pending: 'border-[var(--border2)] text-[var(--text2)] bg-[var(--surface2)]',
-  all:     'border-[var(--accent)] text-[var(--accent2)] bg-[rgba(29,110,245,0.08)]',
+  true: 'border-[rgba(22,163,74,0.4)] bg-[var(--green-bg)] text-[var(--green)]',
+  false: 'border-[rgba(220,38,38,0.4)] bg-[var(--red-bg)] text-[var(--red)]',
+  partial: 'border-[rgba(217,119,6,0.4)] bg-[var(--amber-bg)] text-[var(--amber)]',
+  pending: 'border-[var(--gray-200)] bg-[var(--gray-100)] text-[var(--gray-600)]',
+  all: 'border-[var(--blue)] bg-[var(--blue-light)] text-[var(--blue)]',
 }
 
 function FilterPill({
@@ -48,11 +48,12 @@ function FilterPill({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`font-mono text-[9px] uppercase px-2.5 py-1 rounded-full border flex-shrink-0 transition-colors ${
+      className={`min-h-[36px] cursor-pointer rounded-full border px-2.5 py-1 font-mono text-[9px] uppercase flex-shrink-0 transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--blue)] focus-visible:ring-offset-2 md:min-h-0 ${
         active
           ? color ?? STATUS_ACTIVE.all
-          : 'border-[var(--border)] text-[var(--text3)] hover:border-[var(--border2)] hover:text-[var(--text2)]'
+          : 'border-[var(--gray-200)] text-[var(--gray-500)] hover:border-[var(--gray-200)] hover:text-[var(--gray-900)]'
       }`}
     >
       {label}
@@ -81,8 +82,16 @@ export default function RecordsSection({ records, politicianId }: RecordsSection
 
   return (
     <div>
-      {/* Filter bar */}
-      <div className="space-y-2 mb-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
+          Înregistrări verificate
+        </h2>
+        <span className="rounded-full border border-[var(--gray-200)] bg-[var(--gray-50)] px-2 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-500)]">
+          AI + surse
+        </span>
+      </div>
+
+      <div className="mb-4 space-y-2">
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {(['all', 'promise', 'statement', 'vote'] as const).map(t => (
             <FilterPill

@@ -1,0 +1,110 @@
+﻿
+
+<!DOCTYPE html>
+
+<html lang="ro">
+<head id="ctl00_Head1">
+
+    <!-- Google tag (gtag.js) -->
+    <script defer async src="https://www.googletagmanager.com/gtag/js?id=G-NS02C62ZMW"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-NS02C62ZMW');
+    </script>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" /><title>
+	
+    Senatul Rom├óniei - Parlamentari
+
+</title>
+
+    
+    <meta name="description" content="Senatul Rom├óniei este una din cele dou─â camere ale Parlamentului (acesta fiind bicameral) Rom├óniei. Senatul este ales prin vot universal, liber, secret ╚Öi direct de c─âtre cet─â╚¢enii cu drept de vot ai Rom├óniei." />
+    <meta name="keywords" content="Senatul Rom├óniei" />
+    <meta name="google-site-verification" content="fyT3TWATEumSG3VKP5IOmUTndFiE_pgRYfdc5YGggqk" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="revisit-after" content="1 days" /><meta name="distribution" content="Global" /><meta name="rating" content="General" /><meta name="author" content="Senatul Rom├óniei" /><meta name="copyright" content="Senatul Rom├óniei" /><meta name="content-language" content="ro" /><meta name="content-type" content="text/html;charset=UTF-8" /><link href="https://www.senat.ro/favicon.ico" rel="shortcut icon" type="image/x-icon" /><link href="https://www.senat.ro/favicon.ico" rel="apple-touch-icon" type="image/x-icon" />
+
+    <!-- Bootstrap CSS -->
+    <!--<link rel="stylesheet" href="/css/bootstrap.min.css" integrity="" crossorigin="anonymous" />-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous" /><link rel="stylesheet" href="/css/all.css" crossorigin="anonymous" /><link rel="stylesheet" href="/css/custom.css" /><link rel="stylesheet" href="/css/newTemplate.css" /><link rel="stylesheet" href="/css/custom-responsive.css" />
+
+    <!-- SmartMenus jQuery Bootstrap 4 Addon CSS -->
+    <link rel="stylesheet" href="/css/jquery.smartmenus.bootstrap-4.css" />
+
+
+    <!--<link rel="stylesheet" href="/css/slick.css" />-->
+    <link rel="stylesheet" href="/css/slick-theme.css" /><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+
+    <!--<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" />-->
+    <link rel="stylesheet" href="https://releases.jquery.com/git/ui/jquery-ui-git.css" /><link rel="stylesheet" href="/Senat.css" /><link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!--<script src="/js/jquery-3.4.1.min.js"></script>-->
+    <!--<script src="/js/jquery-3.6.0.min.js"></script>-->
+    <!--<script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>-->
+    <!--<script src="/js/popper.min.js" crossorigin="anonymous"></script>-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" crossorigin="anonymous"></script>-->
+    <!--<script src="/js/bootstrap.min.js" integrity="" crossorigin="anonymous"></script>-->
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>-->
+    <script src="/js/clipboard.min.js" integrity="" crossorigin="anonymous"></script>
+
+    <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>-->
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.4.0/clipboard.min.js" crossorigin="anonymous"></script>
+
+    <!--<script defer src="https://code.jquery.com/ui/1.13.3/jquery-ui.js" crossorigin="anonymous"></script>-->
+    <script defer src="https://releases.jquery.com/git/ui/jquery-ui-git.js" crossorigin="anonymous"></script>
+
+    <!--<script src="/js/slick.min.js"></script>-->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+    <!-- jQuery -->
+
+    <!-- SmartMenus jQuery plugin -->
+    <script src="/js/jquery.smartmenus.js"></script>
+    <!-- SmartMenus jQuery Bootstrap 4 Addon -->
+    <script src="/js/jquery.smartmenus.bootstrap-4.js"></script>
+
+    <script src="/js/cookie.js"></script>
+    <!--<script defer src="/ckeditor/ckeditor.js"></script>-->
+
+    <!--<script src="/js/bootstrap-datepicker-1.6.4-dist/js/bootstrap-datepicker.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <!--<script src="/js/bootstrap-datepicker-1.6.4-dist/locales/bootstrap-datepicker.ro.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.ro.min.js"></script>
+    
+    <!--<script src="/js/yall.min.js"></script>-->
+
+    
+    <style type="text/css">
+        @media print {
+            .k {
+                display: none;
+                visibility: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5XKJB8V"
+            height="0" width="0" style="display: none; visibility: hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <form method="post" action="./FisaSenatori.aspx" id="aspnetForm" enctype="multipart/form-data">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="yBjR64+mImQ84+fK52dU+m6UrRzLu1AjdrZqyQUqlUB12mhocX+RGCiVX141QtKCxgCRLRZ9d2oyEUZmg1EAzdBBvuyI0q8DtuQaxBBZn/np+jzFV63XUejqc8mLb4clNIW1k17ubViLwh+VNOYOltUtzfJ21fWJABDSTszA/vjWu/A0av6z3Xk3qABINsJ8CJj6kzt95eXo9XmA9OeWaN+v66YmExgbU7IKBbmYd8TmrkmkLSxk/O2DJwOyPP41f4qRAIbLFVT41luMafZeIrJsYQuBWtpuliU6Q8LflaeCXyqQZGO7xorJgMWj5r/AWOWrehsB50SVA8UxC/oyKYDDTKV5VDUe/eXO6M+tmWLCoeeVsE7kU21VeDb/8iFB8zWYdsPS5XXAYyL7uIkX+FkKfPGG+QutPJUNQw2xRzYT6iVZBPVbbaSSllwHVMQQ6uqSJUzcv3BIomx1OmIQfeSDrbCcx9S5X60QxScTxcqnAT99HS2fNt/dwAR+GgY5kABqUiTWi1gbJROVBV05ES6UhnkAhBqvf9T4nkG4enh4GCLZucP3JmBJ5CvXe3vzL0T0/XLv1eogJZ+UnfrjWv+sqFyLSoZN9ZHbgUfAaYR7GHuGWK+sxOkgEzzt9LoXsSDOXJsC6OvzL3uEyCoKeH2d5r5mYIqkKn+MyirR37JFlJCKO+4xjlleP5IsQ1KodADoidIYTbwIpERZNohp6+WICa/bORPjLogR

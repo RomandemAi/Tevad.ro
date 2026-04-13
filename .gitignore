@@ -32,3 +32,13 @@ npm-debug.log*
 
 # Local working data
 user-data/
+
+# Cursor / IDE local artifacts
+.cursor/
+
+# Python caches (can be created by local tools)
+**/__pycache__/
+*.pyc
+
+# Supabase local CLI temp files
+supabase/.temp/

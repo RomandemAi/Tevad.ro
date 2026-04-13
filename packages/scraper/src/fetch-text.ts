@@ -1,0 +1,40 @@
+/**
+ * Longer connect/body timeouts than Node's default fetch (helps cdep.ro / senat.ro).
+ */
+import { Agent, fetch as undiciFetch } from 'undici'
+
+const agent = new Agent({
+  connectTimeout: 90_000,
+  bodyTimeout: 180_000,
+  headersTimeout: 120_000,
+})
+
+export async function fetchText(url: string, headers: Record<string, string>): Promise<string> {
+  const res = await undiciFetch(url, {
+    dispatcher: agent,
+    headers,
+    redirect: 'follow',
+  })
+  if (!res.ok) throw new Error(`${url} → ${res.status}`)
+  return res.text()
+}
+
+export async function fetchBuffer(url: string, headers: Record<string, string>): Promise<Buffer> {
+  const res = await undiciFetch(url, {
+    dispatcher: agent,
+    headers,
+    redirect: 'follow',
+  })
+  if (!res.ok) throw new Error(`${url} → ${res.status}`)
+  return Buffer.from(await res.arrayBuffer())
+}
+
+export async function fetchJson<T>(url: string, headers: Record<string, string>): Promise<T> {
+  const res = await undiciFetch(url, {
+    dispatcher: agent,
+    headers,
+    redirect: 'follow',
+  })
+  if (!res.ok) throw new Error(`${url} → ${res.status}`)
+  return (await res.json()) as T
+}

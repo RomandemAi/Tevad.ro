@@ -1,0 +1,12 @@
+{
+  "crons": [
+    { "path": "/api/cron/scrape-cdep", "schedule": "0 2 * * *" },
+    { "path": "/api/cron/scrape-senat", "schedule": "0 3 * * *" },
+    { "path": "/api/cron/scrape-gov", "schedule": "0 4 * * *" },
+    { "path": "/api/cron/rss-watch", "schedule": "*/30 * * * *" },
+    { "path": "/api/cron/score-recalc", "schedule": "0 5 * * *" },
+    { "path": "/api/cron/ani-archive", "schedule": "0 1 * * 0" },
+    { "path": "/api/cron/scrape-bec", "schedule": "0 6 * * 1" },
+    { "path": "/api/cron/contradict", "schedule": "0 7 * * 0" }
+  ]
+}

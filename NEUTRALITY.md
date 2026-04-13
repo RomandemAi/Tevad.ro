@@ -109,6 +109,16 @@ Tevad.ro accepts no advertising from:
 
 Funding sources are disclosed in `FUNDING.md`.
 
+### Rule 11 — Wealth Declarations Are Factual Status, Not Moral Judgment
+Tevad.ro may display whether a politician **continued to publish wealth declarations** after relevant Constitutional Court (CCR) jurisprudence and effective dates, using only **public, linkable sources** (official registers, integritate.eu, archived PDFs).
+
+- **"Stopped"** means: we have **no newer published declaration** after the effective date we cite, not that the person is dishonest or corrupt.
+- **"Published voluntarily"** means: we observed a **newer public declaration** after that date — a neutral observation, not praise.
+- We **never** infer intent ("refused to declare", "hid assets"). We only state what is **on the public record** and link to it.
+- If the record is incomplete or ambiguous, the UI shows **PENDING** / omits the badge until sources are confirmed.
+
+This rule exists so transparency about declarations stays on the same plane as promise verification: **facts + sources**, no editorial pile-on.
+
 ---
 
 ## Enforcement

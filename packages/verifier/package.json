@@ -1,10 +1,19 @@
 {
   "name": "@tevad/verifier",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
+  "exports": {
+    "./cross-check": "./src/cross-check.ts",
+    "./score": "./src/score.ts",
+    "./models": "./src/models.ts",
+    "./contradict": "./src/contradict.ts"
+  },
   "scripts": {
     "verify": "tsx src/verify.ts",
-    "score": "tsx src/score.ts"
+    "verify:pilot": "tsx src/run-verify-from-manifest.ts",
+    "score": "tsx src/score.ts",
+    "contradict": "tsx src/contradict.ts",
+    "demo": "tsx src/verify.ts --demo"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.24.0",

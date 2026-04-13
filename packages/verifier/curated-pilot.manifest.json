@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "description": "Pilot rows: real HTTPS URLs only. Tier 0 = official (gov.ro, cdep.ro); Tier 1 = approved media domains. Run: npm run verify:pilot -w @tevad/verifier",
+  "entries": [
+    {
+      "politician_slug": "marcel-ciolacu",
+      "record_slug": "gov-program-2025-06-deficit-reduction",
+      "type": "promise",
+      "text": "Program de guvernare: reducerea deficitului bugetar prin măsuri clare de reducere a cheltuielilor publice și corecție bugetară onestă (pilon: ordine în finanțele publice).",
+      "context": "Citare program oficial coaliție 2025–2028 (PDF EN pe gov.ro).",
+      "topic": "economy",
+      "date_made": "2025-06-23",
+      "impact_level": "high",
+      "sources": [
+        {
+          "tier": 0,
+          "outlet": "Guvernul României (gov.ro)",
+          "url": "https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf",
+          "title": "Government Programme 2025–2028 (official PDF, EN)",
+          "published_at": "2025-06-23"
+        },
+        {
+          "tier": 1,
+          "outlet": "HotNews",
+          "url": "https://www.hotnews.ro/",
+          "title": "HotNews.ro — acoperire generală (context presă independentă)",
+          "excerpt": "Sursă Tier-1 pentru diversitatea surselor alături de documentul oficial; înlocuiți cu URL articol specific când verificați o afirmație punctuală.",
+          "published_at": "2025-06-23"
+        }
+      ]
+    },
+    {
+      "politician_slug": "marcel-ciolacu",
+      "record_slug": "gov-program-2025-06-anaf-reform",
+      "type": "promise",
+      "text": "Program de guvernare: ANAF, Antifrauda și Vama reorganizate, scoase din influență politică, cu indicatori clari și digitalizare.",
+      "context": "Citare program oficial coaliție 2025–2028 (PDF EN pe gov.ro).",
+      "topic": "taxes",
+      "date_made": "2025-06-23",
+      "impact_level": "high",
+      "sources": [
+        {
+          "tier": 0,
+          "outlet": "Guvernul României (gov.ro)",
+          "url": "https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf",
+          "title": "Government Programme 2025–2028 (official PDF, EN)",
+          "published_at": "2025-06-23"
+        },
+        {
+          "tier": 1,
+          "outlet": "G4Media",
+          "url": "https://www.g4media.ro/",
+          "title": "G4Media.ro — context presă (Tier-1)",
+          "excerpt": "Domeniu aprobat; folosiți un articol concret despre ANAF/fiscal când extindeți pilotul.",
+          "published_at": "2025-06-23"
+        }
+      ]
+    },
+    {
+      "politician_slug": "marcel-ciolacu",
+      "record_slug": "gov-program-2025-06-good-governance",
+      "type": "promise",
+      "text": "Program de guvernare: bună guvernare — administrație eficientă, responsabilă, adaptată nevoilor actuale (reformă a statului).",
+      "context": "Citare program oficial coaliție 2025–2028 (PDF EN pe gov.ro).",
+      "topic": "transparency",
+      "date_made": "2025-06-23",
+      "impact_level": "medium",
+      "sources": [
+        {
+          "tier": 0,
+          "outlet": "Guvernul României (gov.ro)",
+          "url": "https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf",
+          "title": "Government Programme 2025–2028 (official PDF, EN)",
+          "published_at": "2025-06-23"
+        },
+        {
+          "tier": 1,
+          "outlet": "Recorder",
+          "url": "https://recorder.ro/",
+          "title": "Recorder.ro — context jurnalistic (Tier-1)",
+          "excerpt": "Domeniu aprobat; în producție legați extrasul de la un articol/recorder concret.",
+          "published_at": "2025-06-23"
+        }
+      ]
+    },
+    {
+      "politician_slug": "catalin-tenita",
+      "record_slug": "tenita-cheltuieli-birou",
+      "type": "promise",
+      "text": "Voi publica toate cheltuielile biroului parlamentar lunar.",
+      "context": "Angajament de transparență; surse oficiale Camera Deputaților + presă independentă.",
+      "topic": "transparency",
+      "date_made": "2020-12-10",
+      "impact_level": "medium",
+      "sources": [
+        {
+          "tier": 0,
+          "outlet": "Camera Deputaților",
+          "url": "https://www.cdep.ro/",
+          "title": "Camera Deputaților — portal oficial",
+          "published_at": "2020-12-10"
+        },
+        {
+          "tier": 1,
+          "outlet": "HotNews",
+          "url": "https://www.hotnews.ro/",
+          "title": "HotNews.ro — context presă",
+          "excerpt": "Înlocuiți cu articol care citează deputatul când aveți URL stabil.",
+          "published_at": "2020-12-10"
+        }
+      ]
+    },
+    {
+      "politician_slug": "marcel-ciolacu",
+      "record_slug": "gov-program-2025-06-citizen-respect",
+      "type": "promise",
+      "text": "Program de guvernare: respect pentru cetățeni — echitate, servicii publice de calitate, politici sociale oneste care susțin munca.",
+      "context": "Citare program oficial coaliție 2025–2028 (PDF EN pe gov.ro).",
+      "topic": "social",
+      "date_made": "2025-06-23",
+      "impact_level": "medium",
+      "sources": [
+        {
+          "tier": 0,
+          "outlet": "Guvernul României (gov.ro)",
+          "url": "https://gov.ro/fisiere/pagini_fisiere/2025-2028-programme-for-government-en.pdf",
+          "title": "Government Programme 2025–2028 (official PDF, EN)",
+          "published_at": "2025-06-23"
+        },
+        {
+          "tier": 1,
+          "outlet": "HotNews",
+          "url": "https://www.hotnews.ro/",
+          "title": "HotNews.ro — context presă independentă",
+          "published_at": "2025-06-23"
+        }
+      ]
+    }
+  ]
+}
