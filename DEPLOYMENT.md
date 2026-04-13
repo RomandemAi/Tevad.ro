@@ -54,4 +54,4 @@ npm run scrape:senat
 
 ---
 
-*Tevad.ro · "Te văd." · Built by Romandem AI · Bucharest, România · 2026*
+*Tevad.org · "Te văd." · proiect civic independent · România · 2026*

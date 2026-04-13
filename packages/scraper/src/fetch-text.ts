@@ -9,11 +9,37 @@ const agent = new Agent({
   headersTimeout: 120_000,
 })
 
-export async function fetchText(url: string, headers: Record<string, string>): Promise<string> {
+export type FetchTextOptions = {
+  headers?: Record<string, string>
+  timeout?: number
+}
+
+function normalizeHeaders(h?: Record<string, string>): Record<string, string> {
+  return {
+    'user-agent':
+      'Mozilla/5.0 (compatible; teVad.ro/1.0; +https://tevad.ro) AppleWebKit/537.36 (KHTML, like Gecko)',
+    accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    ...(h ?? {}),
+  }
+}
+
+export async function fetchText(
+  url: string,
+  headersOrOptions: Record<string, string> | FetchTextOptions = {}
+): Promise<string> {
+  const options: FetchTextOptions =
+    headersOrOptions && typeof headersOrOptions === 'object' && 'headers' in headersOrOptions
+      ? (headersOrOptions as FetchTextOptions)
+      : ({ headers: headersOrOptions as Record<string, string> } satisfies FetchTextOptions)
+
+  const timeout = typeof options.timeout === 'number' && options.timeout > 0 ? options.timeout : undefined
+  const signal = timeout ? AbortSignal.timeout(timeout) : undefined
+
   const res = await undiciFetch(url, {
     dispatcher: agent,
-    headers,
+    headers: normalizeHeaders(options.headers),
     redirect: 'follow',
+    signal,
   })
   if (!res.ok) throw new Error(`${url} → ${res.status}`)
   return res.text()

@@ -25,10 +25,11 @@ import { resolve } from 'path'
 import { createClient } from '@supabase/supabase-js'
 import { getLean, getSourceTier } from '../../rss-monitor/src/sources.config'
 import Anthropic from '@anthropic-ai/sdk'
+import { fetchText } from '../../scraper/src/fetch-text'
 
 type WebSearchEnrichment = {
   statementDate: string | null
-  sources: Array<{ url: string; title?: string; publishedAt?: string | null }>
+  sources: Array<{ url: string; title?: string; publishedAt?: string | null; excerpt?: string }>
 }
 
 function extractJsonObject<T>(raw: string): T | null {
@@ -62,6 +63,41 @@ function makeWebQuery(politicianName: string, statementText: string, statementDa
     .slice(0, 6)
     .join(' ')
   return `${politicianName} ${keyword} ${year} Romania`
+}
+
+function stripHtmlToExcerpt(html: string, maxChars = 1000): string {
+  return html
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxChars)
+}
+
+function redactPoliticianName(text: string, politicianName: string): string {
+  const parts = politicianName
+    .split(/\s+/)
+    .map(p => p.trim())
+    .filter(Boolean)
+    .filter(p => p.length >= 3)
+  let out = text
+  for (const p of parts) {
+    // Best-effort redaction to avoid identity leakage into blind payload
+    out = out.replace(new RegExp(`\\b${p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi'), '[REDACTED]')
+  }
+  return out
+}
+
+async function tryFetchExcerpt(url: string, timeoutMs = 10_000): Promise<string | undefined> {
+  try {
+    const html = await fetchText(url, { timeout: timeoutMs })
+    const text = stripHtmlToExcerpt(html, 1000)
+    if (!text) return undefined
+    return text
+  } catch {
+    return undefined
+  }
 }
 
 async function enrichWithWebSearch(
@@ -104,15 +140,31 @@ async function enrichWithWebSearch(
   const parsed = extractJsonObject<WebSearchEnrichment>(raw)
   if (!parsed || !Array.isArray(parsed.sources)) return { statementDate: null, sources: [] }
 
+  // Fetch article content (best effort) so models can verify against real text, not just URLs.
+  // We only fetch a couple to avoid slowing down serverless / batch runs.
+  const sources = (parsed.sources ?? [])
+    .map((s: any) => ({
+      url: typeof s?.url === 'string' ? s.url : '',
+      title: typeof s?.title === 'string' ? s.title : undefined,
+      publishedAt: isoDateOrNull(s?.publishedAt),
+    }))
+    .filter(s => !!s.url)
+    .slice(0, 3)
+
+  const fetched = await Promise.allSettled(
+    sources.map(async s => {
+      const excerpt = await tryFetchExcerpt(s.url, 10_000)
+      return { ...s, excerpt: excerpt ? redactPoliticianName(excerpt, politicianName) : undefined }
+    })
+  )
+
+  const withExcerpts = fetched
+    .map(r => (r.status === 'fulfilled' ? r.value : null))
+    .filter(Boolean) as Array<{ url: string; title?: string; publishedAt?: string | null; excerpt?: string }>
+
   return {
     statementDate: isoDateOrNull((parsed as any).statementDate),
-    sources: (parsed.sources ?? [])
-      .map((s: any) => ({
-        url: typeof s?.url === 'string' ? s.url : '',
-        title: typeof s?.title === 'string' ? s.title : undefined,
-        publishedAt: isoDateOrNull(s?.publishedAt),
-      }))
-      .filter(s => !!s.url),
+    sources: withExcerpts,
   }
 }
 
@@ -388,7 +440,8 @@ async function runPending(): Promise<void> {
           url: s.url,
           tier: 1,
           lean,
-          // omit title/excerpt to reduce identity leakage into the blind payload
+          title: s.title ?? undefined,
+          excerpt: s.excerpt ?? undefined,
           publishedAt: s.publishedAt ?? undefined,
         })
       }

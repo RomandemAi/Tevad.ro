@@ -189,5 +189,5 @@ MIT — fork it, build your own country's version. Just credit Tevad.ro.
 
 ---
 
-*Built by [Romandem AI](https://romandemai.com) · Bucharest, România · 2026*
+*Tevad.org — proiect civic independent · România · 2026*
 *"Te văd." — I see you.*

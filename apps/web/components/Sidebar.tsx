@@ -185,7 +185,17 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
           </svg>
           <div>
             <div className="font-mono text-[18px] font-medium tracking-wide text-white">
-              TEVAD<span className="text-[var(--cyan)]">.ORG</span>
+              TEVAD<span className="text-[var(--cyan)]">.ORG</span>{' '}
+              <span
+                className="inline-flex items-center rounded-[3px] border px-1.5 py-[2px] align-middle font-mono text-[8px] tracking-[0.5px]"
+                style={{
+                  background: 'rgba(245,166,35,0.15)',
+                  color: '#f5a623',
+                  borderColor: 'rgba(245,166,35,0.3)',
+                }}
+              >
+                BETA
+              </span>
             </div>
             <div className="font-mono text-[11px] tracking-wide text-[rgba(255,255,255,0.4)]">Te văd.</div>
           </div>
@@ -242,28 +252,44 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
           Info
         </p>
         <Link
-          href="/#cum-functioneaza"
+          href="/cum-functioneaza"
           onClick={() => onNavigate?.()}
-          className={`${linkBase} ${pathname === '/' && hash === '#cum-functioneaza' ? linkActive : 'border-l-[3px] border-l-transparent'}`}
+          className={`${linkBase} ${routeActive('/cum-functioneaza', true) ? linkActive : 'border-l-[3px] border-l-transparent'}`}
         >
           <NavIconInfo />
           Cum funcționează
         </Link>
         <Link
-          href="/about#neutralitate"
+          href="/neutralitate"
           onClick={() => onNavigate?.()}
-          className={`${linkBase} ${infoActive('neutralitate') ? linkActive : 'border-l-[3px] border-l-transparent'}`}
+          className={`${linkBase} ${routeActive('/neutralitate', true) ? linkActive : 'border-l-[3px] border-l-transparent'}`}
         >
           <NavIconScale />
           Neutralitate
         </Link>
         <Link
-          href="/about#despre"
+          href="/despre"
           onClick={() => onNavigate?.()}
-          className={`${linkBase} ${infoActive('despre') ? linkActive : 'border-l-[3px] border-l-transparent'}`}
+          className={`${linkBase} ${routeActive('/despre', true) ? linkActive : 'border-l-[3px] border-l-transparent'}`}
         >
           <NavIconInfo />
           Despre
+        </Link>
+        <Link
+          href="/legal"
+          onClick={() => onNavigate?.()}
+          className={`${linkBase} ${routeActive('/legal', true) ? linkActive : 'border-l-[3px] border-l-transparent'}`}
+        >
+          <NavIconInfo />
+          Legal
+        </Link>
+        <Link
+          href="/privacy"
+          onClick={() => onNavigate?.()}
+          className={`${linkBase} ${routeActive('/privacy', true) ? linkActive : 'border-l-[3px] border-l-transparent'}`}
+        >
+          <NavIconInfo />
+          Privacy
         </Link>
       </nav>
 

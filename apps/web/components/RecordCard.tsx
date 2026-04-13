@@ -14,6 +14,7 @@ interface Source {
 
 interface PoliticianRecord {
   id: string
+  slug?: string
   type: 'promise' | 'statement' | 'vote'
   text: string
   status: 'true' | 'false' | 'partial' | 'pending'
@@ -109,6 +110,7 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
   }
 
   const primary = record.sources?.[0]
+  const reportKey = record.slug || record.id
 
   return (
     <div
@@ -207,6 +209,19 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
         >
           Surse complete →
         </Link>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-[var(--gray-100)] pt-3 font-mono text-[9px] text-[var(--text3)]">
+        <span>Verificat automat de AI</span>
+        <span className="text-[var(--gray-200)]">·</span>
+        <span>Surse publice</span>
+        <span className="text-[var(--gray-200)]">·</span>
+        <a
+          href={`mailto:contact@tevad.org?subject=${encodeURIComponent(`Eroare Tevad: ${reportKey}`)}`}
+          className="text-[var(--blue)] hover:underline"
+        >
+          Raportează o eroare →
+        </a>
       </div>
     </div>
   )

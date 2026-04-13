@@ -44,11 +44,11 @@ export default function HomeHowItWorksSection() {
         </ul>
         <p className="mt-6 font-sans text-[14px] leading-relaxed text-[var(--gray-600)]">
           Detalii despre proiect și reguli:{' '}
-          <Link href="/about#despre" className="text-[var(--blue)] underline-offset-2 hover:underline">
+          <Link href="/despre" className="text-[var(--blue)] underline-offset-2 hover:underline">
             Despre
           </Link>
           {' · '}
-          <Link href="/about#neutralitate" className="text-[var(--blue)] underline-offset-2 hover:underline">
+          <Link href="/neutralitate" className="text-[var(--blue)] underline-offset-2 hover:underline">
             Neutralitate
           </Link>
           {' · '}

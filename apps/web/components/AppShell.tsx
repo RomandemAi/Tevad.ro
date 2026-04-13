@@ -3,6 +3,7 @@
 import Sidebar from './Sidebar'
 import TopBar from './TopBar'
 import MobileBottomNav from './MobileBottomNav'
+import Footer from './Footer'
 
 interface AppShellProps {
   children: React.ReactNode
@@ -21,6 +22,7 @@ export default function AppShell({ children, breadcrumb, topBarRight }: AppShell
       >
         {breadcrumb !== undefined && <TopBar right={topBarRight}>{breadcrumb}</TopBar>}
         {children}
+        <Footer />
       </main>
 
       <MobileBottomNav />
