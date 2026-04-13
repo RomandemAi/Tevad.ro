@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -172,33 +173,31 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
       style={sidebarBg}
     >
       <div className="border-b border-[rgba(255,255,255,0.08)] p-5">
-        <div className="mb-4 flex items-center gap-3">
-          <svg width="32" height="32" viewBox="0 0 28 28" fill="none" aria-hidden>
-            <path d="M14 2L25 8V20L14 26L3 20V8L14 2Z" stroke="white" strokeWidth="1.2" />
-            <path
-              d="M14 7L21 11V19L14 23L7 19V11L14 7Z"
-              fill="var(--blue)"
-              stroke="white"
-              strokeWidth="0.5"
+        <div className="relative mb-4 pr-12">
+          <Link
+            href="/"
+            onClick={() => onNavigate?.()}
+            className="block rounded-md outline-none ring-offset-2 ring-offset-[var(--navy)] focus-visible:ring-2 focus-visible:ring-[var(--cyan)]"
+          >
+            <Image
+              src="/images/logo-tevad.png"
+              alt="Te Văd · Tevad.org — Promisiunile nu expiră."
+              width={400}
+              height={140}
+              className="h-auto w-full max-h-[5.25rem] object-contain object-left"
+              priority
             />
-            <circle cx="14" cy="15" r="2.2" fill="var(--cyan)" />
-          </svg>
-          <div>
-            <div className="font-mono text-[18px] font-medium tracking-wide text-white">
-              TEVAD<span className="text-[var(--cyan)]">.ORG</span>{' '}
-              <span
-                className="inline-flex items-center rounded-[3px] border px-1.5 py-[2px] align-middle font-mono text-[8px] tracking-[0.5px]"
-                style={{
-                  background: 'rgba(245,166,35,0.15)',
-                  color: '#f5a623',
-                  borderColor: 'rgba(245,166,35,0.3)',
-                }}
-              >
-                BETA
-              </span>
-            </div>
-            <div className="font-mono text-[11px] tracking-wide text-[rgba(255,255,255,0.4)]">Te văd.</div>
-          </div>
+          </Link>
+          <span
+            className="pointer-events-none absolute right-0 top-0 inline-flex items-center rounded-[3px] border px-1.5 py-[2px] font-mono text-[8px] tracking-[0.5px]"
+            style={{
+              background: 'rgba(245,166,35,0.15)',
+              color: '#f5a623',
+              borderColor: 'rgba(245,166,35,0.3)',
+            }}
+          >
+            BETA
+          </span>
         </div>
         <div className="flex items-center gap-2">
           <span className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--green)] pulse" aria-hidden />
