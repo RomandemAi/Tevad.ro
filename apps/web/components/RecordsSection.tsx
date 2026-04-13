@@ -18,6 +18,7 @@ interface RecordData {
   dislikes: number
   ai_confidence?: number
   opinion_exempt?: boolean
+  ai_reasoning?: string | null
   sources: any[]
 }
 

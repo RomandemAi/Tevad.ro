@@ -62,3 +62,38 @@ export function dedupePoliticiansByNameIdentity(rows: Politician[]): Politician[
   }
   return Array.from(map.values())
 }
+
+/** Same person, different name order in spotlight cards (premier / president). */
+export interface SpotlightPoliticianLike {
+  id: string
+  slug: string
+  name: string
+  role: string
+  party_short: string | null
+  score: number | null
+  chamber: string
+}
+
+function pickSpotlightPrimary(a: SpotlightPoliticianLike, b: SpotlightPoliticianLike): SpotlightPoliticianLike {
+  const sa = num(a.score)
+  const sb = num(b.score)
+  if (sb !== sa) return sb > sa ? b : a
+  const aIlie = /^ilie\b/i.test(a.name.trim())
+  const bIlie = /^ilie\b/i.test(b.name.trim())
+  if (aIlie !== bIlie) return aIlie ? a : b
+  return a.slug.localeCompare(b.slug) <= 0 ? a : b
+}
+
+export function dedupeSpotlightPoliticians(rows: SpotlightPoliticianLike[]): SpotlightPoliticianLike[] {
+  const map = new Map<string, SpotlightPoliticianLike>()
+  for (const p of rows) {
+    const sig = nameIdentitySignature(p.name)
+    const cur = map.get(sig)
+    if (!cur) {
+      map.set(sig, p)
+      continue
+    }
+    map.set(sig, pickSpotlightPrimary(cur, p))
+  }
+  return Array.from(map.values())
+}

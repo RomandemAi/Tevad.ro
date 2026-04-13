@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import AppShell from '@/components/AppShell'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
+import StatusHintIcon from '@/components/StatusHintIcon'
+import { getStatusHint } from '@/lib/record-status-hint'
 
 export const revalidate = 3600
 
@@ -19,7 +21,7 @@ export default async function PromisesPage() {
   const supabase = createClient()
   const { data: records } = await supabase
     .from('records')
-    .select(`id, slug, type, text, status, date_made, impact_level, ai_confidence,
+    .select(`id, slug, type, text, status, date_made, impact_level, ai_confidence, opinion_exempt, ai_reasoning,
       politicians (*)`)
     .order('date_made', { ascending: false })
     .limit(200)
@@ -43,44 +45,59 @@ export default async function PromisesPage() {
         <div className="mx-auto max-w-[860px] space-y-3">
         {(records ?? []).map((rec, i) => {
           const pol = rec.politicians as any
+          const hint = getStatusHint({
+            status: rec.status as 'true' | 'false' | 'partial' | 'pending',
+            type: rec.type as 'promise' | 'statement' | 'vote',
+            opinion_exempt: rec.opinion_exempt,
+            ai_reasoning: rec.ai_reasoning,
+          })
           return (
-            <Link
+            <div
               key={rec.id}
-              href={`/politician/${pol?.slug}`}
-              className="te-politician-card group flex animate-fade-up items-start gap-3 rounded-2xl border border-[var(--gray-200)] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06)] transition-shadow duration-200 ease-out md:hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+              className="te-politician-card animate-fade-up flex items-stretch rounded-2xl border border-[var(--gray-200)] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06)] transition-shadow duration-200 ease-out md:hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
               style={{ animationDelay: `${Math.min(i, 20) * 0.03}s` }}
             >
-              <PoliticianAvatar
-                name={pol?.name ?? '?'}
-                avatarColor={pol?.avatar_color}
-                avatarTextColor={pol?.avatar_text_color}
-                avatarUrl={pol?.avatar_url}
-                size="sm"
-                className="mt-0.5"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="mb-1 flex items-center gap-2">
-                  <span className="font-mono text-[10px] text-[var(--gray-500)]">{pol?.name}</span>
-                  <span style={{ color: pol?.avatar_text_color ?? 'var(--cyan)', fontSize: '9px' }} className="font-mono">
-                    {pol?.party_short}
-                  </span>
-                </div>
-                <p className="line-clamp-2 text-[13px] leading-snug text-[var(--gray-600)]">{rec.text}</p>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span className={`rounded border px-1.5 py-0.5 font-mono text-[8px] ${STATUS_CLASS[rec.status]}`}>
-                    {STATUS_LABEL[rec.status]}
-                  </span>
-                  <span className="font-mono text-[9px] text-[var(--gray-500)]">
-                    {new Date(rec.date_made).toLocaleDateString('ro-RO', { month: 'short', year: 'numeric' }).toUpperCase()}
-                  </span>
-                  {rec.impact_level === 'high' && (
-                    <span className="rounded border border-[rgba(217,119,6,0.35)] bg-[var(--amber-bg)] px-1 py-0.5 font-mono text-[8px] text-[var(--amber)]">
-                      IMPACT MAJOR
+              <Link
+                href={`/politician/${pol?.slug}`}
+                className="group flex min-w-0 flex-1 items-start gap-3 p-4"
+              >
+                <PoliticianAvatar
+                  name={pol?.name ?? '?'}
+                  avatarColor={pol?.avatar_color}
+                  avatarTextColor={pol?.avatar_text_color}
+                  avatarUrl={pol?.avatar_url}
+                  size="sm"
+                  className="mt-0.5"
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="font-mono text-[10px] text-[var(--gray-500)]">{pol?.name}</span>
+                    <span style={{ color: pol?.avatar_text_color ?? 'var(--cyan)', fontSize: '9px' }} className="font-mono">
+                      {pol?.party_short}
                     </span>
-                  )}
+                  </div>
+                  <p className="line-clamp-2 text-[13px] leading-snug text-[var(--gray-600)]">{rec.text}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <span className={`rounded border px-1.5 py-0.5 font-mono text-[8px] ${STATUS_CLASS[rec.status]}`}>
+                      {STATUS_LABEL[rec.status]}
+                    </span>
+                    <span className="font-mono text-[9px] text-[var(--gray-500)]">
+                      {new Date(rec.date_made).toLocaleDateString('ro-RO', { month: 'short', year: 'numeric' }).toUpperCase()}
+                    </span>
+                    {rec.impact_level === 'high' && (
+                      <span className="rounded border border-[rgba(217,119,6,0.35)] bg-[var(--amber-bg)] px-1 py-0.5 font-mono text-[8px] text-[var(--amber)]">
+                        IMPACT MAJOR
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+              {hint.show && (
+                <div className="flex shrink-0 items-center border-l border-[var(--gray-100)] px-2 py-4 md:px-3">
+                  <StatusHintIcon summary={hint.summary} detail={hint.detail} compact />
+                </div>
+              )}
+            </div>
           )
         })}
         {(records ?? []).length === 0 && (

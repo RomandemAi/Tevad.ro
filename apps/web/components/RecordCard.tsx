@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { getStatusHint } from '@/lib/record-status-hint'
+import StatusHintIcon from '@/components/StatusHintIcon'
 
 interface Source {
   id: string
@@ -24,6 +26,7 @@ interface PoliticianRecord {
   dislikes: number
   ai_confidence?: number
   opinion_exempt?: boolean
+  ai_reasoning?: string | null
   sources: Source[]
 }
 
@@ -112,6 +115,12 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
 
   const primary = record.sources?.[0]
   const reportKey = record.slug || record.id
+  const statusHint = getStatusHint({
+    status: record.status,
+    type: record.type,
+    opinion_exempt: record.opinion_exempt,
+    ai_reasoning: record.ai_reasoning,
+  })
 
   return (
     <div
@@ -119,10 +128,15 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
       style={{ borderLeftColor: BORDER_COLOR[record.status] }}
     >
       <div className="mb-3 flex flex-wrap items-start gap-2">
-        <span
-          className={`inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-wide ${STATUS_CLASS[record.status]}`}
-        >
-          {STATUS_LABEL[record.status]}
+        <span className="inline-flex items-center gap-1">
+          <span
+            className={`inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-wide ${STATUS_CLASS[record.status]}`}
+          >
+            {STATUS_LABEL[record.status]}
+          </span>
+          {statusHint.show && (
+            <StatusHintIcon summary={statusHint.summary} detail={statusHint.detail} />
+          )}
         </span>
         <span className="inline-flex items-center rounded-full border border-[var(--gray-200)] bg-white px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-600)]">
           {TYPE_LABEL[record.type]}

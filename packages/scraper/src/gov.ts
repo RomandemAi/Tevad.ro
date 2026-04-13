@@ -57,6 +57,7 @@ export function isLikelyCabinetPersonName(name: string): boolean {
   if (n.length < 6) return false
   if (/\bgalerie\b/.test(n)) return false
   if (/\bcabinetul\b/.test(n)) return false
+  if (/\bphoto\s+gallery\b/.test(n)) return false
   const words = name.trim().split(/\s+/).filter(Boolean)
   if (words.length < 2) return false
   return true
