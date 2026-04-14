@@ -11,7 +11,8 @@
   },
   "dependencies": {
     "@tevad/verifier": "*",
-    "@supabase/supabase-js": "^2.43.0"
+    "@supabase/supabase-js": "^2.43.0",
+    "dotenv": "^17.4.1"
   },
   "devDependencies": {
     "typescript": "^5.4.0",
