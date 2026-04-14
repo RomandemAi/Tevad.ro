@@ -52,10 +52,9 @@
   --purple: #a78bfa;
 
   /*
-   * Background art — bounded width (avoids one giant node), shared across light surfaces.
-   * RO wash: very subtle civic blue / gold / red mist (flag tones), not literal stripes.
+   * Romanian tricolor nuance (blue / gold / red) — CSS only, no bitmaps.
+   * Light mesh: lists, about, bridge below hero. Dark mesh: sidebar, mobile bar, footer.
    */
-  --tev-bg-art-width: min(100%, 1024px);
   --tev-ro-wash-light: linear-gradient(
     100deg,
     rgba(0, 43, 127, 0.07) 0%,
@@ -63,6 +62,21 @@
     transparent 55%,
     rgba(206, 17, 38, 0.05) 100%
   );
+  --tev-ro-mesh-light:
+    radial-gradient(ellipse 88% 62% at 8% 4%, rgba(0, 43, 127, 0.095) 0%, transparent 54%),
+    radial-gradient(ellipse 72% 52% at 94% 14%, rgba(252, 209, 22, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 78% 58% at 72% 98%, rgba(206, 17, 38, 0.065) 0%, transparent 56%);
+  --tev-ro-mesh-dark:
+    linear-gradient(
+      118deg,
+      rgba(0, 61, 153, 0.38) 0%,
+      transparent 38%,
+      rgba(252, 209, 22, 0.065) 50%,
+      transparent 66%,
+      rgba(165, 32, 48, 0.24) 100%
+    ),
+    radial-gradient(ellipse 105% 88% at 100% -2%, rgba(29, 110, 245, 0.22) 0%, transparent 56%),
+    radial-gradient(ellipse 88% 72% at -8% 102%, rgba(206, 17, 38, 0.15) 0%, transparent 52%);
   --tev-page-scrim: linear-gradient(
     180deg,
     rgba(248, 250, 252, 0.72) 0%,
@@ -74,24 +88,6 @@
     rgba(255, 255, 255, 0.4) 0%,
     rgba(248, 250, 252, 0.2) 100%
   );
-}
-
-@media (min-width: 1280px) {
-  :root {
-    --tev-bg-art-width: min(100%, min(88vw, 1440px));
-  }
-}
-
-@media (min-width: 1536px) {
-  :root {
-    --tev-bg-art-width: min(100%, min(90vw, 1680px));
-  }
-}
-
-@media (min-width: 1920px) {
-  :root {
-    --tev-bg-art-width: min(100%, min(92vw, 1760px));
-  }
 }
 
 * {
@@ -267,20 +263,23 @@ body {
     }
   }
 
-  /* Desktop sidebar: depth + network art (replaces inline styles in Sidebar) */
+  /*
+   * Navy chrome — same RO tricolor story as .tev-page-fill, tuned for dark surfaces.
+   * Shared with mobile nav + footer so shell reads as one system.
+   */
+  .tev-chrome-navy,
   .tev-shell-sidebar {
     background-color: var(--navy);
-    background-image: linear-gradient(
-        180deg,
-        rgba(15, 31, 61, 0.97) 0%,
-        rgba(15, 31, 61, 0.92) 45%,
-        rgba(15, 31, 61, 0.98) 100%
-      ),
-      linear-gradient(160deg, rgba(29, 110, 245, 0.14) 0%, transparent 50%, rgba(14, 165, 233, 0.1) 100%),
-      url(/images/bg-network.png);
-    background-size: 100% 100%, 100% 100%, min(100%, 400px) auto;
+    background-image:
+      var(--tev-ro-mesh-dark),
+      linear-gradient(160deg, rgba(29, 110, 245, 0.13) 0%, transparent 52%, rgba(14, 165, 233, 0.09) 100%),
+      linear-gradient(180deg, rgba(15, 31, 61, 0.42) 0%, rgba(15, 31, 61, 0.74) 50%, rgba(15, 31, 61, 0.88) 100%);
+    background-size: 100% 100%, 100% 100%, 100% 100%;
     background-repeat: no-repeat, no-repeat, no-repeat;
-    background-position: center, center, center bottom;
+    background-position: center, center, center;
+  }
+
+  .tev-shell-sidebar {
     box-shadow: var(--shadow-sidebar);
   }
 
@@ -314,13 +313,13 @@ body {
   position: relative;
   isolation: isolate;
   background-color: var(--gray-50);
-  background-image: var(--tev-stats-scrim), var(--tev-ro-wash-light);
-  background-size: 100% 100%, 100% 100%;
-  background-repeat: no-repeat, no-repeat;
-  background-position: center, center;
+  background-image: var(--tev-stats-scrim), var(--tev-ro-wash-light), var(--tev-ro-mesh-light);
+  background-size: 100% 100%, 100% 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-position: center, center, center;
 }
 
-/* Hero → list bridge: Romania map + navy bleed (wide art follows --tev-bg-art-width) */
+/* Hero → list bridge: navy bleed + same RO mesh as main (no map bitmap) */
 .tev-neutrality-section {
   position: relative;
   isolation: isolate;
@@ -340,10 +339,11 @@ body {
       rgba(248, 250, 252, 0.82) 38%,
       rgba(241, 245, 249, 0.94) 100%
     ),
-    var(--tev-ro-wash-light), url(/images/bg-romania.png);
-  background-size: 100% 100%, 100% 100%, 100% 100%, var(--tev-bg-art-width) auto;
+    var(--tev-ro-wash-light),
+    var(--tev-ro-mesh-light);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
   background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-  background-position: center, center, center, 18% 42%;
+  background-position: center, center, center, center;
 }
 
 /* Main scroll areas (lists, about, politician, etc.) */
@@ -352,10 +352,10 @@ body {
   min-height: 0;
   overflow-y: auto;
   background-color: var(--gray-50);
-  background-image: var(--tev-page-scrim), var(--tev-ro-wash-light), url(/images/bg-network.png);
-  background-size: 100% 100%, 100% 100%, var(--tev-bg-art-width) auto;
+  background-image: var(--tev-page-scrim), var(--tev-ro-wash-light), var(--tev-ro-mesh-light);
+  background-size: 100% 100%, 100% 100%, 100% 100%;
   background-repeat: no-repeat, no-repeat, no-repeat;
-  background-position: center, center, 50% 12%;
+  background-position: center, center, center;
 }
 
 .tev-audit-wrap {
@@ -363,10 +363,10 @@ body {
   min-height: 0;
   overflow-y: auto;
   background-color: var(--gray-50);
-  background-image: var(--tev-page-scrim), var(--tev-ro-wash-light), url(/images/bg-network.png);
-  background-size: 100% 100%, 100% 100%, var(--tev-bg-art-width) auto;
+  background-image: var(--tev-page-scrim), var(--tev-ro-wash-light), var(--tev-ro-mesh-light);
+  background-size: 100% 100%, 100% 100%, 100% 100%;
   background-repeat: no-repeat, no-repeat, no-repeat;
-  background-position: center, center, 50% 8%;
+  background-position: center, center, center;
 }
 
 @media (min-width: 1536px) {
@@ -378,10 +378,10 @@ body {
         transparent 93%,
         rgba(248, 250, 252, 0.82) 100%
       ),
-      var(--tev-page-scrim), var(--tev-ro-wash-light), url(/images/bg-network.png);
-    background-size: 100% 100%, 100% 100%, 100% 100%, var(--tev-bg-art-width) auto;
+      var(--tev-page-scrim), var(--tev-ro-wash-light), var(--tev-ro-mesh-light);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
     background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-    background-position: center, center, center, 50% 12%;
+    background-position: center, center, center, center;
   }
 
   .tev-audit-wrap {
@@ -392,9 +392,9 @@ body {
         transparent 93%,
         rgba(248, 250, 252, 0.82) 100%
       ),
-      var(--tev-page-scrim), var(--tev-ro-wash-light), url(/images/bg-network.png);
-    background-size: 100% 100%, 100% 100%, 100% 100%, var(--tev-bg-art-width) auto;
+      var(--tev-page-scrim), var(--tev-ro-wash-light), var(--tev-ro-mesh-light);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
     background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-    background-position: center, center, center, 50% 8%;
+    background-position: center, center, center, center;
   }
 }

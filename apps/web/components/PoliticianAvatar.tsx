@@ -1,11 +1,15 @@
 import Image from 'next/image'
+import PartyLogo from './PartyLogo'
+import { partyLogoSrc } from '@/lib/party-logo'
 
 interface PoliticianAvatarProps {
   name: string
   avatarColor?: string | null
   avatarTextColor?: string | null
-  /** Official portrait (e.g. gov.ro cabinet); when set, shown instead of initials */
+  /** Official portrait (e.g. gov.ro cabinet); when set, shown instead of initials / party logo */
   avatarUrl?: string | null
+  /** When no portrait: show party logo in the avatar slot if a static asset exists; else initials */
+  partyShort?: string | null
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'card'
   shape?: 'rounded' | 'circle'
   /** Used with shape=circle — party color at ~30% for outer ring */
@@ -34,6 +38,7 @@ export default function PoliticianAvatar({
   avatarColor,
   avatarTextColor,
   avatarUrl,
+  partyShort,
   size = 'md',
   shape = 'rounded',
   ringColor,
@@ -55,6 +60,10 @@ export default function PoliticianAvatar({
     avatarUrl.length > 8 &&
     (avatarUrl.startsWith('https://') || avatarUrl.startsWith('http://'))
 
+  const partyLogo = partyLogoSrc(partyShort)
+  const showPartyLogo = !showPhoto && Boolean(partyLogo)
+  const logoSize = Math.max(22, Math.round(px.box - 10))
+
   return (
     <div
       className={`${SIZE[size]} relative flex flex-shrink-0 items-center justify-center overflow-hidden font-mono font-medium ${className}`}
@@ -72,7 +81,7 @@ export default function PoliticianAvatar({
         justifyContent: 'center',
         flexShrink: 0,
         boxSizing: 'border-box',
-        background: showPhoto ? 'var(--gray-100)' : avatarColor ?? '#0d2a4a',
+        background: showPhoto ? 'var(--gray-100)' : showPartyLogo ? '#fff' : avatarColor ?? '#0d2a4a',
         color: avatarTextColor ?? '#378ADD',
         border: shape === 'circle' ? '2px solid white' : '1px solid rgba(255,255,255,0.06)',
         boxShadow: shape === 'circle' && ringColor ? `0 0 0 2px ${ring}` : undefined,
@@ -80,7 +89,7 @@ export default function PoliticianAvatar({
     >
       {showPhoto ? (
         <Image
-          src={avatarUrl}
+          src={avatarUrl!}
           alt=""
           width={px.box}
           height={px.box}
@@ -88,6 +97,10 @@ export default function PoliticianAvatar({
           style={{ borderRadius: radius }}
           sizes={`${px.box}px`}
         />
+      ) : showPartyLogo ? (
+        <span className="flex h-full w-full items-center justify-center rounded-[inherit] bg-white p-1">
+          <PartyLogo partyShort={partyShort} size={logoSize} className="border border-[var(--gray-200)] bg-white" />
+        </span>
       ) : (
         initials
       )}

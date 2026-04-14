@@ -12,6 +12,34 @@ import {
   isGovernmentProgramRecord,
 } from '@/lib/is-government-program-record'
 
+const STATUS_QUERY_PARAM = 'status' as const
+
+type RecordStatusFilter = 'true' | 'false' | 'partial' | 'pending'
+
+function parseStatusFilter(raw: string | undefined): RecordStatusFilter | null {
+  if (!raw) return null
+  const s = raw.toLowerCase()
+  if (s === 'true' || s === 'false' || s === 'partial' || s === 'pending') return s
+  return null
+}
+
+/** Preserves gov + status when building filter links. */
+function promisesHref(opts: { gov?: boolean; status?: RecordStatusFilter | null }) {
+  const q = new URLSearchParams()
+  if (opts.gov) q.set(GOV_PROGRAM_FILTER_PARAM, GOV_PROGRAM_FILTER_VALUE)
+  if (opts.status) q.set(STATUS_QUERY_PARAM, opts.status)
+  const qs = q.toString()
+  return qs ? `/promises?${qs}` : '/promises'
+}
+
+const STATUS_FILTER_OPTIONS: { status: RecordStatusFilter | null; label: string }[] = [
+  { status: null, label: 'Toate' },
+  { status: 'true', label: 'Adevărate' },
+  { status: 'false', label: 'False' },
+  { status: 'partial', label: 'Parțiale' },
+  { status: 'pending', label: 'În verificare' },
+]
+
 export const revalidate = 300
 
 export const metadata: Metadata = {
@@ -31,7 +59,7 @@ const STATUS_CLASS: Record<string, string> = {
   pending: 'bg-[var(--slate-bg)] text-[var(--slate)] border-[var(--gray-200)]',
 }
 
-type Props = { searchParams?: { filter?: string } }
+type Props = { searchParams?: { filter?: string; status?: string } }
 
 export default async function PromisesPage({ searchParams }: Props) {
   const supabase = createClient()
@@ -43,11 +71,17 @@ export default async function PromisesPage({ searchParams }: Props) {
     .limit(250)
 
   const filterGov = searchParams?.filter === GOV_PROGRAM_FILTER_VALUE
-  const records = filterGov
+  const statusFilter = parseStatusFilter(searchParams?.status)
+
+  let records = filterGov
     ? (recordsRaw ?? []).filter(r =>
         isGovernmentProgramRecord(r.slug as string, (r as { context?: string | null }).context)
       )
     : (recordsRaw ?? [])
+
+  if (statusFilter) {
+    records = records.filter(r => r.status === statusFilter)
+  }
 
   const breadcrumb = (
     <>
@@ -60,33 +94,60 @@ export default async function PromisesPage({ searchParams }: Props) {
       breadcrumb={breadcrumb}
       topBarRight={
         <span className="font-mono text-[10px] text-[var(--gray-500)]">
-          {records.length} înregistrări{filterGov ? ' (program de guvernare)' : ''}
+          {records.length} înregistrări
+          {filterGov ? ' (program de guvernare)' : ''}
+          {statusFilter ? ` (status: ${STATUS_LABEL[statusFilter]})` : ''}
         </span>
       }
     >
       <div className="tev-page-fill flex-1 overflow-y-auto p-4 md:p-6">
-        <div className="mx-auto mb-4 flex max-w-[860px] flex-wrap items-center gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--gray-500)]">Filtru</span>
-          <Link
-            href="/promises"
-            className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] transition-colors ${
-              !filterGov
-                ? 'border-[var(--navy)] bg-[var(--navy)] text-white'
-                : 'border-[var(--gray-200)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-300)]'
-            }`}
-          >
-            Toate
-          </Link>
-          <Link
-            href={`/promises?${GOV_PROGRAM_FILTER_PARAM}=${GOV_PROGRAM_FILTER_VALUE}`}
-            className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] transition-colors ${
-              filterGov
-                ? 'border-[var(--navy)] bg-[var(--navy)] text-white'
-                : 'border-[var(--gray-200)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-300)]'
-            }`}
-          >
-            Program de guvernare
-          </Link>
+        <div className="mx-auto mb-4 flex max-w-[860px] flex-col gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
+              Verdict
+            </span>
+            {STATUS_FILTER_OPTIONS.map(({ status, label }) => {
+              const active = statusFilter === status
+              return (
+                <Link
+                  key={label}
+                  href={promisesHref({ gov: filterGov, status })}
+                  className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] transition-colors ${
+                    active
+                      ? 'border-[var(--navy)] bg-[var(--navy)] text-white'
+                      : 'border-[var(--gray-200)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-300)]'
+                  }`}
+                >
+                  {label}
+                </Link>
+              )
+            })}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
+              Sursă
+            </span>
+            <Link
+              href={promisesHref({ gov: false, status: statusFilter })}
+              className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] transition-colors ${
+                !filterGov
+                  ? 'border-[var(--navy)] bg-[var(--navy)] text-white'
+                  : 'border-[var(--gray-200)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-300)]'
+              }`}
+            >
+              Toate
+            </Link>
+            <Link
+              href={promisesHref({ gov: true, status: statusFilter })}
+              className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] transition-colors ${
+                filterGov
+                  ? 'border-[var(--navy)] bg-[var(--navy)] text-white'
+                  : 'border-[var(--gray-200)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-300)]'
+              }`}
+            >
+              Program de guvernare
+            </Link>
+          </div>
         </div>
         <div className="mx-auto max-w-[860px] space-y-3">
         {records.map((rec, i) => {
@@ -160,7 +221,9 @@ export default async function PromisesPage({ searchParams }: Props) {
         })}
         {records.length === 0 && (
           <div className="flex items-center justify-center rounded-2xl border border-[var(--gray-200)] bg-white p-16 font-mono text-[12px] text-[var(--gray-500)] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06)]">
-            Nicio înregistrare
+            {(recordsRaw?.length ?? 0) > 0 && (statusFilter || filterGov)
+              ? 'Nicio înregistrare pentru filtrele alese'
+              : 'Nicio înregistrare'}
           </div>
         )}
         </div>

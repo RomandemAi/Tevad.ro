@@ -3,9 +3,7 @@
 import Link from 'next/link'
 import { displayScore, scoreColor } from '@/lib/score-utils'
 import PoliticianAvatar from './PoliticianAvatar'
-import PartyLogo from './PartyLogo'
 import type { Politician } from './politician-types'
-import { partyBadgeBackground } from '@/lib/party-logo'
 
 function chamberLabel(ch: string) {
   if (!ch) return '—'
@@ -52,6 +50,7 @@ export default function PoliticianCard({ pol, rank, flash, showLive }: Politicia
           avatarColor={pol.avatar_color}
           avatarTextColor={pol.avatar_text_color}
           avatarUrl={pol.avatar_url}
+          partyShort={pol.party_short}
           size="card"
           shape="circle"
           ringColor={ring}
@@ -65,6 +64,9 @@ export default function PoliticianCard({ pol, rank, flash, showLive }: Politicia
               </div>
               <div className="mt-0.5 line-clamp-2 break-words font-sans text-[12px] leading-snug text-[var(--gray-500)] md:text-[13px]">
                 {pol.role}
+                {pol.party_short ? (
+                  <span className="text-[var(--gray-400)]"> · {pol.party_short}</span>
+                ) : null}
               </div>
             </div>
             <div className="flex flex-shrink-0 flex-col items-end gap-1">
@@ -101,13 +103,6 @@ export default function PoliticianCard({ pol, rank, flash, showLive }: Politicia
             <div className="ml-auto hidden items-center gap-2 md:flex">
               <span className="rounded-full bg-[var(--gray-100)] px-2 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-600)]">
                 {chamberLabel(pol.chamber)}
-              </span>
-              <span
-                className="inline-flex rounded-full p-0.5"
-                style={{ backgroundColor: partyBadgeBackground(pol.party_short) }}
-                title={pol.party_short || undefined}
-              >
-                <PartyLogo partyShort={pol.party_short} size={22} className="border border-[var(--gray-200)] bg-white" />
               </span>
               <svg
                 className="h-4 w-4 text-[var(--gray-300)] transition-transform md:group-hover:translate-x-0.5"
