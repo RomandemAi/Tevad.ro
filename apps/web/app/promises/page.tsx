@@ -7,7 +7,7 @@ import PoliticianAvatar from '@/components/PoliticianAvatar'
 import StatusHintIcon from '@/components/StatusHintIcon'
 import { getStatusHint } from '@/lib/record-status-hint'
 
-export const revalidate = 3600
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Toate promisiunile',
@@ -30,10 +30,10 @@ export default async function PromisesPage() {
   const supabase = createClient()
   const { data: records } = await supabase
     .from('records')
-    .select(`id, slug, type, text, status, date_made, impact_level, ai_confidence, opinion_exempt, ai_reasoning,
+    .select(`id, slug, type, text, status, date_made, created_at, impact_level, ai_confidence, opinion_exempt, ai_reasoning,
       politicians (*)`)
-    .order('date_made', { ascending: false })
-    .limit(200)
+    .order('created_at', { ascending: false })
+    .limit(250)
 
   const breadcrumb = (
     <>
