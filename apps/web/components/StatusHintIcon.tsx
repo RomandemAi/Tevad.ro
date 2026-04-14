@@ -13,23 +13,23 @@ export default function StatusHintIcon({ summary, detail, compact }: Props) {
   const [open, setOpen] = useState(false)
   const panelId = useId()
   const titleText = detail ? `${summary} ${detail}` : summary
-  const ariaLabel = detail ? `${summary} Apasă pentru detalii suplimentare.` : summary
+  const ariaLabel = `${summary} Apasă pentru detalii.`
 
   return (
     <span className="inline-flex flex-col items-start gap-1 align-middle">
       <button
         type="button"
         className={`inline-flex shrink-0 items-center justify-center rounded-full border border-[var(--gray-200)] bg-[var(--gray-50)] text-[var(--gray-500)] transition-colors hover:border-[var(--gray-300)] hover:bg-[var(--gray-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--blue)] focus-visible:ring-offset-2 ${
-          detail ? 'cursor-pointer' : 'cursor-help'
+          'cursor-pointer'
         } ${compact ? 'h-5 w-5' : 'h-6 w-6'}`}
         title={titleText}
         aria-label={ariaLabel}
-        aria-expanded={detail ? open : undefined}
-        aria-controls={detail ? panelId : undefined}
+        aria-expanded={open}
+        aria-controls={panelId}
         onClick={e => {
           e.preventDefault()
           e.stopPropagation()
-          if (detail) setOpen(o => !o)
+          setOpen(o => !o)
         }}
       >
         <span className="sr-only">Informații despre verdict</span>
@@ -47,13 +47,14 @@ export default function StatusHintIcon({ summary, detail, compact }: Props) {
           />
         </svg>
       </button>
-      {detail && open && (
+      {open && (
         <p
           id={panelId}
-          className="max-w-[min(100%,280px)] rounded border border-[var(--gray-200)] bg-white px-2 py-1.5 font-mono text-[9px] leading-snug text-[var(--gray-600)] shadow-sm"
+          className="max-w-[min(100%,300px)] rounded border border-[var(--gray-200)] bg-white px-2 py-1.5 font-mono text-[9px] leading-snug text-[var(--gray-600)] shadow-sm"
           role="note"
         >
-          {detail}
+          <span className="text-[var(--gray-700)]">{summary}</span>
+          {detail ? <span className="text-[var(--gray-600)]">{` ${detail}`}</span> : null}
         </p>
       )}
     </span>
