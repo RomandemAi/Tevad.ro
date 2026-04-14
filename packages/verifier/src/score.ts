@@ -11,8 +11,41 @@
  * Cron: triggered after every new record or reaction batch
  */
 
+import { existsSync, readFileSync } from 'fs'
+import { resolve } from 'path'
 import { createClient } from '@supabase/supabase-js'
 import { explainScoreChange } from './models'
+
+function loadEnvFiles(): void {
+  const candidates = [
+    resolve(process.cwd(), '.env'),
+    resolve(process.cwd(), '.env.local'),
+    resolve(process.cwd(), 'apps/web/.env.local'),
+    resolve(process.cwd(), '..', '.env'),
+    resolve(process.cwd(), '..', '..', '.env'),
+    resolve(process.cwd(), 'packages/verifier', '.env'),
+  ]
+  for (const p of candidates) {
+    if (!existsSync(p)) continue
+    const text = readFileSync(p, 'utf8')
+    for (const line of text.split(/\r?\n/)) {
+      const t = line.trim()
+      if (!t || t.startsWith('#')) continue
+      const i = t.indexOf('=')
+      if (i <= 0) continue
+      const k = t.slice(0, i).trim()
+      let v = t.slice(i + 1).trim()
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+        v = v.slice(1, -1)
+      }
+      if (process.env[k] === undefined) process.env[k] = v
+    }
+    console.log('[score] Loaded env from', p)
+    return
+  }
+}
+
+loadEnvFiles()
 
 function getServiceSupabaseUrl(): string {
   return process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -165,8 +198,32 @@ async function calcConsistency(politicianId: string): Promise<number> {
   return Math.round(Math.max(ratio, 0) * 100)
 }
 
+/** No verified verdicts yet — keep neutral baseline (SCORING.md “no signal”). Pending-only rows used to distort sources (e.g. ~30%). */
+async function hasVerifiedRecord(politicianId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('records')
+    .select('id')
+    .eq('politician_id', politicianId)
+    .in('status', ['true', 'false', 'partial'])
+    .limit(1)
+  if (error) throw new Error(error.message)
+  return (data?.length ?? 0) > 0
+}
+
 // ---- Master score calculator ----
 export async function recalcScore(politicianId: string): Promise<ScoreComponents> {
+  const neutral: ScoreComponents = {
+    promises: 50,
+    reactions: 50,
+    sources: 50,
+    consistency: 50,
+    total: 50,
+  }
+
+  if (!(await hasVerifiedRecord(politicianId))) {
+    return neutral
+  }
+
   const [promises, reactions, sources, consistency] = await Promise.all([
     calcPromises(politicianId),
     calcReactions(politicianId),

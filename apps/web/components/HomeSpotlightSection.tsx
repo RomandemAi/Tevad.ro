@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { displayScore } from '@/lib/score-utils'
+import PartyLogo from '@/components/PartyLogo'
 
 export interface SpotlightPolitician {
   id: string
@@ -80,7 +81,8 @@ export default function HomeSpotlightSection({
                     href={`/politician/${p.slug}`}
                     className="flex min-w-[200px] max-w-[280px] flex-col rounded-xl border border-[var(--gray-200)] bg-white px-4 py-3 shadow-sm transition-shadow hover:border-[rgba(29,110,245,0.25)] hover:shadow-md"
                   >
-                    <span className="font-sans text-[14px] font-semibold leading-snug text-[var(--gray-900)]">
+                    <span className="flex items-center gap-2 font-sans text-[14px] font-semibold leading-snug text-[var(--gray-900)]">
+                      <PartyLogo partyShort={p.party_short} size={24} className="border border-[var(--gray-200)] bg-white" />
                       {p.name}
                     </span>
                     <span className="mt-0.5 line-clamp-2 font-sans text-[12px] text-[var(--gray-500)]">{p.role}</span>

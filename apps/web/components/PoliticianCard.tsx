@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { displayScore, scoreColor } from '@/lib/score-utils'
 import PoliticianAvatar from './PoliticianAvatar'
+import PartyLogo from './PartyLogo'
 import type { Politician } from './politician-types'
 
 function chamberLabel(ch: string) {
@@ -112,6 +113,7 @@ export default function PoliticianCard({ pol, rank, flash, showLive }: Politicia
               <span className="rounded-full bg-[var(--gray-100)] px-2 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-600)]">
                 {chamberLabel(pol.chamber)}
               </span>
+              <PartyLogo partyShort={pol.party_short} size={22} className="border border-[var(--gray-200)] bg-white" />
               <span
                 className="rounded-full px-2 py-1 font-mono text-[9px] uppercase tracking-wide"
                 style={{ backgroundColor: party.bg, color: party.color }}

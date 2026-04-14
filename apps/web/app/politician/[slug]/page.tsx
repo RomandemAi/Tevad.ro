@@ -9,6 +9,7 @@ import PoliticianAvatar from '@/components/PoliticianAvatar'
 import ScoreBreakdown from '@/components/ScoreBreakdown'
 import WealthDeclarationsPanel from '@/components/WealthDeclarationsPanel'
 import RecordsSection from '@/components/RecordsSection'
+import PartyLogo from '@/components/PartyLogo'
 
 export const revalidate = 3600
 
@@ -168,16 +169,19 @@ export default async function PoliticianPage({ params }: Props) {
                     >
                       {pol.chamber}
                     </span>
-                    <span
-                      className="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide"
-                      style={{
-                        backgroundColor: pol.avatar_text_color
-                          ? `color-mix(in srgb, ${pol.avatar_text_color} 12%, white)`
-                          : 'var(--blue-light)',
-                        color: pol.avatar_text_color ?? 'var(--blue)',
-                      }}
-                    >
-                      {pol.party_short}
+                    <span className="inline-flex items-center gap-1.5">
+                      <PartyLogo partyShort={pol.party_short} size={26} className="border border-[var(--gray-200)] bg-white" />
+                      <span
+                        className="rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide"
+                        style={{
+                          backgroundColor: pol.avatar_text_color
+                            ? `color-mix(in srgb, ${pol.avatar_text_color} 12%, white)`
+                            : 'var(--blue-light)',
+                          color: pol.avatar_text_color ?? 'var(--blue)',
+                        }}
+                      >
+                        {pol.party_short}
+                      </span>
                     </span>
                   </div>
                   {pol.constituency && (

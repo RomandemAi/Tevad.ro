@@ -28,12 +28,14 @@
     "score:recalc": "tsx packages/verifier/src/score.ts",
     "verify:pilot": "npm run verify:pilot -w @tevad/verifier",
     "verify:contradict": "tsx packages/verifier/src/contradict.ts",
-    "seed-program": "npm run seed-program -w @tevad/scraper"
+    "seed-program": "npm run seed-program -w @tevad/scraper",
+    "build:party-logos": "node scripts/build-party-logos.mjs"
   },
   "devDependencies": {
-    "turbo": "^2.0.0",
-    "typescript": "^5.4.0",
+    "@types/node": "^20.0.0",
+    "sharp": "^0.34.5",
     "tsx": "^4.7.0",
-    "@types/node": "^20.0.0"
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0"
   }
 }
