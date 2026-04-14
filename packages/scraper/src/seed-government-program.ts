@@ -65,7 +65,7 @@ async function main() {
         slug: row.slug,
         type: 'promise',
         text: row.text,
-        context: ctx,
+        context: row.ref ? `${ctx}\n\nReferință (program): ${row.ref}` : ctx,
         topic: row.topic,
         status: 'pending',
         date_made: '2025-06-23',
