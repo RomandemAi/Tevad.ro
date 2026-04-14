@@ -5,21 +5,11 @@ import { displayScore, scoreColor } from '@/lib/score-utils'
 import PoliticianAvatar from './PoliticianAvatar'
 import PartyLogo from './PartyLogo'
 import type { Politician } from './politician-types'
+import { partyBadgeBackground } from '@/lib/party-logo'
 
 function chamberLabel(ch: string) {
   if (!ch) return '—'
   return ch.charAt(0).toUpperCase() + ch.slice(1)
-}
-
-function partyPillStyle(short: string): { bg: string; color: string } {
-  const map: Record<string, { bg: string; color: string }> = {
-    PSD: { bg: 'rgba(220,38,38,0.1)', color: '#b91c1c' },
-    PNL: { bg: 'rgba(29,110,245,0.1)', color: '#1d4ed8' },
-    USR: { bg: 'rgba(22,163,74,0.1)', color: '#15803d' },
-    AUR: { bg: 'rgba(217,119,6,0.12)', color: '#b45309' },
-    UDMR: { bg: 'rgba(126,34,206,0.1)', color: '#6b21a8' },
-  }
-  return map[short] ?? { bg: 'var(--gray-100)', color: 'var(--gray-600)' }
 }
 
 interface PoliticianCardProps {
@@ -32,7 +22,6 @@ interface PoliticianCardProps {
 export default function PoliticianCard({ pol, rank, flash, showLive }: PoliticianCardProps) {
   const score = displayScore(pol.score)
   const col = scoreColor(score)
-  const party = partyPillStyle(pol.party_short ?? '')
   const ring =
     pol.avatar_text_color != null && pol.avatar_text_color !== ''
       ? `color-mix(in srgb, ${pol.avatar_text_color} 30%, transparent)`
@@ -113,12 +102,12 @@ export default function PoliticianCard({ pol, rank, flash, showLive }: Politicia
               <span className="rounded-full bg-[var(--gray-100)] px-2 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-600)]">
                 {chamberLabel(pol.chamber)}
               </span>
-              <PartyLogo partyShort={pol.party_short} size={22} className="border border-[var(--gray-200)] bg-white" />
               <span
-                className="rounded-full px-2 py-1 font-mono text-[9px] uppercase tracking-wide"
-                style={{ backgroundColor: party.bg, color: party.color }}
+                className="inline-flex rounded-full p-0.5"
+                style={{ backgroundColor: partyBadgeBackground(pol.party_short) }}
+                title={pol.party_short || undefined}
               >
-                {pol.party_short || '—'}
+                <PartyLogo partyShort={pol.party_short} size={22} className="border border-[var(--gray-200)] bg-white" />
               </span>
               <svg
                 className="h-4 w-4 text-[var(--gray-300)] transition-transform md:group-hover:translate-x-0.5"
