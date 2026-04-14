@@ -6,6 +6,8 @@
  * System prompt: prompts/neutrality-system-prompt.md (see neutrality-prompt.ts).
  *
  * Run: npx tsx packages/verifier/src/verify.ts --demo
+ * Pending batch: npm run verify:run -- --run-pending
+ * Optional: VERIFY_SLUG_PREFIX=gov-program VERIFY_LIMIT=50 to target slug prefix only.
  */
 
 import { passesSourceDiversityCheck } from '../../rss-monitor/src/sources.config'
@@ -204,12 +206,20 @@ async function runPending(): Promise<void> {
 
   const limitRaw = process.env.VERIFY_LIMIT
   const limit = Math.min(50, Math.max(1, Number(limitRaw) || 10))
+  const slugPrefix = process.env.VERIFY_SLUG_PREFIX?.trim()
 
-  const { data: records, error: rErr } = await supabase
+  let pendingQuery = supabase
     .from('records')
     .select('id, politician_id, slug, type, text, date_made, status, opinion_exempt')
     .eq('status', 'pending')
     .eq('opinion_exempt', false)
+
+  if (slugPrefix) {
+    pendingQuery = pendingQuery.like('slug', `${slugPrefix}%`)
+    console.log('[verify] Filtering pending by slug prefix:', slugPrefix)
+  }
+
+  const { data: records, error: rErr } = await pendingQuery
     .order('created_at', { ascending: true })
     .limit(limit)
 
