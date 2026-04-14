@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getSiteUrl } from '@/lib/site-url'
-import { scoreColor, scoreLabel, credBadgeClass } from '@/lib/score-utils'
+import { credBadgeClass, displayScore, scoreColor, scoreLabel } from '@/lib/score-utils'
 import AppShell from '@/components/AppShell'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
 import ScoreBreakdown from '@/components/ScoreBreakdown'
@@ -111,6 +111,7 @@ export default async function PoliticianPage({ params }: Props) {
     .eq('politician_id', pol.id)
     .order('year', { ascending: false })
 
+  const displayCredibility = displayScore(pol.score)
   const total = pol.total_records ?? 0
   const trueW = total > 0 ? ((pol.records_true ?? 0) / total) * 100 : 0
   const falseW = total > 0 ? ((pol.records_false ?? 0) / total) * 100 : 0
@@ -154,8 +155,8 @@ export default async function PoliticianPage({ params }: Props) {
                     <h1 className="font-sans text-[24px] font-bold leading-tight text-[var(--gray-900)] md:text-[28px]">
                       {pol.name}
                     </h1>
-                    <span className={`rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide ${credBadgeClass(pol.score)}`}>
-                      {scoreLabel(pol.score)}
+                    <span className={`rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide ${credBadgeClass(displayCredibility)}`}>
+                      {scoreLabel(displayCredibility)}
                     </span>
                   </div>
                   <p className="mt-2 font-sans text-[14px] text-[var(--gray-500)] md:text-[15px]">
@@ -201,7 +202,7 @@ export default async function PoliticianPage({ params }: Props) {
                 </div>
               </div>
 
-              <ScoreRing score={Number(pol.score ?? 0)} />
+              <ScoreRing score={displayCredibility} />
             </div>
 
             <ScoreBreakdown

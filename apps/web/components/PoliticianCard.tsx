@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { scoreColor } from '@/lib/score-utils'
+import { displayScore, scoreColor } from '@/lib/score-utils'
 import PoliticianAvatar from './PoliticianAvatar'
 import type { Politician } from './politician-types'
 
@@ -29,7 +29,7 @@ interface PoliticianCardProps {
 }
 
 export default function PoliticianCard({ pol, rank, flash, showLive }: PoliticianCardProps) {
-  const score = Number(pol.score ?? 0)
+  const score = displayScore(pol.score)
   const col = scoreColor(score)
   const party = partyPillStyle(pol.party_short ?? '')
   const ring =

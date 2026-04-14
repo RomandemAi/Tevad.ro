@@ -6,6 +6,7 @@ import FilterSearchBar, { type SortKey } from './FilterSearchBar'
 import PoliticianCard from './PoliticianCard'
 import type { Politician } from './politician-types'
 import { dedupePoliticiansByNameIdentity } from '@/lib/dedupe-politicians'
+import { displayScore } from '@/lib/score-utils'
 
 export type { Politician } from './politician-types'
 
@@ -65,7 +66,7 @@ export default function PoliticianList({ politicians }: PoliticianListProps) {
 
   const applySort = useCallback(
     (list: Politician[]) => {
-      const sc = (p: Politician) => Number(p.score ?? 0)
+      const sc = (p: Politician) => displayScore(p.score)
       const rf = (p: Politician) => Number(p.records_false ?? 0)
       if (sort === 'score') return [...list].sort((a, b) => sc(b) - sc(a))
       if (sort === 'falseRecords') return [...list].sort((a, b) => rf(b) - rf(a))

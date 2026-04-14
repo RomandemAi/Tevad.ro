@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { displayScore } from '@/lib/score-utils'
 
 export interface SpotlightPolitician {
   id: string
@@ -87,7 +88,7 @@ export default function HomeSpotlightSection({
                       <span className="rounded-full bg-[var(--gray-100)] px-2 py-0.5 uppercase tracking-wide text-[var(--gray-600)]">
                         {p.chamber}
                       </span>
-                      <span className="tabular-nums text-[var(--blue)]">{p.score ?? '—'}</span>
+                      <span className="tabular-nums text-[var(--blue)]">{displayScore(p.score)}</span>
                     </span>
                   </Link>
                 </li>

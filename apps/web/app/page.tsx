@@ -12,6 +12,7 @@ import HomeSpotlightSection, {
 } from '@/components/HomeSpotlightSection'
 import PoliticianList from '@/components/PoliticianList'
 import { dedupePoliticiansByNameIdentity, dedupeSpotlightPoliticians } from '@/lib/dedupe-politicians'
+import { displayScore } from '@/lib/score-utils'
 
 const homeDescription =
   'Monitorizare politicieni România: promisiuni, declarații și voturi cu surse, scor de credibilitate și verificare neutră. „Te văd.” — registru civic deschis.'
@@ -87,7 +88,7 @@ export default async function HomePage() {
 
   const list = dedupePoliticiansByNameIdentity(politicians ?? [])
   const total = list.length
-  const scoreOf = (p: (typeof list)[number]) => Number(p.score ?? 0)
+  const scoreOf = (p: (typeof list)[number]) => displayScore(p.score)
   const broken = list.reduce((a, p) => a + (p.records_false ?? 0), 0)
   const pending = list.reduce((a, p) => a + (p.records_pending ?? 0), 0)
   const avgScore = total > 0 ? Math.round(list.reduce((a, p) => a + scoreOf(p), 0) / total) : 0

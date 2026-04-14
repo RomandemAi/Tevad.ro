@@ -1,5 +1,16 @@
 // lib/score-utils.ts
 
+/** Neutral baseline (matches DB default + SCORING.md empty-state). */
+export const DEFAULT_SCORE = 50
+
+/** Use for display when `politicians.score` may be null before first recalc. */
+export function displayScore(score: number | null | undefined): number {
+  if (score == null) return DEFAULT_SCORE
+  const n = Number(score)
+  if (Number.isNaN(n)) return DEFAULT_SCORE
+  return Math.min(100, Math.max(0, n))
+}
+
 export function scoreColor(score: number): string {
   if (score >= 70) return '#16a34a'
   if (score >= 45) return '#d97706'
