@@ -3,7 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import AppShell from '@/components/AppShell'
 import { getSiteUrl } from '@/lib/site-url'
-import PoliticianAvatar from '@/components/PoliticianAvatar'
+import {
+  RecordRowPoliticianAvatar,
+  RecordRowPoliticianName,
+} from '@/components/RecordRowPoliticianLead'
 import StatusHintIcon from '@/components/StatusHintIcon'
 import { getStatusHint } from '@/lib/record-status-hint'
 import {
@@ -172,22 +175,10 @@ export default async function PromisesPage({ searchParams }: Props) {
                 href={`/politician/${pol?.slug}`}
                 className="group flex min-w-0 flex-1 items-start gap-3 p-4"
               >
-                <PoliticianAvatar
-                  name={pol?.name ?? '?'}
-                  avatarColor={pol?.avatar_color}
-                  avatarTextColor={pol?.avatar_text_color}
-                  avatarUrl={pol?.avatar_url}
-                  size="sm"
-                  className="mt-0.5"
-                />
+                <RecordRowPoliticianAvatar pol={pol} />
                 <div className="min-w-0 flex-1">
-                  <div className="mb-1 flex items-center gap-2">
-                    <span className="font-mono text-[10px] text-[var(--gray-500)]">{pol?.name}</span>
-                    <span style={{ color: pol?.avatar_text_color ?? 'var(--cyan)', fontSize: '9px' }} className="font-mono">
-                      {pol?.party_short}
-                    </span>
-                  </div>
-                  <p className="line-clamp-2 text-[13px] leading-snug text-[var(--gray-600)]">{rec.text}</p>
+                  <RecordRowPoliticianName pol={pol} />
+                  <p className="mt-2 line-clamp-2 text-[13px] leading-snug text-[var(--gray-600)]">{rec.text}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-2">
                     <span className={`rounded border px-1.5 py-0.5 font-mono text-[8px] ${STATUS_CLASS[rec.status]}`}>
                       {STATUS_LABEL[rec.status]}

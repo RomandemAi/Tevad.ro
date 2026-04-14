@@ -52,8 +52,25 @@ export default function Footer() {
           © 2026 Tevad.org · Proiect civic open-source · MIT
         </div>
 
-        <div className="text-center font-mono text-[9px] tracking-wide text-[var(--text3)]">
-          Powered by Cosmo &amp; Claude
+        <div className="flex items-center justify-center gap-2 text-center font-mono text-[9px] tracking-wide text-[var(--text3)]">
+          <svg
+            className="h-4 w-4 shrink-0 text-[var(--cyan)] opacity-85"
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden
+          >
+            <circle cx="7" cy="7" r="2.75" fill="currentColor" />
+            <circle cx="13" cy="13" r="2.75" fill="currentColor" opacity="0.45" />
+            <path
+              d="M9.2 9.2 12.2 12.2"
+              stroke="currentColor"
+              strokeWidth="1.35"
+              strokeLinecap="round"
+              opacity="0.55"
+            />
+          </svg>
+          <span>Powered by Cosmo &amp; Claude</span>
         </div>
       </div>
     </footer>

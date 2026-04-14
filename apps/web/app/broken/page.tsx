@@ -2,7 +2,10 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import AppShell from '@/components/AppShell'
-import PoliticianAvatar from '@/components/PoliticianAvatar'
+import {
+  RecordRowPoliticianAvatar,
+  RecordRowPoliticianName,
+} from '@/components/RecordRowPoliticianLead'
 import { getSiteUrl } from '@/lib/site-url'
 
 export const revalidate = 3600
@@ -51,22 +54,10 @@ export default async function BrokenPage() {
               className="te-politician-card flex animate-fade-up items-start gap-3 rounded-2xl border border-[var(--gray-200)] border-l-[3px] border-l-[var(--red)] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06)] transition-shadow duration-200 ease-out md:hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
               style={{ animationDelay: `${Math.min(i, 20) * 0.03}s` }}
             >
-              <PoliticianAvatar
-                name={pol?.name ?? '?'}
-                avatarColor={pol?.avatar_color}
-                avatarTextColor={pol?.avatar_text_color}
-                avatarUrl={pol?.avatar_url}
-                size="sm"
-                className="mt-0.5"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="mb-1 flex items-center gap-2">
-                  <span className="font-mono text-[10px] text-[var(--gray-500)]">{pol?.name}</span>
-                  <span style={{ color: pol?.avatar_text_color ?? 'var(--cyan)', fontSize: '9px' }} className="font-mono">
-                    {pol?.party_short}
-                  </span>
-                </div>
-                <p className="line-clamp-2 text-[13px] leading-snug text-[var(--gray-600)]">{rec.text}</p>
+              <RecordRowPoliticianAvatar pol={pol} />
+              <div className="min-w-0 flex-1">
+                <RecordRowPoliticianName pol={pol} />
+                <p className="mt-2 line-clamp-2 text-[13px] leading-snug text-[var(--gray-600)]">{rec.text}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span className="rounded border border-[rgba(220,38,38,0.35)] bg-[var(--red-bg)] px-1.5 py-0.5 font-mono text-[8px] text-[var(--red)]">
                     FALS
