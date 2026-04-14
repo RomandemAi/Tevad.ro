@@ -6,6 +6,11 @@ import { getSiteUrl } from '@/lib/site-url'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
 import StatusHintIcon from '@/components/StatusHintIcon'
 import { getStatusHint } from '@/lib/record-status-hint'
+import {
+  GOV_PROGRAM_FILTER_PARAM,
+  GOV_PROGRAM_FILTER_VALUE,
+  isGovernmentProgramRecord,
+} from '@/lib/is-government-program-record'
 
 export const revalidate = 300
 
@@ -26,14 +31,23 @@ const STATUS_CLASS: Record<string, string> = {
   pending: 'bg-[var(--slate-bg)] text-[var(--slate)] border-[var(--gray-200)]',
 }
 
-export default async function PromisesPage() {
+type Props = { searchParams?: { filter?: string } }
+
+export default async function PromisesPage({ searchParams }: Props) {
   const supabase = createClient()
-  const { data: records } = await supabase
+  const { data: recordsRaw } = await supabase
     .from('records')
-    .select(`id, slug, type, text, status, date_made, created_at, impact_level, ai_confidence, opinion_exempt, ai_reasoning,
+    .select(`id, slug, type, text, context, status, date_made, created_at, impact_level, ai_confidence, opinion_exempt, ai_reasoning,
       politicians (*)`)
     .order('created_at', { ascending: false })
     .limit(250)
+
+  const filterGov = searchParams?.filter === GOV_PROGRAM_FILTER_VALUE
+  const records = filterGov
+    ? (recordsRaw ?? []).filter(r =>
+        isGovernmentProgramRecord(r.slug as string, (r as { context?: string | null }).context)
+      )
+    : (recordsRaw ?? [])
 
   const breadcrumb = (
     <>
@@ -46,14 +60,41 @@ export default async function PromisesPage() {
       breadcrumb={breadcrumb}
       topBarRight={
         <span className="font-mono text-[10px] text-[var(--gray-500)]">
-          {records?.length ?? 0} înregistrări
+          {records.length} înregistrări{filterGov ? ' (program de guvernare)' : ''}
         </span>
       }
     >
       <div className="tev-page-fill flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="mx-auto mb-4 flex max-w-[860px] flex-wrap items-center gap-2">
+          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--gray-500)]">Filtru</span>
+          <Link
+            href="/promises"
+            className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] transition-colors ${
+              !filterGov
+                ? 'border-[var(--navy)] bg-[var(--navy)] text-white'
+                : 'border-[var(--gray-200)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-300)]'
+            }`}
+          >
+            Toate
+          </Link>
+          <Link
+            href={`/promises?${GOV_PROGRAM_FILTER_PARAM}=${GOV_PROGRAM_FILTER_VALUE}`}
+            className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] transition-colors ${
+              filterGov
+                ? 'border-[var(--navy)] bg-[var(--navy)] text-white'
+                : 'border-[var(--gray-200)] bg-white text-[var(--gray-700)] hover:border-[var(--gray-300)]'
+            }`}
+          >
+            Program de guvernare
+          </Link>
+        </div>
         <div className="mx-auto max-w-[860px] space-y-3">
-        {(records ?? []).map((rec, i) => {
+        {records.map((rec, i) => {
           const pol = rec.politicians as any
+          const fromGovProgram = isGovernmentProgramRecord(
+            rec.slug as string,
+            (rec as { context?: string | null }).context
+          )
           const hint = getStatusHint({
             status: rec.status as 'true' | 'false' | 'partial' | 'pending',
             type: rec.type as 'promise' | 'statement' | 'vote',
@@ -98,6 +139,14 @@ export default async function PromisesPage() {
                         IMPACT MAJOR
                       </span>
                     )}
+                    {fromGovProgram && (
+                      <span
+                        className="rounded border border-[rgba(13,42,74,0.25)] bg-[rgba(13,42,74,0.06)] px-1 py-0.5 font-mono text-[8px] text-[var(--navy)]"
+                        title="Angajament din programul de guvernare al coaliției (sursă: document oficial)"
+                      >
+                        PROGRAM GUVERNARE
+                      </span>
+                    )}
                   </div>
                 </div>
               </Link>
@@ -109,7 +158,7 @@ export default async function PromisesPage() {
             </div>
           )
         })}
-        {(records ?? []).length === 0 && (
+        {records.length === 0 && (
           <div className="flex items-center justify-center rounded-2xl border border-[var(--gray-200)] bg-white p-16 font-mono text-[12px] text-[var(--gray-500)] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06)]">
             Nicio înregistrare
           </div>
