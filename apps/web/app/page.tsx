@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import AppShell from '@/components/AppShell'
+import { getSiteUrl } from '@/lib/site-url'
 import HomeHero from '@/components/HomeHero'
 import HomeHowItWorksSection from '@/components/HomeHowItWorksSection'
 import HomeNeutralitySection from '@/components/HomeNeutralitySection'
@@ -10,6 +12,24 @@ import HomeSpotlightSection, {
 } from '@/components/HomeSpotlightSection'
 import PoliticianList from '@/components/PoliticianList'
 import { dedupePoliticiansByNameIdentity, dedupeSpotlightPoliticians } from '@/lib/dedupe-politicians'
+
+const homeDescription =
+  'Monitorizare politicieni România: promisiuni, declarații și voturi cu surse, scor de credibilitate și verificare neutră. „Te văd.” — registru civic deschis.'
+
+export const metadata: Metadata = {
+  title: { absolute: 'Tevad.org — Te Văd · România' },
+  description: homeDescription,
+  alternates: { canonical: `${getSiteUrl()}/` },
+  openGraph: {
+    title: 'Tevad.org — Te Văd · România',
+    description: homeDescription,
+    url: getSiteUrl(),
+  },
+  twitter: {
+    title: 'Tevad.org — Te Văd · România',
+    description: homeDescription,
+  },
+}
 
 export const revalidate = 120
 

@@ -1,9 +1,18 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import AppShell from '@/components/AppShell'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
+import { getSiteUrl } from '@/lib/site-url'
 
 export const revalidate = 3600
+
+export const metadata: Metadata = {
+  title: 'Promisiuni verificate adevărate',
+  description:
+    'Promisiuni confirmate de surse independente și înregistrări oficiale — verificare neutră, surse citate.',
+  alternates: { canonical: `${getSiteUrl()}/verified` },
+}
 
 export default async function VerifiedPage() {
   const supabase = createClient()

@@ -1,7 +1,8 @@
 import { createClient as createServerClient } from '@/lib/supabase/server'
+import { getSiteUrl } from '@/lib/site-url'
 import type { MetadataRoute } from 'next'
 
-const siteBase = (process.env.NEXT_PUBLIC_APP_URL || 'https://tevad.org').replace(/\/$/, '')
+const siteBase = getSiteUrl()
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createServerClient()
@@ -14,11 +15,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }))
 
+  const now = new Date()
+
   return [
-    { url: siteBase, priority: 1.0 },
-    { url: `${siteBase}/despre`, priority: 0.9 },
-    { url: `${siteBase}/legal`, priority: 0.5 },
-    { url: `${siteBase}/privacy`, priority: 0.5 },
+    { url: siteBase, lastModified: now, changeFrequency: 'daily' as const, priority: 1.0 },
+    { url: `${siteBase}/promises`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.9 },
+    { url: `${siteBase}/broken`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.75 },
+    { url: `${siteBase}/verified`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.75 },
+    { url: `${siteBase}/despre`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.85 },
+    { url: `${siteBase}/about`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.65 },
+    { url: `${siteBase}/cum-functioneaza`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.75 },
+    { url: `${siteBase}/neutralitate`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.75 },
+    { url: `${siteBase}/legal`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.45 },
+    { url: `${siteBase}/privacy`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.45 },
     ...politicianUrls,
   ]
 }

@@ -1,9 +1,18 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import AppShell from '@/components/AppShell'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
+import { getSiteUrl } from '@/lib/site-url'
 
 export const revalidate = 3600
+
+export const metadata: Metadata = {
+  title: 'Promisiuni false',
+  description:
+    'Promisiuni contrazise de surse verificabile — registru public de responsabilitate politică, fără comentariu editorial.',
+  alternates: { canonical: `${getSiteUrl()}/broken` },
+}
 
 export default async function BrokenPage() {
   const supabase = createClient()

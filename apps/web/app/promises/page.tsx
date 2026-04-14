@@ -1,11 +1,20 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import AppShell from '@/components/AppShell'
+import { getSiteUrl } from '@/lib/site-url'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
 import StatusHintIcon from '@/components/StatusHintIcon'
 import { getStatusHint } from '@/lib/record-status-hint'
 
 export const revalidate = 3600
+
+export const metadata: Metadata = {
+  title: 'Toate promisiunile',
+  description:
+    'Lista promisiunilor politicienilor monitorizați în România — status de verificare, surse citate și nivel de impact.',
+  alternates: { canonical: `${getSiteUrl()}/promises` },
+}
 
 const STATUS_LABEL: Record<string, string> = {
   true: 'ADEVĂRAT', false: 'FALS', partial: 'PARȚIAL', pending: 'PENDING',

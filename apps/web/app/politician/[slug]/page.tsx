@@ -1,6 +1,8 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { getSiteUrl } from '@/lib/site-url'
 import { scoreColor, scoreLabel, credBadgeClass } from '@/lib/score-utils'
 import AppShell from '@/components/AppShell'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
@@ -52,17 +54,40 @@ function ScoreRing({ score }: { score: number }) {
   )
 }
 
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const base = getSiteUrl()
+  const canonical = `${base}/politician/${params.slug}`
   const supabase = createClient()
   const { data: pol } = await supabase
     .from('politicians')
     .select('name, role, party')
     .eq('slug', params.slug)
     .single()
-  if (!pol) return { title: 'Politician — Tevad.org' }
+  if (!pol) {
+    return {
+      title: 'Politician',
+      alternates: { canonical },
+    }
+  }
+  const title = `${pol.name} · ${pol.role}`
+  const description = `Urmărește promisiunile, declarațiile și voturile lui ${pol.name} (${pol.party}).`
   return {
-    title: `${pol.name} · ${pol.role} — Tevad.org`,
-    description: `Urmărește promisiunile, declarațiile și voturile lui ${pol.name} (${pol.party}).`,
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title: `${title} · Tevad.org`,
+      description,
+      url: canonical,
+      type: 'profile',
+      siteName: 'Tevad.org',
+      locale: 'ro_RO',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} · Tevad.org`,
+      description,
+    },
   }
 }
 
