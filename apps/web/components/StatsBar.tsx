@@ -21,7 +21,7 @@ export default function StatsBar({ total, broken, pending, avgScore }: StatsBarP
       aria-label="Indicatori principali"
     >
       <div className="mx-auto max-w-[1100px] px-4 md:px-6">
-        <div className="overflow-hidden rounded-2xl border border-[var(--gray-200)] bg-[var(--white)] shadow-[0_1px_2px_rgba(15,23,42,0.05)]">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border border-[var(--gray-200)] bg-[var(--white)] shadow-[var(--shadow-card)]">
           <div className="flex flex-col divide-y divide-[var(--gray-200)] md:flex-row md:divide-y-0 md:divide-x">
             {items.map(m => (
               <div key={m.label} className="flex flex-1 flex-col justify-center px-5 py-4 md:px-8 md:py-5">

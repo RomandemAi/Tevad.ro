@@ -15,7 +15,7 @@ interface AppShellProps {
 
 export default function AppShell({ children, breadcrumb, topBarRight }: AppShellProps) {
   return (
-    <div className="flex min-h-screen w-full bg-[var(--gray-50)]">
+    <div className="tev-app-shell flex min-h-screen w-full bg-[var(--gray-50)]">
       <Sidebar className="hidden md:flex" />
 
       <main

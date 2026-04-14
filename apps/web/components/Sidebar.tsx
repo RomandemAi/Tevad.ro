@@ -127,7 +127,7 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
   }, [pathname])
 
   const linkBase =
-    'flex items-center gap-2 rounded-lg px-4 py-2 text-[13px] text-[rgba(255,255,255,0.65)] transition-colors duration-200 ease-out hover:bg-[rgba(255,255,255,0.08)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)] md:hover:bg-[rgba(255,255,255,0.08)]'
+    'flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2 text-[13px] text-[rgba(255,255,255,0.65)] transition-colors duration-200 ease-out hover:bg-[rgba(255,255,255,0.08)] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)] md:hover:bg-[rgba(255,255,255,0.08)]'
   const linkActive =
     'border-l-[3px] border-l-[var(--blue)] bg-[rgba(255,255,255,0.12)] pl-[13px] text-white'
 
@@ -156,28 +156,16 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
 
   const infoActive = (id: string) => pathname === '/about' && hash === `#${id}`
 
-  const sidebarBg = {
-    backgroundImage: `
-      linear-gradient(180deg, rgba(15, 31, 61, 0.97) 0%, rgba(15, 31, 61, 0.92) 45%, rgba(15, 31, 61, 0.98) 100%),
-      linear-gradient(160deg, rgba(29, 110, 245, 0.14) 0%, transparent 50%, rgba(14, 165, 233, 0.1) 100%),
-      url(/images/bg-network.png)
-    `,
-    backgroundSize: '100% 100%, 100% 100%, min(100%, 400px) auto',
-    backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
-    backgroundPosition: 'center, center, center bottom',
-  } as const
-
   return (
     <aside
-      className={`te-sidebar fixed inset-y-0 left-0 z-40 flex w-[240px] flex-shrink-0 flex-col bg-[var(--navy)] text-white ${className}`}
-      style={sidebarBg}
+      className={`te-sidebar tev-shell-sidebar fixed inset-y-0 left-0 z-40 flex w-[240px] flex-shrink-0 flex-col text-white ${className}`}
     >
       <div className="border-b border-[rgba(255,255,255,0.08)] p-5">
         <div className="relative mb-4 pr-12">
           <Link
             href="/"
             onClick={() => onNavigate?.()}
-            className="block rounded-md outline-none ring-offset-2 ring-offset-[var(--navy)] focus-visible:ring-2 focus-visible:ring-[var(--cyan)]"
+            className="block cursor-pointer rounded-md outline-none ring-offset-2 ring-offset-[var(--navy)] focus-visible:ring-2 focus-visible:ring-[var(--cyan)]"
           >
             <Image
               src="/images/logo-tevad.png"

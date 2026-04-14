@@ -31,7 +31,7 @@ export default function PoliticianCard({ pol, rank, flash, showLive }: Politicia
     <Link
       href={`/politician/${pol.slug}`}
       title={`${pol.name} — ${pol.role}`}
-      className={`te-politician-card group relative block cursor-pointer rounded-2xl border border-[var(--gray-200)] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06)] transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--blue)] focus-visible:ring-offset-2 md:p-5 md:hover:-translate-y-0.5 md:hover:border-[rgba(29,110,245,0.3)] md:hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)] active:scale-[0.99] motion-reduce:md:hover:translate-y-0 ${
+      className={`te-politician-card tev-card-surface group relative block cursor-pointer p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2 focus-visible:ring-offset-white md:p-5 md:hover:-translate-y-0.5 active:scale-[0.99] motion-reduce:md:hover:translate-y-0 ${
         flash ? 'tev-card-flash' : ''
       }`}
       style={{ animationDelay: '0s' }}

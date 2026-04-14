@@ -34,7 +34,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="te-mobile-nav fixed bottom-0 left-0 right-0 z-50 flex h-16 items-stretch border-t border-[rgba(255,255,255,0.08)] bg-[var(--navy)] pb-[env(safe-area-inset-bottom)] text-[rgba(255,255,255,0.55)] md:hidden"
+      className="te-mobile-nav tev-mobile-nav-elevated fixed bottom-0 left-0 right-0 z-50 flex h-16 items-stretch border-t border-[rgba(255,255,255,0.08)] bg-[var(--navy)] pb-[env(safe-area-inset-bottom)] text-[rgba(255,255,255,0.55)] md:hidden"
       aria-label="Navigare principală"
     >
       <Link href="/" className={tabClass('politicieni')}>
