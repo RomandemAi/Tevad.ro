@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -167,15 +166,17 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
             onClick={() => onNavigate?.()}
             className="block cursor-pointer rounded-md outline-none ring-offset-2 ring-offset-[var(--navy)] focus-visible:ring-2 focus-visible:ring-[var(--cyan)]"
           >
-            <span className="block rounded-xl border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] p-3 shadow-[0_18px_48px_rgba(0,0,0,0.28)] backdrop-blur-sm">
-              <Image
-                src="/images/logo-tevad.png"
-                alt="Te Văd · Tevad.org — Promisiunile nu expiră."
-                width={400}
-                height={140}
-                className="h-auto w-full max-h-[4.75rem] rounded-lg object-contain object-left opacity-[0.96]"
-                priority
-              />
+            <span className="block rounded-xl border border-[rgba(255,255,255,0.10)] bg-[rgba(255,255,255,0.04)] px-3 py-3 shadow-[0_18px_48px_rgba(0,0,0,0.26)] backdrop-blur-sm">
+              <span className="block font-mono text-[18px] font-semibold leading-none tracking-[-0.02em] text-white">
+                Te <span className="text-white/90">Văd</span>
+              </span>
+              <span className="mt-1 block font-mono text-[10px] uppercase tracking-[0.18em] text-[rgba(255,255,255,0.58)]">
+                tevad.org
+              </span>
+              <span className="mt-2 block h-[2px] w-[86px] rounded-full bg-gradient-to-r from-[rgba(29,110,245,0.9)] via-[rgba(252,209,22,0.75)] to-[rgba(206,17,38,0.75)] opacity-85" />
+              <span className="mt-2 block font-sans text-[10px] leading-snug text-[rgba(255,255,255,0.42)]">
+                Promisiunile nu expiră.
+              </span>
             </span>
           </Link>
           <span
