@@ -20,7 +20,7 @@ export default function AppShell({ children, breadcrumb, topBarRight }: AppShell
 
       <main
         id="main-content"
-        className="relative flex min-h-screen min-w-0 flex-1 flex-col scroll-mt-0 md:ml-[240px] md:pb-0 pb-[calc(4rem+env(safe-area-inset-bottom))]"
+        className="relative flex min-h-screen min-w-0 flex-1 flex-col scroll-mt-0 pb-[calc(4rem+env(safe-area-inset-bottom))] md:ml-[240px] md:pb-0 md:before:pointer-events-none md:before:absolute md:before:inset-y-0 md:before:left-0 md:before:w-8 md:before:bg-gradient-to-r md:before:from-[rgba(15,31,61,0.16)] md:before:to-transparent"
       >
         <MobileAppNotices />
         <SiteUnderstandingModal />

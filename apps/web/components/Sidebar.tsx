@@ -160,21 +160,23 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
     <aside
       className={`te-sidebar tev-shell-sidebar fixed inset-y-0 left-0 z-40 flex w-[240px] flex-shrink-0 flex-col text-white ${className}`}
     >
-      <div className="border-b border-[rgba(255,255,255,0.08)] p-5">
+      <div className="border-b border-[rgba(255,255,255,0.06)] p-5">
         <div className="relative mb-4 pr-12">
           <Link
             href="/"
             onClick={() => onNavigate?.()}
             className="block cursor-pointer rounded-md outline-none ring-offset-2 ring-offset-[var(--navy)] focus-visible:ring-2 focus-visible:ring-[var(--cyan)]"
           >
-            <Image
-              src="/images/logo-tevad.png"
-              alt="Te Văd · Tevad.org — Promisiunile nu expiră."
-              width={400}
-              height={140}
-              className="h-auto w-full max-h-[5.25rem] object-contain object-left"
-              priority
-            />
+            <span className="block rounded-xl border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.06)] p-3 shadow-[0_18px_48px_rgba(0,0,0,0.28)] backdrop-blur-sm">
+              <Image
+                src="/images/logo-tevad.png"
+                alt="Te Văd · Tevad.org — Promisiunile nu expiră."
+                width={400}
+                height={140}
+                className="h-auto w-full max-h-[4.75rem] rounded-lg object-contain object-left opacity-[0.96]"
+                priority
+              />
+            </span>
           </Link>
           <span
             className="pointer-events-none absolute right-0 top-0 inline-flex items-center rounded-[3px] border px-1.5 py-[2px] font-mono text-[8px] tracking-[0.5px]"
@@ -284,7 +286,7 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
         </Link>
       </nav>
 
-      <div className="border-t border-[rgba(255,255,255,0.08)] p-4">
+      <div className="border-t border-[rgba(255,255,255,0.06)] p-4">
         <p className="font-mono text-[9px] tracking-wide text-[rgba(255,255,255,0.2)]">
           OPEN SOURCE · MIT · v2.0
         </p>

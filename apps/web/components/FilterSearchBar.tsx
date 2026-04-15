@@ -2,6 +2,9 @@
 
 export type SortKey = 'score' | 'falseRecords' | 'name'
 
+import PartyLogo from './PartyLogo'
+import { partyLogoSrc } from '@/lib/party-logo'
+
 const SORT_LABELS: Record<SortKey, string> = {
   score: 'Scor',
   falseRecords: 'Promisiuni false',
@@ -86,9 +89,17 @@ export default function FilterSearchBar({
               key={code}
               type="button"
               onClick={() => onPartyChange(party === code ? null : code)}
-              className={`cursor-pointer flex-shrink-0 rounded-full px-3 py-2 font-mono text-[10px] uppercase tracking-wide transition-colors duration-200 ease-out md:py-1 ${partyPillClass(code, party === code)}`}
+              aria-label={`Filtru partid ${code}`}
+              title={code}
+              className={`cursor-pointer flex-shrink-0 rounded-full px-2.5 py-2 transition-colors duration-200 ease-out md:py-1 ${partyPillClass(code, party === code)}`}
             >
-              {code}
+              {partyLogoSrc(code) ? (
+                <span className="flex items-center justify-center">
+                  <PartyLogo partyShort={code} size={18} className="border border-[var(--gray-200)] bg-white" />
+                </span>
+              ) : (
+                <span className="font-mono text-[10px] uppercase tracking-wide">{code}</span>
+              )}
             </button>
           ))}
           {extra.map(code => (
@@ -96,9 +107,17 @@ export default function FilterSearchBar({
               key={code}
               type="button"
               onClick={() => onPartyChange(party === code ? null : code)}
-              className={`cursor-pointer flex-shrink-0 rounded-full px-3 py-2 font-mono text-[10px] uppercase tracking-wide transition-colors duration-200 ease-out md:py-1 ${partyPillClass(code, party === code)}`}
+              aria-label={`Filtru partid ${code}`}
+              title={code}
+              className={`cursor-pointer flex-shrink-0 rounded-full px-2.5 py-2 transition-colors duration-200 ease-out md:py-1 ${partyPillClass(code, party === code)}`}
             >
-              {code}
+              {partyLogoSrc(code) ? (
+                <span className="flex items-center justify-center">
+                  <PartyLogo partyShort={code} size={18} className="border border-[var(--gray-200)] bg-white" />
+                </span>
+              ) : (
+                <span className="font-mono text-[10px] uppercase tracking-wide">{code}</span>
+              )}
             </button>
           ))}
         </div>
