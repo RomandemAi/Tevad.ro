@@ -89,7 +89,8 @@ export default async function HomePage() {
   const list = dedupePoliticiansByNameIdentity(politicians ?? [])
   const total = list.length
   const scoreOf = (p: (typeof list)[number]) => displayScore(p.score)
-  const broken = list.reduce((a, p) => a + (p.records_false ?? 0), 0)
+  // Keep hero + stats consistent: use canonical records table count for false promises.
+  const broken = totalPromisesBroken
   const pending = list.reduce((a, p) => a + (p.records_pending ?? 0), 0)
   const avgScore = total > 0 ? Math.round(list.reduce((a, p) => a + scoreOf(p), 0) / total) : 0
 
