@@ -16,6 +16,7 @@
     "type-check": "turbo run type-check",
     "scrape:cdep": "tsx packages/scraper/src/cdep.ts",
     "senat": "tsx packages/scraper/src/senat.ts",
+    "senat:votes": "tsx packages/scraper/src/senat-votes.ts",
     "gov": "tsx packages/scraper/src/gov.ts",
     "ani": "tsx packages/scraper/src/ani.ts",
     "scrape:senat": "tsx packages/scraper/src/senat.ts",

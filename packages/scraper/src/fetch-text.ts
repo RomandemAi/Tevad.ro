@@ -45,6 +45,27 @@ export async function fetchText(
   return res.text()
 }
 
+export async function fetchFormText(
+  url: string,
+  body: URLSearchParams,
+  headers: Record<string, string> = {}
+): Promise<string> {
+  const res = await undiciFetch(url, {
+    dispatcher: agent,
+    method: 'POST',
+    headers: {
+      ...normalizeHeaders(headers),
+      'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      origin: new URL(url).origin,
+      referer: url,
+    },
+    body,
+    redirect: 'follow',
+  })
+  if (!res.ok) throw new Error(`${url} → ${res.status}`)
+  return res.text()
+}
+
 export async function fetchBuffer(url: string, headers: Record<string, string>): Promise<Buffer> {
   const res = await undiciFetch(url, {
     dispatcher: agent,

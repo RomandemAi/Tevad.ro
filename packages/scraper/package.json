@@ -5,6 +5,7 @@
   "exports": {
     "./cdep": "./src/cdep.ts",
     "./senat": "./src/senat.ts",
+    "./senat-votes": "./src/senat-votes.ts",
     "./gov": "./src/gov.ts",
     "./bec": "./src/bec.ts",
     "./ani": "./src/ani.ts",
@@ -15,6 +16,7 @@
   "scripts": {
     "cdep": "tsx src/cdep.ts",
     "senat": "tsx src/senat.ts",
+    "senat:votes": "tsx src/senat-votes.ts",
     "gov": "tsx src/gov.ts",
     "bec": "tsx src/bec.ts",
     "ani": "tsx src/ani.ts",

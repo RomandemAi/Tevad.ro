@@ -23,8 +23,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Senat, Gov, ANI
-        run: npm run senat && npm run gov && npm run ani
+      - name: Senat, Gov, ANI, Senat votes
+        run: npm run senat && npm run senat:votes && npm run gov && npm run ani
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
