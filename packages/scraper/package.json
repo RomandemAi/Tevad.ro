@@ -4,6 +4,7 @@
   "private": true,
   "exports": {
     "./cdep": "./src/cdep.ts",
+    "./cdep-steno": "./src/cdep-steno.ts",
     "./senat": "./src/senat.ts",
     "./senat-votes": "./src/senat-votes.ts",
     "./gov": "./src/gov.ts",

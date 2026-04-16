@@ -10,7 +10,8 @@
     "start": "next start -p 3001",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "cron:rss": "node ./scripts/trigger-cron.mjs /api/cron/rss-watch"
+    "cron:rss": "node ./scripts/trigger-cron.mjs /api/cron/rss-watch",
+    "cron:cdep-steno": "node ./scripts/trigger-cron.mjs /api/cron/scrape-cdep-steno"
   },
   "dependencies": {
     "@supabase/ssr": "^0.3.0",

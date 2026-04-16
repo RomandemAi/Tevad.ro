@@ -26,6 +26,7 @@
     "scrape:datagov": "tsx packages/scraper/src/datagov.ts",
     "rss:watch": "tsx packages/rss-monitor/src/feed-watcher.ts",
     "rss:drain": "tsx packages/rss-monitor/src/drain-queue.ts",
+    "cdep:steno": "tsx packages/scraper/src/cdep-steno.ts",
     "verify:run": "tsx packages/verifier/src/verify.ts",
     "score:recalc": "tsx packages/verifier/src/score.ts",
     "verify:pilot": "npm run verify:pilot -w @tevad/verifier",
