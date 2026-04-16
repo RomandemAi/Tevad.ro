@@ -10,7 +10,9 @@ import ScoreBreakdown from '@/components/ScoreBreakdown'
 import WealthDeclarationsPanel from '@/components/WealthDeclarationsPanel'
 import RecordsSection from '@/components/RecordsSection'
 import PartyLogo from '@/components/PartyLogo'
+import { chamberBadgeLabelPublic, executiveChamberRank, EXECUTIVE_SPOTLIGHT_CHAMBERS } from '@/lib/executive-chamber'
 import { partyBadgeBackground, partyProfileHeaderStyle } from '@/lib/party-logo'
+import { nameIdentitySignature } from '@tevad/scraper/name-identity'
 
 export const revalidate = 3600
 
@@ -96,9 +98,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PoliticianPage({ params }: Props) {
   const supabase = createClient()
 
-  const { data: pol } = await supabase.from('politicians').select('*').eq('slug', params.slug).single()
+  const [{ data: pol }, { data: execPeers }] = await Promise.all([
+    supabase.from('politicians').select('*').eq('slug', params.slug).single(),
+    supabase
+      .from('politicians')
+      .select('role, chamber, name')
+      .eq('is_active', true)
+      .in('chamber', [...EXECUTIVE_SPOTLIGHT_CHAMBERS]),
+  ])
 
   if (!pol) notFound()
+
+  const execPeer = (execPeers ?? []).find(
+    r => nameIdentitySignature(String(r.name)) === nameIdentitySignature(String(pol.name))
+  )
+  const polCh = String(pol.chamber ?? '')
+  const useExec =
+    execPeer &&
+    executiveChamberRank(String(execPeer.chamber)) < executiveChamberRank(polCh)
+  const displayRole = useExec ? String(execPeer.role) : String(pol.role)
+  const displayChamber = useExec ? String(execPeer.chamber) : polCh
 
   const { data: records } = await supabase
     .from('records')
@@ -204,10 +223,12 @@ export default async function PoliticianPage({ params }: Props) {
                         {scoreLabel(displayCredibility)}
                       </span>
                     </div>
-                    <p className="mt-2 font-sans text-[14px] leading-relaxed text-[var(--gray-500)] md:text-[15px]">{pol.role}</p>
+                    <p className="mt-2 font-sans text-[14px] leading-relaxed text-[var(--gray-500)] md:text-[15px]">
+                      {displayRole}
+                    </p>
                     <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
                       <span className="rounded-full bg-[var(--gray-100)] px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-600)]">
-                        {pol.chamber}
+                        {chamberBadgeLabelPublic(displayChamber)}
                       </span>
                       <span
                         className="inline-flex rounded-full p-0.5 ring-1 ring-black/[0.04]"

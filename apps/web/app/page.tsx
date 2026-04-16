@@ -16,6 +16,7 @@ import {
   dedupePoliticiansByNameIdentity,
   dedupeSpotlightPoliticians,
 } from '@/lib/dedupe-politicians'
+import { EXECUTIVE_SPOTLIGHT_CHAMBERS } from '@/lib/executive-chamber'
 import { sortAndCapSpotlightPoliticians } from '@/lib/home-spotlight-politicians'
 import { displayScore } from '@/lib/score-utils'
 
@@ -67,7 +68,7 @@ export default async function HomePage() {
       .from('politicians')
       .select('id, slug, name, role, party_short, score, chamber')
       .eq('is_active', true)
-      .in('chamber', ['president', 'premier', 'minister', 'ministru'])
+      .in('chamber', [...EXECUTIVE_SPOTLIGHT_CHAMBERS])
       .not('name', 'ilike', '%galerie%')
       .not('name', 'ilike', '%cabinetul%')
       .order('score', { ascending: false }),

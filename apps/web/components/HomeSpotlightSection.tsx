@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { displayScore } from '@/lib/score-utils'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
+import { chamberBadgeLabelPublic } from '@/lib/executive-chamber'
 
 export interface SpotlightPolitician {
   id: string
@@ -44,20 +45,6 @@ function statusClass(status: string): string {
       return 'text-[var(--amber)]'
     default:
       return 'text-[var(--gray-500)]'
-  }
-}
-
-function chamberSpotlightLabel(chamber: string): string {
-  switch (chamber) {
-    case 'president':
-      return 'Președinte'
-    case 'premier':
-      return 'Prim-ministru'
-    case 'minister':
-    case 'ministru':
-      return 'Guvern'
-    default:
-      return chamber
   }
 }
 
@@ -125,7 +112,7 @@ function SpotlightPersonCard({
           <p className={roleCls}>{p.role}</p>
           <span className="mt-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] md:text-[11px]">
             <span className="rounded-full bg-[var(--gray-100)] px-2 py-0.5 uppercase tracking-wide text-[var(--gray-600)]">
-              {chamberSpotlightLabel(p.chamber)}
+              {chamberBadgeLabelPublic(p.chamber)}
             </span>
             <span className="tabular-nums text-[var(--blue)]">{displayScore(p.score)}</span>
           </span>

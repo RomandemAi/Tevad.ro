@@ -1,4 +1,5 @@
 import type { Politician } from '@/components/politician-types'
+import { executiveChamberRank, pickMoreSeniorOfficeRow } from '@/lib/executive-chamber'
 import { nameIdentitySignature } from '@tevad/scraper/name-identity'
 
 function num(v: unknown): number {
@@ -24,10 +25,24 @@ function pickPrimary(a: Politician, b: Politician): [Politician, Politician] {
   return a.slug <= b.slug ? [a, b] : [b, a]
 }
 
+function photoUsable(u: unknown): u is string {
+  return typeof u === 'string' && u.length > 10
+}
+
 function mergePair(primary: Politician, secondary: Politician): Politician {
+  const display = pickMoreSeniorOfficeRow(primary, secondary)
+  const avatar_url = photoUsable(primary.avatar_url)
+    ? primary.avatar_url
+    : photoUsable(secondary.avatar_url)
+      ? secondary.avatar_url
+      : primary.avatar_url
+
   return {
     ...primary,
     name: pickDisplayName(primary.name, secondary.name),
+    role: display.role,
+    chamber: display.chamber,
+    avatar_url,
     total_records: num(primary.total_records) + num(secondary.total_records),
     records_true: num(primary.records_true) + num(secondary.records_true),
     records_false: num(primary.records_false) + num(secondary.records_false),
@@ -75,17 +90,9 @@ export interface SpotlightPoliticianLike {
   chamber: string
 }
 
-/** For collapsing duplicate spotlight rows for the same person (president > premier > cabinet). */
-function spotlightExecutiveRank(chamber: string): number {
-  if (chamber === 'president') return 0
-  if (chamber === 'premier') return 1
-  if (chamber === 'minister' || chamber === 'ministru') return 2
-  return 99
-}
-
 function pickSpotlightPrimary(a: SpotlightPoliticianLike, b: SpotlightPoliticianLike): SpotlightPoliticianLike {
-  const ra = spotlightExecutiveRank(a.chamber)
-  const rb = spotlightExecutiveRank(b.chamber)
+  const ra = executiveChamberRank(a.chamber)
+  const rb = executiveChamberRank(b.chamber)
   if (ra !== rb) return ra < rb ? a : b
   const sa = num(a.score)
   const sb = num(b.score)
