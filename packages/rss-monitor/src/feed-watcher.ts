@@ -281,7 +281,7 @@ export async function run() {
   // Deterministic rotation by time window so repeated invocations distribute coverage.
   const windowMs = 30 * 60 * 1000
   const windowIndex = Number(process.env.RSS_WINDOW_INDEX ?? '') || Math.floor(Date.now() / windowMs)
-  const batchSize = Math.max(1, Math.min(8, Number(process.env.RSS_BATCH_SIZE ?? '') || 2))
+  const batchSize = Math.max(1, Math.min(8, Number(process.env.RSS_BATCH_SIZE ?? '') || 4))
   const start = allSources.length ? windowIndex % allSources.length : 0
   const selected = allSources.length
     ? Array.from({ length: Math.min(batchSize, allSources.length) }, (_, i) => {

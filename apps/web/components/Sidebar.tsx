@@ -8,6 +8,7 @@ const INDEX = [
   { href: '/', label: 'Politicieni', exact: true as const },
   { href: '/#clasament', label: 'Clasament' },
   { href: '/promises', label: 'Toate promisiunile' },
+  { href: '/declaratii', label: 'Declarații' },
 ] as const
 
 const FILTERS = [
@@ -100,7 +101,7 @@ function NavIconScale() {
   )
 }
 
-const INDEX_ICONS = [NavIconPolitician, NavIconChart, NavIconDoc]
+const INDEX_ICONS = [NavIconPolitician, NavIconChart, NavIconDoc, NavIconDoc]
 const FILTER_ICONS = [NavIconWarn, NavIconCheck, NavIconWarn]
 
 interface SidebarProps {

@@ -45,10 +45,24 @@ export const TIER1_SOURCES: SourceConfig[] = [
     lean: 'center',
   },
   {
+    outlet: 'HotNews (Politic)',
+    domain: 'hotnews.ro',
+    rssUrl: 'https://hotnews.ro/c/actualitate/politic/feed',
+    description: 'Politics-only feed (higher politician mention rate than the global RSS).',
+    lean: 'center',
+  },
+  {
     outlet: 'G4Media',
     domain: 'g4media.ro',
     rssUrl: 'https://www.g4media.ro/feed',
     description: 'Politics, justice, corruption. Investigative. Non-partisan.',
+    lean: 'center',
+  },
+  {
+    outlet: 'G4Media (Politică tag)',
+    domain: 'g4media.ro',
+    rssUrl: 'https://www.g4media.ro/tag/politica/feed',
+    description: 'Politics tag feed (higher politician mention rate than the global RSS).',
     lean: 'center',
   },
   {
@@ -69,6 +83,13 @@ export const TIER2_SOURCES: SourceConfig[] = [
     domain: 'digi24.ro',
     rssUrl: 'https://www.digi24.ro/rss',
     description: 'Largest news TV in Romania. Publicly quoted company.',
+    lean: 'center',
+  },
+  {
+    outlet: 'Digi24 (Politică)',
+    domain: 'digi24.ro',
+    rssUrl: 'https://www.digi24.ro/rss/Stiri/Actualitate/Politica',
+    description: 'Politics-only feed (higher politician mention rate than the global RSS).',
     lean: 'center',
   },
   {
@@ -97,6 +118,34 @@ export const TIER2_SOURCES: SourceConfig[] = [
     domain: 'zf.ro',
     rssUrl: 'https://www.zf.ro/rss',
     description: 'Economic and political reporting.',
+    lean: 'center',
+  },
+  {
+    outlet: 'Europa Liberă',
+    domain: 'romania.europalibera.org',
+    rssUrl: 'https://romania.europalibera.org/api/zvo_mml-vomx-tpeukvm_',
+    description: 'RFE/RL Romania. News + politics reporting; RSS via /api/* feed endpoints.',
+    lean: 'center',
+  },
+  {
+    outlet: 'Profit.ro',
+    domain: 'profit.ro',
+    rssUrl: 'https://www.profit.ro/rss',
+    description: 'Business + politics. High frequency; includes a Politic section.',
+    lean: 'center',
+  },
+  {
+    outlet: 'Buletin de București',
+    domain: 'buletin.de',
+    rssUrl: 'https://buletin.de/bucuresti/category/stiri/feed',
+    description: 'Local investigations/news (Bucharest) with frequent political/administrative coverage.',
+    lean: 'center',
+  },
+  {
+    outlet: 'Romania Insider',
+    domain: 'romania-insider.com',
+    rssUrl: 'https://www.romania-insider.com/feed',
+    description: 'English-language Romania news (politics/economy).',
     lean: 'center',
   },
 ]

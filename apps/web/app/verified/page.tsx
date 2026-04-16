@@ -23,6 +23,7 @@ export default async function VerifiedPage() {
     .from('records')
     .select(`id, slug, type, text, status, date_made, impact_level, ai_confidence,
       politicians (*)`)
+    .eq('type', 'promise')
     .eq('status', 'true')
     .order('date_made', { ascending: false })
     .limit(200)

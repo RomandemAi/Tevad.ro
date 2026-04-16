@@ -70,6 +70,7 @@ export default async function PromisesPage({ searchParams }: Props) {
     .from('records')
     .select(`id, slug, type, text, context, status, date_made, created_at, impact_level, ai_confidence, opinion_exempt, ai_reasoning,
       politicians (*)`)
+    .eq('type', 'promise')
     .order('created_at', { ascending: false })
     .limit(250)
 
