@@ -10,7 +10,7 @@ import ScoreBreakdown from '@/components/ScoreBreakdown'
 import WealthDeclarationsPanel from '@/components/WealthDeclarationsPanel'
 import RecordsSection from '@/components/RecordsSection'
 import PartyLogo from '@/components/PartyLogo'
-import { partyBadgeBackground } from '@/lib/party-logo'
+import { partyBadgeBackground, partyProfileHeaderStyle } from '@/lib/party-logo'
 
 export const revalidate = 3600
 
@@ -178,7 +178,10 @@ export default async function PoliticianPage({ params }: Props) {
         <div className="mx-auto w-full max-w-[940px] px-4 py-6 md:px-6 md:py-10">
           <section className="overflow-hidden rounded-2xl border border-[var(--gray-200)] bg-white shadow-[var(--shadow-card)] transition-shadow duration-[var(--duration-2)] ease-[var(--ease-out)] md:hover:shadow-[var(--shadow-card-hover)]">
             <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
-              <div className="border-b border-[var(--gray-100)] bg-gradient-to-b from-white to-[var(--gray-50)] p-6 md:p-8 lg:border-b-0 lg:border-r">
+              <div
+                className="relative overflow-hidden border-b border-[var(--gray-100)] p-6 md:p-8 lg:border-b-0 lg:border-r"
+                style={partyProfileHeaderStyle(pol.party_short)}
+              >
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
                   <PoliticianAvatar
                     name={pol.name}
