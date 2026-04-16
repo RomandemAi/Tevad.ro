@@ -1,34 +1,33 @@
-# Te Văd · Tevad.ro
+# Te Văd · Tevad.org
 
 > **"Te văd."** — I see you.
 
-Romania's open-source political accountability platform. Every promise tracked. Every vote recorded. Every statement verified. AI-powered. Source-cited. Neutral by design.
+Romania’s open-source political accountability platform. Promises and public statements are tracked on the record, verified with **Anthropic Claude**, and cited to **archived public sources**. Neutral by design: no editorial column, auditable math for the credibility score.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Status: Phase 01 — Scaffold](https://img.shields.io/badge/Status-Phase%2001%20Scaffold-orange)]()
+[![Status: Beta](https://img.shields.io/badge/Status-Beta-orange)]()
 [![Made in Romania](https://img.shields.io/badge/Made%20in-România-blue)]()
 [![Open Source](https://img.shields.io/badge/Open-Source-green)]()
 
+**Live site:** [tevad.org](https://tevad.org) · **Repository:** [github.com/RomandemAi/Tevad.ro](https://github.com/RomandemAi/Tevad.ro)
+
 ---
 
-## What is Tevad.ro?
+## What is Tevad?
 
-Tevad.ro is a public truth ledger for Romanian politicians. It tracks:
+**Tevad.org** is a public ledger for Romanian politicians. Today it focuses on:
 
-- **Campaign promises** — made before elections
-- **Official statements & speeches** — on record, with sources
-- **Voting records** — every bill, every vote, For / Against / Absent
-- **Policy positions over time** — do they contradict themselves?
+- **Campaign promises** — tracked with verification status and sources  
+- **Public statements (declarații)** — same pipeline; materiality filters apply only to how some lines affect scoring (see [SCORING.md](SCORING.md))  
+- **Structured record types** — the data model also supports **vote** rows where parliament data is ingested; the UI can surface them alongside promises and statements  
+- **Per-record audit pages** — transparency fields, verdict context, and (where available) AI-assisted metadata such as claim measurability (always labeled as indicative)  
+- **Contradiction pairs** — when the verifier flags tension between two records, the politician profile can surface that block for review  
 
-Each entry is AI-verified using Claude, cross-referenced with a minimum of 2 independent Tier-1 sources. Citizens can react (like / dislike) but cannot comment — the record speaks for itself.
+Citizens can **react** (like / dislike) on records; there is **no** public comment thread — the record and its sources are the story.
 
-Every politician gets a **Credibility Score** (0–100) calculated from:
-- Promise kept/broken ratio
-- Public reaction sentiment
-- Verified source citations
-- Time-in-office consistency
+Each politician has a **credibility score (0–100)** built from public subscores (promises, declarații, reactions, sources, consistency). Weights and definitions are in [SCORING.md](SCORING.md); the implementation lives in `packages/verifier`.
 
-The score is public, the formula is public, the code is public. No hidden weights. No editorial opinion. No political affiliation.
+The **web app** supports **Aspect**: luminos / întunecat / **Sistem** (follows the device color scheme), persisted in the browser.
 
 ---
 
@@ -36,168 +35,170 @@ The score is public, the formula is public, the code is public. No hidden weight
 
 **"Te văd"** is Romanian for **"I see you."**
 
-Not a threat. Not a judgment. Just a fact. The permanent, calm, undeniable presence of the public record. Politicians speak in public. Their words belong to the public. Tevad.ro just keeps them organized.
+Not a threat. Not a judgment. Just a fact. The permanent, calm, undeniable presence of the public record. Politicians speak in public. Their words belong to the public. Tevad keeps them organized and checkable.
 
 ---
 
 ## Stack
 
 | Layer | Technology |
-|---|---|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS |
-| Database | Supabase (PostgreSQL + RLS + Realtime) |
-| AI Verification | Anthropic Claude API |
-| Hosting | Vercel |
-| Scrapers | Node.js cron workers |
-| RSS Monitor | Recorder.ro, HotNews.ro, G4Media.ro feeds |
-| Parliament Data | cdep.ro + senat.ro scraper + OpenPolitics CSV |
-| Monorepo | Turborepo |
+|--------|--------------|
+| Frontend | Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS |
+| Database | Supabase (PostgreSQL, RLS, migrations under `supabase/migrations/`) |
+| AI verification | Anthropic Claude (`packages/verifier`) |
+| Hosting | **Netlify** (`netlify.toml`, `@netlify/plugin-nextjs`) |
+| Scheduled work | Next.js **Route Handlers** under `apps/web/app/api/cron/*` (secured with `CRON_SECRET`) |
+| RSS ingestion | `packages/rss-monitor` |
+| Parliament & gov scrapers | `packages/scraper` (cdep, senat, gov, BEC, ANI, etc.) |
+| Monorepo | npm workspaces + **Turborepo** |
 
 ---
 
-## Data Sources
+## Data sources
 
-### Official (Tier 0 — always overrides media)
-- `cdep.ro` — Camera Deputaților (331 deputies, vote records)
-- `senat.ro` — Senatul României (136 senators)
-- `parlament.openpolitics.ro` — CC-BY-SA-4.0 CSV export (all votes, questions, party migration)
-- `monitoruloficial.ro` — Every law that passed
+### Official (Tier 0 — overrides media where applicable)
 
-### Verified Media (Tier 1 — primary sources for statements)
-- **Recorder.ro** — #1 most-cited source in Romania (MediaTRUST 2023)
-- **HotNews.ro** — ~5M unique users/month, independent
-- **G4Media.ro** — Politics, justice, corruption, investigative
+- **cdep.ro** / **senat.ro** — chamber sites and structured data paths used by scrapers  
+- **parlament.openpolitics.ro** — CC-BY-SA-4.0 CSV and related exports where integrated  
+- **monitoruloficial.ro** — legal gazette (scraper support in repo)
 
-### Broad Reach Media (Tier 2 — supplementary only)
-- Digi24.ro, ProTV.ro, Europa FM
+### Verified media (Tier 1 — primary for many statements)
 
-### Excluded
-- Party-owned media
-- Outlets with active CNA misinformation sanctions
-- Politician self-press / party websites
-- Anonymous sources
+- **Recorder.ro**, **HotNews.ro**, **G4Media.ro** — among feeds configured in `packages/rss-monitor`
 
----
+### Broader media (Tier 2 — supplementary)
 
-## Neutrality Rules
+- e.g. Digi24, ProTV, Europa FM — where listed in source configuration
 
-1. No editorial opinion — only: promised / happened / sources confirm or deny
-2. All parties treated identically — same process for PSD, PNL, USR, AUR, everyone
-3. Minimum 2 independent Tier-1 sources required for any FALSE verdict
-4. Politicians cannot submit rebuttals through the platform
-5. Credibility score is math — public formula, auditable by anyone
-6. Official records (Monitorul Oficial, cdep.ro votes) always override media
-7. No anonymous sources — every record must have a permanent, archived URL
+### Excluded (by policy)
 
-Full rules: [NEUTRALITY.md](NEUTRALITY.md)
+- Party-owned media, sanctioned outlets, politician self-press without independent corroboration, anonymous sources  
+
+Details and tiers: **[SOURCES.md](SOURCES.md)**
 
 ---
 
-## Scoring Formula
+## Neutrality
+
+Rules are documented in **[NEUTRALITY.md](NEUTRALITY.md)** — in short: same process for all parties, no hidden editorial “take”, minimum sourcing discipline for strong verdicts, and official records respected when they govern a fact.
+
+---
+
+## Credibility score (summary)
+
+Full methodology: **[SCORING.md](SCORING.md)**
 
 ```
-credibility_score = (
-  score_promises * 0.35 +
-  score_reactions * 0.20 +
-  score_sources  * 0.25 +
-  score_consistency * 0.20
-) / 100
+credibility_score = round(
+  (score_promises     * 0.28) +
+  (score_declaratii   * 0.12) +
+  (score_reactions    * 0.18) +
+  (score_sources      * 0.22) +
+  (score_consistency  * 0.20)
+)
 ```
 
-Full methodology: [SCORING.md](SCORING.md)
+All subscores are integers **0–100**; weights sum to **1.0**.
 
 ---
 
-## Project Structure
+## Repository layout
 
 ```
-tevad.ro/
+Tevad.ro/
 ├── apps/
-│   └── web/                  # Next.js 14 frontend
-│       ├── app/
-│       │   ├── page.tsx              # Homepage / leaderboard
-│       │   ├── politician/[slug]/    # Politician profile
-│       │   ├── promises/             # All promises
-│       │   ├── broken/               # Broken promises
-│       │   └── api/                  # API routes
-│       └── components/
+│   └── web/                      # Next.js site (tevad.org)
+│       ├── app/                  # Routes: /, /promises, /declaratii, /broken, /verified,
+│       │                         # /politician/[slug], /audit/[recordId], /about, /despre,
+│       │                         # /legal, /privacy, /neutralitate, /cum-functioneaza, …
+│       └── app/api/              # react + cron/* (RSS, verify, scrapers, score-recalc, …)
 ├── packages/
-│   ├── scraper/              # cdep.ro + senat.ro scrapers
-│   │   ├── cdep.ts
-│   │   ├── senat.ts
-│   │   └── monitorul.ts
-│   ├── rss-monitor/          # Tier-1 source watchers
-│   │   ├── feed-watcher.ts
-│   │   └── sources.config.ts
-│   └── verifier/             # Claude AI verification pipeline
-│       ├── verify.ts
-│       └── score.ts
-└── supabase/
-    ├── migrations/
-    │   ├── 001_politicians.sql
-    │   ├── 002_records.sql
-    │   └── 003_sources_reactions_scores.sql
-    └── seed.sql
+│   ├── scraper/                  # Parliament & government data collectors
+│   ├── rss-monitor/            # Feed watcher + queue drain
+│   └── verifier/               # Claude verify pipeline, scoring, contradictions helper
+├── supabase/
+│   ├── migrations/               # Schema evolution (001+, votes, queue, scoring, …)
+│   └── seed.sql
+├── prompts/                      # Shared prompt assets where referenced
+├── netlify.toml
+├── turbo.json
+├── SCORING.md · NEUTRALITY.md · SOURCES.md · CONTRIBUTING.md
+└── package.json                  # Root scripts (see below)
 ```
 
 ---
 
-## Build Phases
+## Scripts (root)
 
-| Phase | Status | Description |
-|---|---|---|
-| 01 — Scaffold | 🟡 In Progress | Repo, DB schema, seed data, static UI |
-| 02 — Scrapers | ⬜ Planned | cdep.ro + senat.ro + OpenPolitics import |
-| 03 — AI Verify | ⬜ Planned | Claude pipeline, RSS monitor, score engine |
-| 04 — Launch | ⬜ Planned | tevad.ro live, open source community |
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Turborepo dev (web app default **port 3001** in `apps/web`) |
+| `npm run build` | Production build |
+| `npm run lint` / `npm run type-check` | Quality gates |
+| `npm run verify:run` | Run verifier CLI against queued records |
+| `npm run score:recalc` | Recompute politician scores |
+| `npm run rss:watch` / `npm run rss:drain` | RSS monitor |
+| `npm run verify:contradict` | Contradiction pass (Sonnet path in verifier) |
+| `npm run scrape:cdep` / `scrape:senat` / `scrape:gov` / … | Scraper entrypoints |
+| `npm run audit:parliament -w @tevad/scraper` | Roster audit (read-only; needs service role in env) |
+
+Web-app helpers (see `apps/web/package.json`): e.g. `cron:rss`, `cron:cdep-steno`.
 
 ---
 
-## Getting Started
+## Getting started
 
 ```bash
 git clone https://github.com/RomandemAi/Tevad.ro.git
 cd Tevad.ro
 npm install
 
-# Set up environment
+# Environment for the Next app (and align with scraper/verifier if you run them)
 cp apps/web/.env.example apps/web/.env.local
-# Fill in: SUPABASE_URL, SUPABASE_ANON_KEY, ANTHROPIC_API_KEY
-
-# Run Supabase locally
-npx supabase start
-npx supabase db push
-
-# Seed dev data
-npx supabase db seed
-
-# Start dev server
-npm run dev
+# Fill at least: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
+# SUPABASE_SERVICE_ROLE_KEY (server/cron), ANTHROPIC_API_KEY, CRON_SECRET (production crons)
 ```
 
-### Politician roster audit (read-only)
-
-Requires `SUPABASE_URL` (or `NEXT_PUBLIC_SUPABASE_URL`) and `SUPABASE_SERVICE_ROLE_KEY` in the repo root `.env` (same as scrapers). Compares active politicians to official deputy, senator, and cabinet lists; does not write to the database.
+**Supabase (local):**
 
 ```bash
-npm run audit:parliament -w @tevad/scraper
+npx supabase start
+# Prefer a full local reset (migrations + supabase/seed.sql):
+npx supabase db reset
+# Or apply migrations only without wiping data:
+npx supabase db push
 ```
 
-Use `--json` for JSON output (includes fuzzy `suggestion` on many `not_in_roster` rows). Optional `--full-deputy-roster` skips OpenPolitics narrowing of the deputy list. See [SOURCES.md](SOURCES.md).
+**Run the site:**
+
+```bash
+npm run dev
+# Open http://localhost:3001 (see apps/web dev script)
+```
+
+---
+
+## Deployment (Netlify)
+
+- Build: `npm ci --include=dev && npm run build -w web` (see `netlify.toml`)  
+- Set **`CRON_SECRET`** and call cron routes with `Authorization: Bearer <CRON_SECRET>`  
+- Set **`NEXT_PUBLIC_APP_URL`** to your canonical public URL (e.g. `https://tevad.org`)  
+
+Cron entrypoints live under `apps/web/app/api/cron/` (RSS watch, verify, scrapers, score recalc, contradict, etc.).
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to submit evidence, report inaccuracies, or contribute code.
+See **[CONTRIBUTING.md](CONTRIBUTING.md)** for evidence, corrections, and code contributions.
 
 ---
 
 ## License
 
-MIT — fork it, build your own country's version. Just credit Tevad.ro.
+**MIT** — fork it, adapt it for another country, credit the project.
 
 ---
 
-*Tevad.org — proiect civic independent · România · 2026*
+*Tevad.org — proiect civic independent · România · 2026*  
 *"Te văd." — I see you.*
