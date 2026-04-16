@@ -185,3 +185,104 @@ Return JSON:
     recordB: parsed.recordB ?? null,
   }
 }
+
+export type ClaimKind = 'future_promise' | 'present_fact' | 'opinion_only' | 'mixed'
+export type Measurability = 'high' | 'medium' | 'low' | 'non_falsifiable'
+export type SuggestedType = 'promise' | 'statement' | 'vote'
+
+export interface ClassifyClaimResult {
+  claim_kind: ClaimKind
+  measurability: Measurability
+  suggested_type: SuggestedType
+  confidence: number
+  reasoning: string | null
+  model_version: string
+}
+
+/**
+ * Claim-kind + measurability classifier (neutral, no politics).
+ * Used to suggest `records.type` and whether a claim is falsifiable.
+ */
+export async function classifyClaim(input: {
+  type: 'promise' | 'statement' | 'vote'
+  text: string
+  date: string
+}): Promise<ClassifyClaimResult> {
+  const fallback: ClassifyClaimResult = {
+    claim_kind: input.type === 'promise' ? 'future_promise' : input.type === 'vote' ? 'present_fact' : 'present_fact',
+    measurability: input.type === 'statement' ? 'medium' : 'high',
+    suggested_type: input.type,
+    confidence: 50,
+    reasoning: null,
+    model_version: HAIKU,
+  }
+  if (!process.env.ANTHROPIC_API_KEY) return fallback
+
+  const response = await getClient().messages.create({
+    model: HAIKU,
+    max_tokens: 200,
+    system:
+      'You are a neutral classifier for a Romanian political accountability platform. ' +
+      'Your job: classify falsifiability/measurability and whether the text is a future commitment (promise) vs a factual claim (statement) vs a vote. ' +
+      'No political framing. Return JSON only.',
+    messages: [
+      {
+        role: 'user',
+        content: `TYPE: ${input.type.toUpperCase()}
+DATE: ${input.date}
+TEXT: "${input.text}"
+
+Return JSON:
+{
+  "claim_kind": "future_promise|present_fact|opinion_only|mixed",
+  "measurability": "high|medium|low|non_falsifiable",
+  "suggested_type": "promise|statement|vote",
+  "confidence": 0-100,
+  "reasoning": "one short factual sentence or null"
+}`,
+      },
+    ],
+  })
+
+  const text = response.content[0]?.type === 'text' ? response.content[0].text : '{}'
+  const parsed = extractJsonObject<{
+    claim_kind?: ClaimKind
+    measurability?: Measurability
+    suggested_type?: SuggestedType
+    confidence?: number
+    reasoning?: string | null
+  }>(text)
+  if (!parsed) return fallback
+
+  const ck =
+    parsed.claim_kind === 'future_promise' ||
+    parsed.claim_kind === 'present_fact' ||
+    parsed.claim_kind === 'opinion_only' ||
+    parsed.claim_kind === 'mixed'
+      ? parsed.claim_kind
+      : fallback.claim_kind
+
+  const meas =
+    parsed.measurability === 'high' ||
+    parsed.measurability === 'medium' ||
+    parsed.measurability === 'low' ||
+    parsed.measurability === 'non_falsifiable'
+      ? parsed.measurability
+      : fallback.measurability
+
+  const st =
+    parsed.suggested_type === 'promise' || parsed.suggested_type === 'statement' || parsed.suggested_type === 'vote'
+      ? parsed.suggested_type
+      : fallback.suggested_type
+
+  const conf = typeof parsed.confidence === 'number' ? Math.max(0, Math.min(100, parsed.confidence)) : fallback.confidence
+
+  return {
+    claim_kind: ck,
+    measurability: meas,
+    suggested_type: st,
+    confidence: conf,
+    reasoning: typeof parsed.reasoning === 'string' ? parsed.reasoning.trim() || null : null,
+    model_version: HAIKU,
+  }
+}

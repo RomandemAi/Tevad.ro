@@ -15,6 +15,7 @@ import { getLean, getSourceTier, TIER0_SOURCES } from './sources.config'
 import type { SourceLean } from './sources.config'
 import type { CrossCheckInput } from '@tevad/verifier/cross-check'
 import { resolveRecordTypeFromQueue } from './resolve-record-type'
+import { classifyClaim } from '@tevad/verifier/models'
 
 // Load repo `.env` (and optionally apps/web/.env.local)
 {
@@ -176,6 +177,23 @@ export async function run(opts: { limit?: number } = {}) {
 
       const result = await crossCheckVerify(input)
       await saveCrossCheckResult(recordId, politicianId, result, crossSources)
+
+      // Non-editorial annotation: claim-kind + measurability + suggested type.
+      try {
+        const ann = await classifyClaim({ type: resolvedType, text: statementText, date: dateMade })
+        await supabase.from('record_ai_annotations').insert({
+          record_id: recordId,
+          politician_id: politicianId,
+          claim_kind: ann.claim_kind,
+          measurability: ann.measurability,
+          suggested_type: ann.suggested_type,
+          confidence: ann.confidence,
+          reasoning: ann.reasoning,
+          model_version: ann.model_version,
+        } as any)
+      } catch (e) {
+        console.warn('[rss:drain] classifyClaim failed:', (e as Error).message)
+      }
 
       const components = await recalcScore(politicianId)
       await saveScore(politicianId, components, 'rss_drain_queue', recordId, { skipReasonExplain: true })

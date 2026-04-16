@@ -72,6 +72,13 @@ export default async function AuditPage({ params }: Props) {
     .eq('record_id', record.id)
     .order('created_at', { ascending: false })
 
+  const { data: annotations } = await supabase
+    .from('record_ai_annotations')
+    .select('*')
+    .eq('record_id', record.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+
   type JoinedPolitician = {
     id: string
     slug: string
@@ -156,6 +163,62 @@ export default async function AuditPage({ params }: Props) {
             </span>
           </div>
         </div>
+
+        {(annotations ?? []).length > 0 && (
+          <div className={`mb-6 rounded-2xl border border-[var(--gray-200)] bg-white p-5 md:p-6 ${cardShadow}`}>
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <h2 className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
+                AI · clasificare (orientativ)
+              </h2>
+              <span className="rounded-full border border-[var(--gray-200)] bg-[var(--gray-50)] px-2 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-500)]">
+                poate greși
+              </span>
+            </div>
+            {(() => {
+              const a = (annotations ?? [])[0] as any
+              return (
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <div className={innerBox}>
+                    <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--gray-500)]">
+                      claim_kind
+                    </p>
+                    <p className="font-mono text-[12px] text-[var(--gray-800)]">{String(a.claim_kind)}</p>
+                  </div>
+                  <div className={innerBox}>
+                    <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--gray-500)]">
+                      measurability
+                    </p>
+                    <p className="font-mono text-[12px] text-[var(--gray-800)]">{String(a.measurability)}</p>
+                  </div>
+                  <div className={innerBox}>
+                    <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--gray-500)]">
+                      suggested_type
+                    </p>
+                    <p className="font-mono text-[12px] text-[var(--gray-800)]">{String(a.suggested_type)}</p>
+                  </div>
+                  <div className={innerBox}>
+                    <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--gray-500)]">
+                      confidence
+                    </p>
+                    <p className="font-mono text-[12px] text-[var(--gray-800)]">{String(a.confidence)}%</p>
+                  </div>
+                  {a.reasoning && (
+                    <div className="md:col-span-2">
+                      <div className={innerBox}>
+                        <p className="mb-1 font-mono text-[9px] uppercase tracking-wider text-[var(--gray-500)]">
+                          reasoning
+                        </p>
+                        <p className="font-sans text-[14px] leading-relaxed text-[var(--gray-700)]">
+                          {String(a.reasoning)}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
+          </div>
+        )}
 
         <h2 className="mb-4 font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
           Jurnal audit · {auditLogs?.length ?? 0} verificări

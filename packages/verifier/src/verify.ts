@@ -27,6 +27,7 @@ import { resolve } from 'path'
 import { createClient } from '@supabase/supabase-js'
 import { getLean, getSourceTier } from '../../rss-monitor/src/sources.config'
 import { enrichWithWebSearch } from './web-search-enrich'
+import { classifyClaim } from './models'
 
 function loadEnvFiles(): void {
   const candidates = [
@@ -333,6 +334,32 @@ async function runPending(): Promise<void> {
     })
 
     await saveCrossCheckResult(recordId, politicianId, cc, input.sources)
+
+    // Non-editorial annotation: claim-kind + measurability + suggested type.
+    try {
+      const ann = await classifyClaim({
+        type: input.statementType,
+        text: input.statementText,
+        date: input.statementDate,
+      })
+      await supabase.from('record_ai_annotations').insert({
+        record_id: recordId,
+        politician_id: politicianId,
+        claim_kind: ann.claim_kind,
+        measurability: ann.measurability,
+        suggested_type: ann.suggested_type,
+        confidence: ann.confidence,
+        reasoning: ann.reasoning,
+        model_version: ann.model_version,
+      } as any)
+      if (ann.suggested_type !== input.statementType && ann.confidence >= 85) {
+        console.log(
+          `[verify] annotation: suggested_type=${ann.suggested_type} (was ${input.statementType}) conf=${ann.confidence}%`
+        )
+      }
+    } catch (e) {
+      console.warn('[verify] classifyClaim failed:', (e as Error).message)
+    }
 
     const components = await recalcScore(politicianId)
     await saveScore(politicianId, components, 'pending_record_verified', recordId, {
