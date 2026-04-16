@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { getStatusHint } from '@/lib/record-status-hint'
+import { verdictBadgeLabel } from '@/lib/record-verdict-display'
 import StatusHintIcon from '@/components/StatusHintIcon'
 
 interface Source {
@@ -28,13 +29,6 @@ interface PoliticianRecord {
   opinion_exempt?: boolean
   ai_reasoning?: string | null
   sources: Source[]
-}
-
-const STATUS_LABEL: Record<string, string> = {
-  true: 'ADEVĂRAT',
-  false: 'FALS',
-  partial: 'PARȚIAL',
-  pending: 'PENDING',
 }
 
 const STATUS_CLASS: Record<string, string> = {
@@ -132,7 +126,7 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
           <span
             className={`inline-flex items-center rounded-full border px-2.5 py-1 font-mono text-[9px] font-medium uppercase tracking-wide ${STATUS_CLASS[record.status]}`}
           >
-            {STATUS_LABEL[record.status]}
+            {verdictBadgeLabel(record.type, record.status)}
           </span>
           {statusHint.show && (
             <StatusHintIcon summary={statusHint.summary} detail={statusHint.detail} />

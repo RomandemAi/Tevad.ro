@@ -1,3 +1,5 @@
+import { verdictMeaningSummary } from '@/lib/record-verdict-display'
+
 export type RecordStatus = 'true' | 'false' | 'partial' | 'pending'
 export type RecordType = 'promise' | 'statement' | 'vote'
 
@@ -64,8 +66,19 @@ export function getStatusHint(input: StatusHintInput): StatusHint {
   if (status === 'partial') {
     return {
       show: true,
-      summary: 'Verdict parțial — sursele publice susțin doar o parte din afirmație.',
+      summary: verdictMeaningSummary(type, 'partial'),
       ...(reasoning ? { detail: truncateDetail(reasoning) } : {}),
+    }
+  }
+
+  if (status === 'true' || status === 'false') {
+    const summary = verdictMeaningSummary(type, status)
+    if (summary) {
+      return {
+        show: true,
+        summary,
+        ...(reasoning ? { detail: truncateDetail(reasoning) } : {}),
+      }
     }
   }
 

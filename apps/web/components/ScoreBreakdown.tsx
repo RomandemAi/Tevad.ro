@@ -54,6 +54,11 @@ export default function ScoreBreakdown({
             <div className="h-1.5 overflow-hidden rounded-full bg-[var(--gray-200)]">
               <div className="h-full rounded-full transition-all duration-[var(--duration-1)] ease-[var(--ease-out)]" style={{ width: `${v}%`, backgroundColor: col }} />
             </div>
+            {row.key === 'declaratii' && (
+              <p className="mt-1.5 max-w-[28rem] font-mono text-[9px] leading-snug text-[var(--gray-400)]">
+                Amestec factual pe declarații verificabile; nu reflectă îndeplinirea promisiunilor.
+              </p>
+            )}
           </div>
         )
       })}

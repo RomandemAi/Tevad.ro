@@ -9,6 +9,7 @@ import {
 } from '@/components/RecordRowPoliticianLead'
 import StatusHintIcon from '@/components/StatusHintIcon'
 import { getStatusHint } from '@/lib/record-status-hint'
+import { verdictBadgeLabel } from '@/lib/record-verdict-display'
 
 const STATUS_QUERY_PARAM = 'status' as const
 
@@ -45,9 +46,6 @@ export const metadata: Metadata = {
   alternates: { canonical: `${getSiteUrl()}/declaratii` },
 }
 
-const STATUS_LABEL: Record<string, string> = {
-  true: 'ADEVĂRAT', false: 'FALS', partial: 'PARȚIAL', pending: 'PENDING',
-}
 const STATUS_CLASS: Record<string, string> = {
   true: 'bg-[var(--green-bg)] text-[var(--green)] border-[rgba(22,163,74,0.35)]',
   false: 'bg-[var(--red-bg)] text-[var(--red)] border-[rgba(220,38,38,0.35)]',
@@ -83,7 +81,7 @@ export default async function DeclaratiiPage({ searchParams }: Props) {
       topBarRight={
         <span className="font-mono text-[10px] text-[var(--gray-500)]">
           {records.length} înregistrări
-          {statusFilter ? ` (status: ${STATUS_LABEL[statusFilter]})` : ''}
+          {statusFilter ? ` (status: ${verdictBadgeLabel('statement', statusFilter)})` : ''}
         </span>
       }
     >
@@ -134,7 +132,7 @@ export default async function DeclaratiiPage({ searchParams }: Props) {
                     <p className="mt-2 line-clamp-2 text-[13px] leading-snug text-[var(--gray-600)]">{rec.text}</p>
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <span className={`rounded border px-1.5 py-0.5 font-mono text-[8px] ${STATUS_CLASS[rec.status]}`}>
-                        {STATUS_LABEL[rec.status]}
+                        {verdictBadgeLabel('statement', rec.status as 'true' | 'false' | 'partial' | 'pending')}
                       </span>
                       <span className="font-mono text-[9px] text-[var(--gray-500)]">
                         {new Date(rec.date_made).toLocaleDateString('ro-RO', { month: 'short', year: 'numeric' }).toUpperCase()}

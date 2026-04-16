@@ -19,6 +19,12 @@ It does not answer:
 
 ---
 
+## Verdict labels and record types
+
+The verification pipeline still uses one machine-readable verdict per record (`true`, `false`, `partial`, `pending`) for every `type`. On the public site, **badge wording depends on `type`** (promisiune vs declarație vs vot) so readers are not misled: a confirmed **declarație** means the claim aligns with cited sources; a fulfilled **promisiune** means evidence supports that the commitment was kept. Filters, APIs, and scoring continue to use the canonical status values; only presentation copy differs.
+
+---
+
 ## Rules
 
 ### Rule 01 — No Editorial Opinion

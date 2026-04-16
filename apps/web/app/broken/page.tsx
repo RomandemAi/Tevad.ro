@@ -7,6 +7,7 @@ import {
   RecordRowPoliticianName,
 } from '@/components/RecordRowPoliticianLead'
 import { getSiteUrl } from '@/lib/site-url'
+import { verdictBadgeLabel } from '@/lib/record-verdict-display'
 
 export const revalidate = 3600
 
@@ -61,7 +62,7 @@ export default async function BrokenPage() {
                 <p className="mt-2 line-clamp-2 text-[13px] leading-snug text-[var(--gray-600)]">{rec.text}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span className="rounded border border-[rgba(220,38,38,0.35)] bg-[var(--red-bg)] px-1.5 py-0.5 font-mono text-[8px] text-[var(--red)]">
-                    FALS
+                    {verdictBadgeLabel('promise', 'false')}
                   </span>
                   <span className="font-mono text-[9px] text-[var(--gray-500)]">
                     {new Date(rec.date_made).toLocaleDateString('ro-RO', { month: 'short', year: 'numeric' }).toUpperCase()}
