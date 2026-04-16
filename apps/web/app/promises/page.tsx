@@ -183,7 +183,13 @@ export default async function PromisesPage({ searchParams }: Props) {
                       {verdictBadgeLabel('promise', rec.status as 'true' | 'false' | 'partial' | 'pending')}
                     </span>
                     <span className="font-mono text-[9px] text-[var(--gray-500)]">
-                      {new Date(rec.date_made).toLocaleDateString('ro-RO', { month: 'short', year: 'numeric' }).toUpperCase()}
+                      {new Date((rec as { created_at?: string }).created_at ?? rec.date_made).toLocaleString('ro-RO', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
                     </span>
                     {rec.impact_level === 'high' && (
                       <span className="rounded border border-[rgba(217,119,6,0.35)] bg-[var(--amber-bg)] px-1 py-0.5 font-mono text-[8px] text-[var(--amber)]">

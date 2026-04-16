@@ -13,6 +13,7 @@ interface RecordData {
   text: string
   status: RecordStatus
   date_made: string
+  created_at?: string
   impact_level: string
   likes: number
   dislikes: number
@@ -90,7 +91,7 @@ export default function RecordsSection({ records, politicianId }: RecordsSection
           Înregistrări verificate
         </h2>
         <span className="rounded-full border border-[var(--gray-200)] bg-[var(--gray-50)] px-2 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-500)]">
-          AI + surse
+          AI + surse · poate greși
         </span>
       </div>
 

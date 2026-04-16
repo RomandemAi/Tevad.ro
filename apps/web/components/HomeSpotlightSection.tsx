@@ -124,7 +124,15 @@ export default function HomeSpotlightSection({
                       <span className={`font-mono text-[11px] font-medium uppercase ${statusClass(r.status)}`}>
                         {statusLabel(r.status)}
                       </span>
-                      <span className="font-mono text-[10px] text-[var(--gray-500)]">{r.date_made}</span>
+                      <span className="font-mono text-[10px] text-[var(--gray-500)]">
+                        {new Date(r.date_made).toLocaleString('ro-RO', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
                     </div>
                   </Link>
                 </li>

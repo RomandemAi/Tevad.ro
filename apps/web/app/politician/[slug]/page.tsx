@@ -102,7 +102,7 @@ export default async function PoliticianPage({ params }: Props) {
 
   const { data: records } = await supabase
     .from('records')
-    .select(`id, slug, type, text, status, date_made, impact_level, likes, dislikes, ai_confidence, opinion_exempt, ai_reasoning,
+    .select(`id, slug, type, text, status, date_made, created_at, impact_level, likes, dislikes, ai_confidence, opinion_exempt, ai_reasoning,
       sources (id, tier, outlet, url, archived_url, published_at)`)
     .eq('politician_id', pol.id)
     .order('date_made', { ascending: false })
@@ -127,6 +127,13 @@ export default async function PoliticianPage({ params }: Props) {
   ])
   const promiseCount = promRes.count ?? 0
   const statementCount = stmtRes.count ?? 0
+
+  const { data: contradictionRows } = await supabase
+    .from('contradiction_pairs')
+    .select('id, topic, record_a_id, record_b_id, record_a_date, record_b_date, explanation, detected_at')
+    .eq('politician_id', pol.id)
+    .order('detected_at', { ascending: false })
+    .limit(8)
 
   const displayCredibility = displayScore(pol.score)
   const total = pol.total_records ?? 0
@@ -273,6 +280,50 @@ export default async function PoliticianPage({ params }: Props) {
                 </div>
               </aside>
             </div>
+
+            {(contradictionRows ?? []).length > 0 && (
+              <div className="border-t border-[var(--gray-100)] bg-white px-6 py-6 md:px-8 md:py-7">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
+                    Contradicții detectate
+                  </h2>
+                  <span className="rounded-full border border-[var(--gray-200)] bg-[var(--gray-50)] px-2 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-500)]">
+                    AI · poate greși
+                  </span>
+                </div>
+                <p className="mt-3 max-w-[64ch] font-sans text-[14px] leading-relaxed text-[var(--gray-600)]">
+                  Exemple de poziții opuse pe același subiect în momente diferite. Nu sunt judecăți de valoare — doar
+                  consistență între înregistrări.
+                </p>
+
+                <div className="mt-4 space-y-3">
+                  {(contradictionRows ?? []).slice(0, 3).map(row => (
+                    <div
+                      key={row.id as string}
+                      className="rounded-xl border border-[var(--gray-200)] bg-[var(--gray-50)] px-4 py-3"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
+                          {String(row.topic)}
+                        </span>
+                        <span className="font-mono text-[10px] text-[var(--gray-400)]">
+                          {String(row.record_a_date ?? '')}
+                          {row.record_b_date ? ` → ${String(row.record_b_date)}` : ''}
+                        </span>
+                      </div>
+                      {row.explanation && (
+                        <p className="mt-2 font-sans text-[13px] leading-relaxed text-[var(--gray-700)]">
+                          {String(row.explanation)}
+                        </p>
+                      )}
+                      <p className="mt-2 font-mono text-[10px] text-[var(--gray-500)]">
+                        ID-uri: {String(row.record_a_id).slice(0, 8)}… / {String(row.record_b_id).slice(0, 8)}…
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="border-t border-[var(--gray-100)] bg-white px-6 py-6 md:px-8 md:py-7">
               <WealthDeclarationsPanel

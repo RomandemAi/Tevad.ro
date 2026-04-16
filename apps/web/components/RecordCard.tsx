@@ -22,6 +22,7 @@ interface PoliticianRecord {
   text: string
   status: 'true' | 'false' | 'partial' | 'pending'
   date_made: string
+  created_at?: string
   impact_level: string
   likes: number
   dislikes: number
@@ -196,7 +197,13 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
           <span className="font-mono text-[11px] text-[var(--gray-500)]">Fără sursă publică</span>
         )}
         <span className="font-mono text-[11px] text-[var(--gray-500)]">
-          {new Date(record.date_made).toLocaleDateString('ro-RO', { day: '2-digit', month: 'short', year: 'numeric' })}
+          {new Date(record.created_at ?? record.date_made).toLocaleString('ro-RO', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
         </span>
       </div>
 
