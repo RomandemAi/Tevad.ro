@@ -26,4 +26,9 @@ export interface ModelResult {
   reasoning: string
   canBeDecided: boolean
   requiresMoreSources: boolean
+  /**
+   * Only for STATEMENT type in the user prompt: materiality (public-policy vs personal).
+   * Persisted to `records.impact_level` for declarații only. Promises/votes must omit this key.
+   */
+  impact_level?: 'high' | 'medium' | 'low'
 }

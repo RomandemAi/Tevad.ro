@@ -43,9 +43,12 @@ If a politician has **no** verified promise rows (true/false/partial), `score_pr
 
 ### score_declaratii (weight: 12%)
 
-Same truth-mix formula as promises, but only for **declarații / statements** (`records.type = 'statement'`). **`opinion_exempt = true`** rows are excluded for the same reason as under promises.
+Same truth-mix formula as promises, but only for **declarații / statements** (`records.type = 'statement'`). Excluded rows:
 
-This subscore reflects **factual verification of claims we treat as checkable**, not whether a statement was wise, decent, or politically important. Trivial or awkward but accurate claims can register as “true” without implying moral or leadership credit; editorial scope (`opinion_exempt`, and which statements enter the queue) is the main lever for edge cases like purely personal or deflecting remarks.
+- **`opinion_exempt = true`** — same rationale as under promises.
+- **`impact_level = 'low'`** — classified at verification time (AI, **statements only**) as personal / lifestyle / no meaningful public-policy stake; the line can stay on the site with a factual verdict, but it does not move this subscore. Promises and votes are **never** given this AI materiality pass; they use the verdict JSON without `impact_level`, and promise scoring does not filter by `impact_level`.
+
+This subscore reflects **factual verification of claims we treat as material for public-policy accountability**, not moral or leadership credit.
 
 ```
 kept     = statement records where status = 'true'
@@ -161,8 +164,13 @@ Any change to weights or component formulas requires:
 5. Recalculation of all existing scores with the new formula
 6. Public announcement
 
-**Current version: v1.1.1**  
+**Current version: v1.2.0**  
 **Effective from: 2026-04-16**
+
+### v1.2.0 (declarații materiality)
+
+- Verification prompt **v1.2.0**: models output **`impact_level` only when STATEMENT TYPE is STATEMENT**; for PROMISE or VOTE they return verdict JSON **without** `impact_level` (no AI “importance” judgment on promises).
+- `score_declaratii` excludes verified statements with **`impact_level = 'low'`** (in addition to `opinion_exempt`).
 
 ### v1.1.1 (clarification + scoring filter)
 

@@ -9,6 +9,7 @@
  *
  * `score_promises` uses only type=promise; `score_declaratii` only type=statement.
  * Rows with opinion_exempt=true are excluded from those two subscores (non-falsifiable / no verdict on record).
+ * For statements only, impact_level='low' is excluded from score_declaratii (AI materiality; promises never use this).
  *
  * Run: npx tsx packages/verifier/src/score.ts [politician-slug]
  * Cron: triggered after every new record or reaction batch
@@ -97,6 +98,7 @@ async function calcDeclaratii(politicianId: string): Promise<number> {
     .eq('politician_id', politicianId)
     .eq('type', 'statement')
     .eq('opinion_exempt', false)
+    .or('impact_level.is.null,impact_level.eq.high,impact_level.eq.medium')
     .in('status', ['true', 'false', 'partial'])
 
   if (!records || records.length === 0) return 50

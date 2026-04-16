@@ -165,6 +165,11 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
           Declarație politică — verdictul nu se aplică opiniilor
         </p>
       )}
+      {record.type === 'statement' && record.impact_level === 'low' && !record.opinion_exempt && (
+        <p className="mt-3 rounded-lg border border-[var(--gray-200)] bg-[var(--gray-50)] px-3 py-2 font-mono text-[10px] leading-relaxed text-[var(--gray-600)]">
+          Miză redusă pentru politici publice — verdictul rămâne factual; nu intră în scorul agregat de declarații.
+        </p>
+      )}
       {record.status === 'pending' && record.type === 'promise' && !record.opinion_exempt && (
         <p className="mt-3 rounded-lg border border-[rgba(29,110,245,0.25)] bg-[var(--blue-light)] px-3 py-2 font-mono text-[10px] leading-relaxed text-[var(--blue)]">
           Promisiune în curs de verificare — verdict disponibil după implementare

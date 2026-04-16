@@ -11,7 +11,7 @@ import type { SourceLean } from '../../rss-monitor/src/sources.config'
 import { buildBlindPayload } from './blind-payload'
 import { buildBlindUserPrompt } from './prompt-utils'
 import { getVerificationSystemPrompt, runVerificationModel } from './model-runner'
-import type { BlindPayload } from './blind-types'
+import type { BlindPayload, ModelResult } from './blind-types'
 
 function getServiceSupabaseUrl(): string {
   return process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -27,6 +27,7 @@ function getServiceSupabase() {
 }
 
 type Verdict = 'true' | 'false' | 'partial' | 'pending'
+type ImpactLevel = 'high' | 'medium' | 'low'
 
 export interface CrossCheckResult {
   finalVerdict: Verdict
@@ -45,6 +46,8 @@ export interface CrossCheckResult {
   responseSecondaryRaw: string | null
   blindPayload: BlindPayload
   flaggedForReview: boolean
+  /** Set only when verifying type=statement; used to persist `records.impact_level`. */
+  statementImpactLevel: ImpactLevel | null
 }
 
 function verdictsAgree(a: Verdict, b: Verdict): boolean {
@@ -68,6 +71,17 @@ export interface CrossCheckInput {
     excerpt?: string
     publishedAt?: string
   }>
+}
+
+/** AI materiality for declarații only; null for promise/vote (we do not overwrite impact_level). */
+export function resolveStatementImpactLevel(
+  statementType: CrossCheckInput['statementType'],
+  primary: ModelResult | null
+): ImpactLevel | null {
+  if (statementType !== 'statement') return null
+  const v = primary?.impact_level
+  if (v === 'high' || v === 'medium' || v === 'low') return v
+  return 'medium'
 }
 
 const PRIMARY_MODEL = 'claude-sonnet-4-6'
@@ -118,6 +132,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
       responseSecondaryRaw,
       blindPayload,
       flaggedForReview: true,
+      statementImpactLevel: resolveStatementImpactLevel(input.statementType, null),
     }
   }
 
@@ -143,6 +158,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
       responseSecondaryRaw,
       blindPayload,
       flaggedForReview,
+      statementImpactLevel: resolveStatementImpactLevel(input.statementType, primary),
     }
   }
 
@@ -164,6 +180,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
       responseSecondaryRaw,
       blindPayload,
       flaggedForReview: false,
+      statementImpactLevel: resolveStatementImpactLevel(input.statementType, primary),
     }
   }
 
@@ -189,6 +206,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
       responseSecondaryRaw,
       blindPayload,
       flaggedForReview: true,
+      statementImpactLevel: resolveStatementImpactLevel(input.statementType, primary),
     }
   }
 
@@ -213,6 +231,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
     responseSecondaryRaw,
     blindPayload,
     flaggedForReview: false,
+    statementImpactLevel: resolveStatementImpactLevel(input.statementType, primary),
   }
 }
 
@@ -227,21 +246,23 @@ export async function saveCrossCheckResult(
     sourcesFed.map(s => ({ tier: s.tier, lean: s.lean }))
   )
 
-  const { error } = await supabase
-    .from('records')
-    .update({
-      status: result.finalVerdict,
-      ai_verdict: result.finalVerdict,
-      ai_confidence: result.primaryConfidence,
-      ai_reasoning: result.primaryReasoning,
-      ai_model: result.primaryModel,
-      ai_can_be_decided: !result.forcedPending,
-      ai_requires_more_sources: result.forcedPending,
-      ai_models_agreed: result.modelsAgreed,
-      ai_verified_at: new Date().toISOString(),
-      date_verified: new Date().toISOString(),
-    })
-    .eq('id', recordId)
+  const recordPatch: Record<string, unknown> = {
+    status: result.finalVerdict,
+    ai_verdict: result.finalVerdict,
+    ai_confidence: result.primaryConfidence,
+    ai_reasoning: result.primaryReasoning,
+    ai_model: result.primaryModel,
+    ai_can_be_decided: !result.forcedPending,
+    ai_requires_more_sources: result.forcedPending,
+    ai_models_agreed: result.modelsAgreed,
+    ai_verified_at: new Date().toISOString(),
+    date_verified: new Date().toISOString(),
+  }
+  if (result.statementImpactLevel != null) {
+    recordPatch.impact_level = result.statementImpactLevel
+  }
+
+  const { error } = await supabase.from('records').update(recordPatch as Record<string, unknown>).eq('id', recordId)
 
   if (error) throw error
 
@@ -263,7 +284,7 @@ export async function saveCrossCheckResult(
     flagged_for_review: result.flaggedForReview,
     blind_verified: result.blindVerified,
 
-    prompt_version: 'v1.0.0',
+    prompt_version: 'v1.2.0',
     blind_payload: result.blindPayload,
     sources_fed: sourcesFed,
     response_primary: result.responsePrimaryRaw,

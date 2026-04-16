@@ -26,5 +26,12 @@ Excerpt: ${s.excerpt ?? 'No excerpt available'}
 
 Analyze the above and return your verdict as JSON.
 Remember: FALSE requires 2+ independent Tier-1 sources or 1 Tier-1 + 1 official record.
+${
+  payload.type === 'statement'
+    ? `
+You are verifying a STATEMENT (declarație): your JSON MUST include "impact_level" per the system prompt (high | medium | low).`
+    : `
+STATEMENT TYPE is not STATEMENT: your JSON must NOT include "impact_level" — verdict fields only.`
+}
 `.trim()
 }
