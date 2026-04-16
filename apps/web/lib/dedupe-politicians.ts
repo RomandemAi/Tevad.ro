@@ -35,6 +35,7 @@ function mergePair(primary: Politician, secondary: Politician): Politician {
     records_pending: num(primary.records_pending) + num(secondary.records_pending),
     score: Math.round((num(primary.score) + num(secondary.score)) / 2),
     score_promises: Math.round((num(primary.score_promises) + num(secondary.score_promises)) / 2),
+    score_declaratii: Math.round((num(primary.score_declaratii) + num(secondary.score_declaratii)) / 2),
     score_reactions: Math.round((num(primary.score_reactions) + num(secondary.score_reactions)) / 2),
     score_sources: Math.round((num(primary.score_sources) + num(secondary.score_sources)) / 2),
     score_consistency: Math.round(

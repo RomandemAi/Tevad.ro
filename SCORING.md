@@ -1,6 +1,6 @@
 # Credibility Score Formula — Tevad.ro
 
-The credibility score is a number between 0 and 100. It is calculated automatically from four components. The formula is public, version-controlled, and cannot be changed without community review.
+The credibility score is a number between 0 and 100. It is calculated automatically from **five** public components. The formula is version-controlled, and cannot be changed without community review.
 
 ---
 
@@ -8,21 +8,23 @@ The credibility score is a number between 0 and 100. It is calculated automatica
 
 ```
 credibility_score = round(
-  (score_promises    * 0.35) +
-  (score_reactions   * 0.20) +
-  (score_sources     * 0.25) +
-  (score_consistency * 0.20)
+  (score_promises     * 0.28) +
+  (score_declaratii  * 0.12) +
+  (score_reactions    * 0.18) +
+  (score_sources      * 0.22) +
+  (score_consistency  * 0.20)
 )
 ```
 
-All four component scores are integers from 0 to 100.
+All component scores are integers from 0 to 100. Weights sum to **1.0**.
 
 ---
 
 ## Component Definitions
 
-### score_promises (weight: 35%)
-Measures the ratio of kept vs broken promises and statements.
+### score_promises (weight: 28%)
+
+Measures the ratio of kept vs broken **promises** only (`records.type = 'promise'`).
 
 ```
 kept     = records where status = 'true'
@@ -35,11 +37,31 @@ score_promises = round(
 )
 ```
 
-If a politician has zero verified records, `score_promises = 50` (neutral default).
+If a politician has **no** verified promise rows (true/false/partial), `score_promises = 50` (neutral default).
 
 ---
 
-### score_reactions (weight: 20%)
+### score_declaratii (weight: 12%)
+
+Same truth-mix formula as promises, but only for **declarații / statements** (`records.type = 'statement'`).
+
+```
+kept     = statement records where status = 'true'
+broken   = statement records where status = 'false'
+partial  = statement records where status = 'partial'
+total    = kept + broken + partial
+
+score_declaratii = round(
+  ((kept * 1.0) + (partial * 0.5)) / max(total, 1) * 100
+)
+```
+
+If there are **no** verified statement rows, `score_declaratii = 50` (neutral default).
+
+---
+
+### score_reactions (weight: 18%)
+
 Measures public sentiment across all records for this politician.
 
 ```
@@ -57,7 +79,8 @@ If a politician has zero reactions, `score_reactions = 50` (neutral default).
 
 ---
 
-### score_sources (weight: 25%)
+### score_sources (weight: 22%)
+
 Measures the quality and quantity of verified sources across all records.
 
 ```
@@ -79,6 +102,7 @@ score_sources = round(
 ---
 
 ### score_consistency (weight: 20%)
+
 Measures whether a politician's positions are consistent over time.
 
 ```
@@ -113,10 +137,11 @@ If a politician has fewer than 3 records, `score_consistency = 50` (neutral defa
 ## Score History
 
 Every score recalculation is logged in the `score_history` table with:
-- Previous score
-- New score
-- Delta
-- Reason (new_record / reaction_update / source_update / formula_change)
+
+- Previous score and new score
+- Delta (derived)
+- Subscores written on the event, including `score_promises_new`, `score_declaratii_new`, `score_reactions_new`, `score_sources_new`, `score_consistency_new`
+- Reason (e.g. new_record, reaction_update, full_recalc)
 - Timestamp
 
 This creates a full audit trail of how every politician's score changed over time.
@@ -126,6 +151,7 @@ This creates a full audit trail of how every politician's score changed over tim
 ## Formula Changes
 
 Any change to weights or component formulas requires:
+
 1. A public GitHub PR with full explanation
 2. Minimum 14-day community review period
 3. Approval from 2 independent maintainers
@@ -133,8 +159,14 @@ Any change to weights or component formulas requires:
 5. Recalculation of all existing scores with the new formula
 6. Public announcement
 
-**Current version: v1.0.0**
-**Effective from: 2026-03-25**
+**Current version: v1.1.0**  
+**Effective from: 2026-04-16**
+
+### v1.1.0 — deploy checklist
+
+1. Apply migration `supabase/migrations/023_score_declaratii.sql` on production (Supabase SQL Editor, linked `supabase db push`, or `supabase db query -f … --db-url …`). This adds `politicians.score_declaratii` and `score_history.score_declaratii_new`.
+2. After DDL, wait briefly if PostgREST reports schema cache errors (`PGRST204`); they clear after the cache refreshes.
+3. Run a full backfill: `npm run score:recalc` (uses `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` from `.env`).
 
 ---
 

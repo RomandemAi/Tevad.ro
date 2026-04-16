@@ -41,6 +41,8 @@ function mergePoliticianRow(prev: Politician, incoming: Record<string, unknown>)
     avatar_url: (incoming.avatar_url as string | null | undefined) ?? prev.avatar_url,
     score_promises:
       typeof incoming.score_promises === 'number' ? incoming.score_promises : prev.score_promises,
+    score_declaratii:
+      typeof incoming.score_declaratii === 'number' ? incoming.score_declaratii : prev.score_declaratii,
     score_reactions:
       typeof incoming.score_reactions === 'number' ? incoming.score_reactions : prev.score_reactions,
     score_sources:

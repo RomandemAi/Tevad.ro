@@ -17,6 +17,7 @@ export interface Politician {
   /** Official portrait URL (e.g. gov.ro cabinet) */
   avatar_url?: string | null
   score_promises?: number | null
+  score_declaratii?: number | null
   score_reactions?: number | null
   score_sources?: number | null
   score_consistency?: number | null

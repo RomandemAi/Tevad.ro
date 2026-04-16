@@ -2,10 +2,12 @@
  * packages/verifier/src/score.ts
  * Tevad.ro — Credibility Score Engine
  *
- * Implements the public formula from SCORING.md v1.0.0:
+ * Master score (weights sum to 1.0):
  *
- * score = (score_promises * 0.35) + (score_reactions * 0.20)
- *       + (score_sources * 0.25) + (score_consistency * 0.20)
+ * score = (score_promises * 0.28) + (score_declaratii * 0.12)
+ *       + (score_reactions * 0.18) + (score_sources * 0.22) + (score_consistency * 0.20)
+ *
+ * `score_promises` uses only records with type=promise; `score_declaratii` only type=statement.
  *
  * Run: npx tsx packages/verifier/src/score.ts [politician-slug]
  * Cron: triggered after every new record or reaction batch
@@ -58,18 +60,20 @@ const supabase = createClient(
 
 interface ScoreComponents {
   promises: number
+  declaratii: number
   reactions: number
   sources: number
   consistency: number
   total: number
 }
 
-// ---- Component: score_promises (35%) ----
+// ---- Component: score_promises (28% of total) — promises only ----
 async function calcPromises(politicianId: string): Promise<number> {
   const { data: records } = await supabase
     .from('records')
     .select('status')
     .eq('politician_id', politicianId)
+    .eq('type', 'promise')
     .in('status', ['true', 'false', 'partial'])
 
   if (!records || records.length === 0) return 50
@@ -83,7 +87,27 @@ async function calcPromises(politicianId: string): Promise<number> {
   return Math.round(((kept * 1.0) + (partial * 0.5)) / total * 100)
 }
 
-// ---- Component: score_reactions (20%) ----
+// ---- Component: score_declaratii (12% of total) — statements only ----
+async function calcDeclaratii(politicianId: string): Promise<number> {
+  const { data: records } = await supabase
+    .from('records')
+    .select('status')
+    .eq('politician_id', politicianId)
+    .eq('type', 'statement')
+    .in('status', ['true', 'false', 'partial'])
+
+  if (!records || records.length === 0) return 50
+
+  const kept = records.filter(r => r.status === 'true').length
+  const broken = records.filter(r => r.status === 'false').length
+  const partial = records.filter(r => r.status === 'partial').length
+  const total = kept + broken + partial
+
+  if (total === 0) return 50
+  return Math.round(((kept * 1.0) + (partial * 0.5)) / total * 100)
+}
+
+// ---- Component: score_reactions (18%) ----
 async function calcReactions(politicianId: string): Promise<number> {
   const { data: records } = await supabase
     .from('records')
@@ -111,7 +135,7 @@ async function calcReactions(politicianId: string): Promise<number> {
   return Math.round(avg * 100)
 }
 
-// ---- Component: score_sources (25%) ----
+// ---- Component: score_sources (22%) ----
 async function calcSources(politicianId: string): Promise<number> {
   const { data: records } = await supabase
     .from('records')
@@ -214,6 +238,7 @@ async function hasVerifiedRecord(politicianId: string): Promise<boolean> {
 export async function recalcScore(politicianId: string): Promise<ScoreComponents> {
   const neutral: ScoreComponents = {
     promises: 50,
+    declaratii: 50,
     reactions: 50,
     sources: 50,
     consistency: 50,
@@ -224,21 +249,23 @@ export async function recalcScore(politicianId: string): Promise<ScoreComponents
     return neutral
   }
 
-  const [promises, reactions, sources, consistency] = await Promise.all([
+  const [promises, declaratii, reactions, sources, consistency] = await Promise.all([
     calcPromises(politicianId),
+    calcDeclaratii(politicianId),
     calcReactions(politicianId),
     calcSources(politicianId),
     calcConsistency(politicianId),
   ])
 
   const total = Math.round(
-    (promises    * 0.35) +
-    (reactions   * 0.20) +
-    (sources     * 0.25) +
-    (consistency * 0.20)
+    promises * 0.28 +
+    declaratii * 0.12 +
+    reactions * 0.18 +
+    sources * 0.22 +
+    consistency * 0.2
   )
 
-  return { promises, reactions, sources, consistency, total }
+  return { promises, declaratii, reactions, sources, consistency, total }
 }
 
 export interface SaveScoreOptions {
@@ -266,6 +293,7 @@ export async function saveScore(
     .update({
       score:              components.total,
       score_promises:     components.promises,
+      score_declaratii:   components.declaratii,
       score_reactions:    components.reactions,
       score_sources:      components.sources,
       score_consistency:  components.consistency,
@@ -299,6 +327,7 @@ export async function saveScore(
     score_prev:            prevScore,
     score_new:             components.total,
     score_promises_new:    components.promises,
+    score_declaratii_new: components.declaratii,
     score_reactions_new:   components.reactions,
     score_sources_new:     components.sources,
     score_consistency_new: components.consistency,
@@ -308,7 +337,7 @@ export async function saveScore(
 
   console.log(
     `[score] ${politicianId}: ${prevScore} → ${components.total} ` +
-    `(P:${components.promises} R:${components.reactions} S:${components.sources} C:${components.consistency})`
+    `(P:${components.promises} D:${components.declaratii} R:${components.reactions} S:${components.sources} C:${components.consistency})`
   )
 }
 

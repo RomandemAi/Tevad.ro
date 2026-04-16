@@ -50,7 +50,7 @@ function ScoreRing({ score }: { score: number }) {
         </div>
       </div>
       <span className="mt-2 text-center font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
-        Credibilitate
+        Scor credibilitate
       </span>
     </div>
   )
@@ -113,6 +113,21 @@ export default async function PoliticianPage({ params }: Props) {
     .eq('politician_id', pol.id)
     .order('year', { ascending: false })
 
+  const [promRes, stmtRes] = await Promise.all([
+    supabase
+      .from('records')
+      .select('id', { count: 'exact', head: true })
+      .eq('politician_id', pol.id)
+      .eq('type', 'promise'),
+    supabase
+      .from('records')
+      .select('id', { count: 'exact', head: true })
+      .eq('politician_id', pol.id)
+      .eq('type', 'statement'),
+  ])
+  const promiseCount = promRes.count ?? 0
+  const statementCount = stmtRes.count ?? 0
+
   const displayCredibility = displayScore(pol.score)
   const total = pol.total_records ?? 0
   const trueW = total > 0 ? ((pol.records_true ?? 0) / total) * 100 : 0
@@ -139,107 +154,127 @@ export default async function PoliticianPage({ params }: Props) {
   return (
     <AppShell breadcrumb={breadcrumb}>
       <div className="tev-page-fill flex-1 overflow-y-auto">
-        <div className="mx-auto w-full max-w-[900px] px-4 py-6 md:px-6 md:py-8">
-          <div className="rounded-2xl border border-[var(--gray-200)] bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.08)] md:p-8">
-            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-              <div className="flex min-w-0 flex-1 flex-col gap-4 sm:flex-row sm:items-start">
-                <PoliticianAvatar
-                  name={pol.name}
-                  avatarColor={pol.avatar_color}
-                  avatarTextColor={pol.avatar_text_color}
-                  avatarUrl={pol.avatar_url}
-                  size="xl"
-                  shape="circle"
-                  className="mx-auto sm:mx-0"
-                />
-                <div className="min-w-0 flex-1 text-center sm:text-left">
-                  <div className="flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-                    <h1 className="font-sans text-[24px] font-bold leading-tight text-[var(--gray-900)] md:text-[28px]">
-                      {pol.name}
-                    </h1>
-                    <span className={`rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide ${credBadgeClass(displayCredibility)}`}>
-                      {scoreLabel(displayCredibility)}
-                    </span>
-                  </div>
-                  <p className="mt-2 font-sans text-[14px] text-[var(--gray-500)] md:text-[15px]">
-                    {pol.role}
-                  </p>
-                  <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-                    <span
-                      className="rounded-full bg-[var(--gray-100)] px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-600)]"
-                    >
-                      {pol.chamber}
-                    </span>
-                    <span
-                      className="inline-flex rounded-full p-0.5"
-                      style={{ backgroundColor: partyBadgeBackground(pol.party_short) }}
-                      title={pol.party_short ?? undefined}
-                    >
-                      <PartyLogo partyShort={pol.party_short} size={26} className="border border-[var(--gray-200)] bg-white" />
-                    </span>
-                  </div>
-                  {pol.constituency && (
-                    <p className="mt-2 font-mono text-[11px] text-[var(--gray-500)]">{pol.constituency}</p>
-                  )}
-
-                  {total > 0 && (
-                    <div className="mt-4">
-                      <div className="mb-2 flex h-1.5 w-full max-w-md overflow-hidden rounded-full bg-[var(--gray-100)]">
-                        <div style={{ width: `${trueW}%`, background: 'var(--green)' }} className="transition-all" />
-                        <div style={{ width: `${falseW}%`, background: 'var(--red)' }} className="transition-all" />
-                        <div style={{ width: `${partW}%`, background: 'var(--amber)' }} className="transition-all" />
-                      </div>
-                      <div className="flex flex-wrap justify-center gap-3 font-mono text-[10px] sm:justify-start">
-                        <span className="text-[var(--green)]">{pol.records_true ?? 0} adevărate</span>
-                        <span className="text-[var(--red)]">{pol.records_false ?? 0} false</span>
-                        <span className="text-[var(--amber)]">{pol.records_partial ?? 0} parțiale</span>
-                        <span className="text-[var(--gray-500)]">{pol.records_pending ?? 0} în verificare</span>
-                      </div>
+        <div className="mx-auto w-full max-w-[940px] px-4 py-6 md:px-6 md:py-10">
+          <section className="overflow-hidden rounded-2xl border border-[var(--gray-200)] bg-white shadow-[var(--shadow-card)] transition-shadow duration-[var(--duration-2)] ease-[var(--ease-out)] md:hover:shadow-[var(--shadow-card-hover)]">
+            <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_minmax(260px,320px)]">
+              <div className="border-b border-[var(--gray-100)] bg-gradient-to-b from-white to-[var(--gray-50)] p-6 md:p-8 lg:border-b-0 lg:border-r">
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+                  <PoliticianAvatar
+                    name={pol.name}
+                    avatarColor={pol.avatar_color}
+                    avatarTextColor={pol.avatar_text_color}
+                    avatarUrl={pol.avatar_url}
+                    size="xl"
+                    shape="circle"
+                    className="mx-auto shrink-0 sm:mx-0"
+                  />
+                  <div className="min-w-0 flex-1 text-center sm:text-left">
+                    <div className="flex flex-col items-center gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                      <h1 className="font-sans text-[24px] font-bold leading-tight tracking-tight text-[var(--gray-900)] md:text-[30px]">
+                        {pol.name}
+                      </h1>
+                      <span
+                        className={`rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide ${credBadgeClass(displayCredibility)}`}
+                      >
+                        {scoreLabel(displayCredibility)}
+                      </span>
                     </div>
-                  )}
+                    <p className="mt-2 font-sans text-[14px] leading-relaxed text-[var(--gray-500)] md:text-[15px]">{pol.role}</p>
+                    <div className="mt-3 flex flex-wrap items-center justify-center gap-2 sm:justify-start">
+                      <span className="rounded-full bg-[var(--gray-100)] px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide text-[var(--gray-600)]">
+                        {pol.chamber}
+                      </span>
+                      <span
+                        className="inline-flex rounded-full p-0.5 ring-1 ring-black/[0.04]"
+                        style={{ backgroundColor: partyBadgeBackground(pol.party_short) }}
+                        title={pol.party_short ?? undefined}
+                      >
+                        <PartyLogo partyShort={pol.party_short} size={26} className="border border-[var(--gray-200)] bg-white" />
+                      </span>
+                    </div>
+                    {pol.constituency && (
+                      <p className="mt-2 font-mono text-[11px] text-[var(--gray-500)]">{pol.constituency}</p>
+                    )}
+
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono text-[10px] text-[var(--gray-600)] sm:justify-start">
+                      <span className="rounded-md border border-[var(--gray-200)] bg-white/80 px-2 py-1">
+                        <span className="text-[var(--gray-500)]">Promisiuni</span>{' '}
+                        <span className="tabular-nums text-[var(--gray-900)]">{promiseCount}</span>
+                      </span>
+                      <span className="rounded-md border border-[var(--gray-200)] bg-white/80 px-2 py-1">
+                        <span className="text-[var(--gray-500)]">Declarații</span>{' '}
+                        <span className="tabular-nums text-[var(--gray-900)]">{statementCount}</span>
+                      </span>
+                    </div>
+
+                    {total > 0 && (
+                      <div className="mt-5">
+                        <p className="mb-2 font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--gray-400)]">
+                          Distribuție verdicte
+                        </p>
+                        <div className="mb-2 flex h-2 w-full max-w-md overflow-hidden rounded-full bg-[var(--gray-100)] ring-1 ring-black/[0.03]">
+                          <div style={{ width: `${trueW}%`, background: 'var(--green)' }} className="transition-all duration-[var(--duration-1)]" />
+                          <div style={{ width: `${falseW}%`, background: 'var(--red)' }} className="transition-all duration-[var(--duration-1)]" />
+                          <div style={{ width: `${partW}%`, background: 'var(--amber)' }} className="transition-all duration-[var(--duration-1)]" />
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-mono text-[10px] sm:justify-start">
+                          <span className="text-[var(--green)]">{pol.records_true ?? 0} adevărate</span>
+                          <span className="text-[var(--red)]">{pol.records_false ?? 0} false</span>
+                          <span className="text-[var(--amber)]">{pol.records_partial ?? 0} parțiale</span>
+                          <span className="text-[var(--gray-500)]">{pol.records_pending ?? 0} în verificare</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {chips.map(c => (
+                    <div
+                      key={c.label}
+                      className="rounded-xl border border-[var(--gray-200)] px-3 py-3 text-center shadow-[0_1px_0_rgba(15,23,42,0.04)]"
+                      style={{ backgroundColor: c.bg }}
+                    >
+                      <div className="font-mono text-[22px] font-semibold tabular-nums md:text-[24px]" style={{ color: c.fg }}>
+                        {c.n}
+                      </div>
+                      <div className="mt-1 font-mono text-[9px] uppercase tracking-[0.1em] text-[var(--gray-500)]">{c.label}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              <ScoreRing score={displayCredibility} />
-            </div>
-
-            <ScoreBreakdown
-              promises={pol.score_promises ?? 50}
-              reactions={pol.score_reactions ?? 50}
-              sources={pol.score_sources ?? 50}
-              consistency={pol.score_consistency ?? 50}
-            />
-
-            <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
-              {chips.map(c => (
-                <div
-                  key={c.label}
-                  className="rounded-xl border border-[var(--gray-200)] px-3 py-3 text-center"
-                  style={{ backgroundColor: c.bg }}
-                >
-                  <div className="font-mono text-[22px] font-medium tabular-nums md:text-[24px]" style={{ color: c.fg }}>
-                    {c.n}
-                  </div>
-                  <div className="mt-1 font-mono text-[10px] uppercase tracking-wide text-[var(--gray-500)]">
-                    {c.label}
-                  </div>
+              <aside className="flex flex-col items-center bg-[var(--gray-50)]/90 p-6 md:p-8 lg:items-stretch">
+                <div className="flex w-full flex-col items-center lg:items-center">
+                  <ScoreRing score={displayCredibility} />
                 </div>
-              ))}
+                <div className="mt-8 w-full min-w-0 border-t border-[var(--gray-200)] pt-6">
+                  <ScoreBreakdown
+                    promises={pol.score_promises ?? 50}
+                    declaratii={pol.score_declaratii ?? 50}
+                    reactions={pol.score_reactions ?? 50}
+                    sources={pol.score_sources ?? 50}
+                    consistency={pol.score_consistency ?? 50}
+                  />
+                </div>
+              </aside>
             </div>
 
-            <WealthDeclarationsPanel
-              politician={{
-                id: pol.id,
-                slug: pol.slug,
-                last_declaration_date: (pol as { last_declaration_date?: string | null }).last_declaration_date ?? null,
-                declaration_stopped_after_ccr:
-                  (pol as { declaration_stopped_after_ccr?: boolean | null }).declaration_stopped_after_ccr ?? null,
-              }}
-              declarations={wealthRows ?? []}
-            />
-          </div>
+            <div className="border-t border-[var(--gray-100)] bg-white px-6 py-6 md:px-8 md:py-7">
+              <WealthDeclarationsPanel
+                politician={{
+                  id: pol.id,
+                  slug: pol.slug,
+                  last_declaration_date: (pol as { last_declaration_date?: string | null }).last_declaration_date ?? null,
+                  declaration_stopped_after_ccr:
+                    (pol as { declaration_stopped_after_ccr?: boolean | null }).declaration_stopped_after_ccr ?? null,
+                }}
+                declarations={wealthRows ?? []}
+              />
+            </div>
+          </section>
 
-          <div className="mt-8 md:mt-10">
+          <div id="inregistrari" className="mt-8 scroll-mt-24 md:mt-10">
             {(records ?? []).length === 0 ? (
               <div className="flex items-center justify-center rounded-2xl border border-[var(--gray-200)] bg-white py-16 font-mono text-[12px] text-[var(--gray-500)]">
                 Nicio înregistrare disponibilă
