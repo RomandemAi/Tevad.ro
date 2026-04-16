@@ -11,7 +11,11 @@ import HomeSpotlightSection, {
   type SpotlightPromise,
 } from '@/components/HomeSpotlightSection'
 import PoliticianList from '@/components/PoliticianList'
-import { dedupePoliticiansByNameIdentity, dedupeSpotlightPoliticians } from '@/lib/dedupe-politicians'
+import {
+  alignSpotlightWithMergedPoliticians,
+  dedupePoliticiansByNameIdentity,
+  dedupeSpotlightPoliticians,
+} from '@/lib/dedupe-politicians'
 import { sortAndCapSpotlightPoliticians } from '@/lib/home-spotlight-politicians'
 import { displayScore } from '@/lib/score-utils'
 
@@ -96,7 +100,12 @@ export default async function HomePage() {
   const avgScore = total > 0 ? Math.round(list.reduce((a, p) => a + scoreOf(p), 0) / total) : 0
 
   const spotlightPoliticians = sortAndCapSpotlightPoliticians(
-    dedupeSpotlightPoliticians((spotlightPoliticiansRes.data ?? []) as SpotlightPolitician[]),
+    dedupeSpotlightPoliticians(
+      alignSpotlightWithMergedPoliticians(
+        (spotlightPoliticiansRes.data ?? []) as SpotlightPolitician[],
+        list
+      )
+    ),
     { maxTotal: 5, maxCabinet: 3 }
   )
   type JoinedPol = { slug: string; name: string; party_short: string | null }

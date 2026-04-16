@@ -75,14 +75,51 @@ export interface SpotlightPoliticianLike {
   chamber: string
 }
 
+/** For collapsing duplicate spotlight rows for the same person (president > premier > cabinet). */
+function spotlightExecutiveRank(chamber: string): number {
+  if (chamber === 'president') return 0
+  if (chamber === 'premier') return 1
+  if (chamber === 'minister' || chamber === 'ministru') return 2
+  return 99
+}
+
 function pickSpotlightPrimary(a: SpotlightPoliticianLike, b: SpotlightPoliticianLike): SpotlightPoliticianLike {
+  const ra = spotlightExecutiveRank(a.chamber)
+  const rb = spotlightExecutiveRank(b.chamber)
+  if (ra !== rb) return ra < rb ? a : b
   const sa = num(a.score)
   const sb = num(b.score)
   if (sb !== sa) return sb > sa ? b : a
-  const aIlie = /^ilie\b/i.test(a.name.trim())
-  const bIlie = /^ilie\b/i.test(b.name.trim())
-  if (aIlie !== bIlie) return aIlie ? a : b
   return a.slug.localeCompare(b.slug) <= 0 ? a : b
+}
+
+/**
+ * Patch spotlight rows so score / slug / id match the canonical row used in clasament
+ * (`dedupePoliticiansByNameIdentity`), while keeping each row's executive `role` and `chamber`
+ * for the „funcții cheie” labels.
+ */
+export function alignSpotlightWithMergedPoliticians<T extends SpotlightPoliticianLike>(
+  spotlightRows: T[],
+  mergedList: Politician[]
+): T[] {
+  const bySig = new Map<string, Politician>()
+  for (const m of mergedList) {
+    bySig.set(nameIdentitySignature(m.name), m)
+  }
+  const out: T[] = []
+  for (const r of spotlightRows) {
+    const m = bySig.get(nameIdentitySignature(r.name))
+    if (!m) continue
+    out.push({
+      ...r,
+      id: m.id,
+      slug: m.slug,
+      score: m.score,
+      name: m.name,
+      party_short: m.party_short ?? r.party_short,
+    })
+  }
+  return out
 }
 
 export function dedupeSpotlightPoliticians(rows: SpotlightPoliticianLike[]): SpotlightPoliticianLike[] {
