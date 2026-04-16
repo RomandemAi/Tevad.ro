@@ -123,6 +123,7 @@ export default async function AuditPage({ params }: Props) {
               avatarColor={pol?.avatar_color}
               avatarTextColor={pol?.avatar_text_color}
               avatarUrl={pol?.avatar_url}
+              partyShort={pol?.party_short}
               size="md"
               className="mt-0.5 flex-shrink-0"
             />

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import PartyLogo from './PartyLogo'
-import { partyLogoSrc } from '@/lib/party-logo'
+import { normalizePartyCode, partyBadgeBackground, partyLogoSrc } from '@/lib/party-logo'
 
 interface PoliticianAvatarProps {
   name: string
@@ -62,7 +62,10 @@ export default function PoliticianAvatar({
 
   const partyLogo = partyLogoSrc(partyShort)
   const showPartyLogo = !showPhoto && Boolean(partyLogo)
+  const partyCode = normalizePartyCode(partyShort)
+  const showPartyCode = !showPhoto && !showPartyLogo && Boolean(partyCode)
   const logoSize = Math.max(22, Math.round(px.box - 10))
+  const partyCodeFont = Math.min(Math.round(px.box * 0.26), 14)
 
   return (
     <div
@@ -81,7 +84,13 @@ export default function PoliticianAvatar({
         justifyContent: 'center',
         flexShrink: 0,
         boxSizing: 'border-box',
-        background: showPhoto ? 'var(--gray-100)' : showPartyLogo ? '#fff' : avatarColor ?? '#0d2a4a',
+        background: showPhoto
+          ? 'var(--gray-100)'
+          : showPartyLogo
+            ? '#fff'
+            : showPartyCode
+              ? partyBadgeBackground(partyShort)
+              : avatarColor ?? '#0d2a4a',
         color: avatarTextColor ?? '#378ADD',
         border: shape === 'circle' ? '2px solid white' : '1px solid rgba(255,255,255,0.06)',
         boxShadow: shape === 'circle' && ringColor ? `0 0 0 2px ${ring}` : undefined,
@@ -100,6 +109,13 @@ export default function PoliticianAvatar({
       ) : showPartyLogo ? (
         <span className="flex h-full w-full items-center justify-center rounded-[inherit] bg-white p-1">
           <PartyLogo partyShort={partyShort} size={logoSize} className="border border-[var(--gray-200)] bg-white" />
+        </span>
+      ) : showPartyCode ? (
+        <span
+          className="flex h-full w-full items-center justify-center rounded-[inherit] px-0.5 font-mono font-semibold uppercase leading-none tracking-tight text-[var(--gray-900)]"
+          style={{ fontSize: partyCodeFont }}
+        >
+          {(partyCode ?? '').length > 6 ? (partyCode ?? '').slice(0, 6) : (partyCode ?? '')}
         </span>
       ) : (
         initials

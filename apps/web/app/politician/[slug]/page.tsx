@@ -188,6 +188,7 @@ export default async function PoliticianPage({ params }: Props) {
                     avatarColor={pol.avatar_color}
                     avatarTextColor={pol.avatar_text_color}
                     avatarUrl={pol.avatar_url}
+                    partyShort={pol.party_short}
                     size="xl"
                     shape="circle"
                     className="mx-auto shrink-0 sm:mx-0"
