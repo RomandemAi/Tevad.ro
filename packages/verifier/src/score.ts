@@ -7,7 +7,8 @@
  * score = (score_promises * 0.28) + (score_declaratii * 0.12)
  *       + (score_reactions * 0.18) + (score_sources * 0.22) + (score_consistency * 0.20)
  *
- * `score_promises` uses only records with type=promise; `score_declaratii` only type=statement.
+ * `score_promises` uses only type=promise; `score_declaratii` only type=statement.
+ * Rows with opinion_exempt=true are excluded from those two subscores (non-falsifiable / no verdict on record).
  *
  * Run: npx tsx packages/verifier/src/score.ts [politician-slug]
  * Cron: triggered after every new record or reaction batch
@@ -74,6 +75,7 @@ async function calcPromises(politicianId: string): Promise<number> {
     .select('status')
     .eq('politician_id', politicianId)
     .eq('type', 'promise')
+    .eq('opinion_exempt', false)
     .in('status', ['true', 'false', 'partial'])
 
   if (!records || records.length === 0) return 50
@@ -94,6 +96,7 @@ async function calcDeclaratii(politicianId: string): Promise<number> {
     .select('status')
     .eq('politician_id', politicianId)
     .eq('type', 'statement')
+    .eq('opinion_exempt', false)
     .in('status', ['true', 'false', 'partial'])
 
   if (!records || records.length === 0) return 50

@@ -24,7 +24,7 @@ All component scores are integers from 0 to 100. Weights sum to **1.0**.
 
 ### score_promises (weight: 28%)
 
-Measures the ratio of kept vs broken **promises** only (`records.type = 'promise'`).
+Measures the ratio of kept vs broken **promises** only (`records.type = 'promise'`). Rows with **`opinion_exempt = true`** are excluded: they are not treated as checkable factual claims for scoring.
 
 ```
 kept     = records where status = 'true'
@@ -43,7 +43,9 @@ If a politician has **no** verified promise rows (true/false/partial), `score_pr
 
 ### score_declaratii (weight: 12%)
 
-Same truth-mix formula as promises, but only for **declarații / statements** (`records.type = 'statement'`).
+Same truth-mix formula as promises, but only for **declarații / statements** (`records.type = 'statement'`). **`opinion_exempt = true`** rows are excluded for the same reason as under promises.
+
+This subscore reflects **factual verification of claims we treat as checkable**, not whether a statement was wise, decent, or politically important. Trivial or awkward but accurate claims can register as “true” without implying moral or leadership credit; editorial scope (`opinion_exempt`, and which statements enter the queue) is the main lever for edge cases like purely personal or deflecting remarks.
 
 ```
 kept     = statement records where status = 'true'
@@ -159,8 +161,12 @@ Any change to weights or component formulas requires:
 5. Recalculation of all existing scores with the new formula
 6. Public announcement
 
-**Current version: v1.1.0**  
+**Current version: v1.1.1**  
 **Effective from: 2026-04-16**
+
+### v1.1.1 (clarification + scoring filter)
+
+- Promise and declarație **truth-mix** subscores ignore rows with `opinion_exempt = true` (aligned with verification: no falsifiable verdict).
 
 ### v1.1.0 — deploy checklist
 
