@@ -12,6 +12,7 @@ import HomeSpotlightSection, {
 } from '@/components/HomeSpotlightSection'
 import PoliticianList from '@/components/PoliticianList'
 import { dedupePoliticiansByNameIdentity, dedupeSpotlightPoliticians } from '@/lib/dedupe-politicians'
+import { sortAndCapSpotlightPoliticians } from '@/lib/home-spotlight-politicians'
 import { displayScore } from '@/lib/score-utils'
 
 const homeDescription =
@@ -62,10 +63,10 @@ export default async function HomePage() {
       .from('politicians')
       .select('id, slug, name, role, party_short, score, chamber')
       .eq('is_active', true)
-      .in('chamber', ['premier', 'president'])
+      .in('chamber', ['president', 'premier', 'minister', 'ministru'])
       .not('name', 'ilike', '%galerie%')
       .not('name', 'ilike', '%cabinetul%')
-      .order('chamber', { ascending: true }),
+      .order('score', { ascending: false }),
     supabase
       .from('records')
       .select('id, slug, text, status, date_made, politicians ( slug, name, party_short )')
@@ -94,8 +95,9 @@ export default async function HomePage() {
   const pending = list.reduce((a, p) => a + (p.records_pending ?? 0), 0)
   const avgScore = total > 0 ? Math.round(list.reduce((a, p) => a + scoreOf(p), 0) / total) : 0
 
-  const spotlightPoliticians = dedupeSpotlightPoliticians(
-    (spotlightPoliticiansRes.data ?? []) as SpotlightPolitician[]
+  const spotlightPoliticians = sortAndCapSpotlightPoliticians(
+    dedupeSpotlightPoliticians((spotlightPoliticiansRes.data ?? []) as SpotlightPolitician[]),
+    { maxTotal: 5, maxCabinet: 3 }
   )
   type JoinedPol = { slug: string; name: string; party_short: string | null }
   const spotlightPromises: SpotlightPromise[] = (spotlightPromisesRes.data ?? [])
