@@ -31,7 +31,7 @@ function statementsHref(opts: { status?: RecordStatusFilter | null }) {
 
 const STATUS_FILTER_OPTIONS: { status: RecordStatusFilter | null; label: string }[] = [
   { status: null, label: 'Toate' },
-  { status: 'true', label: 'Adevărate' },
+  { status: 'true', label: 'Confirmate' },
   { status: 'false', label: 'False' },
   { status: 'partial', label: 'Parțiale' },
   { status: 'pending', label: 'În verificare' },

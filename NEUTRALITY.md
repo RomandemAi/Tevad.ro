@@ -23,6 +23,8 @@ It does not answer:
 
 The verification pipeline still uses one machine-readable verdict per record (`true`, `false`, `partial`, `pending`) for every `type`. On the public site, **badge wording depends on `type`** (promisiune vs declarație vs vot) so readers are not misled: a confirmed **declarație** means the claim aligns with cited sources; a fulfilled **promisiune** means evidence supports that the commitment was kept. Filters, APIs, and scoring continue to use the canonical status values; only presentation copy differs.
 
+**Typing:** `promise` is for forward commitments (“vom / voi …”, including referendum pledges); `statement` is for checkable claims about facts in context. Ingestion uses `packages/rss-monitor/src/resolve-record-type.ts` (and migration `025_reclassify_referendum_statements_to_promises.sql` for past rows matching a conservative referendum + modality pattern).
+
 ---
 
 ## Rules

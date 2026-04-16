@@ -130,6 +130,20 @@ export default async function PoliticianPage({ params }: Props) {
 
   const displayCredibility = displayScore(pol.score)
   const total = pol.total_records ?? 0
+  const recordRows = (records ?? []) as Array<{ type: string; status: string }>
+  const countStatus = (t: string, s: string) => recordRows.filter(r => r.type === t && r.status === s).length
+  const trueDecl = countStatus('statement', 'true')
+  const trueProm = countStatus('promise', 'true')
+  const trueVote = countStatus('vote', 'true')
+  const positiveVerdictParts: string[] = []
+  if (trueDecl > 0) positiveVerdictParts.push(`${trueDecl} decl. confirmate`)
+  if (trueProm > 0) positiveVerdictParts.push(`${trueProm} prom. îndeplinite`)
+  if (trueVote > 0) positiveVerdictParts.push(`${trueVote} voturi confirmate`)
+  const positiveVerdictLine =
+    positiveVerdictParts.length > 0
+      ? positiveVerdictParts.join(' · ')
+      : `${pol.records_true ?? 0} verdict pozitive`
+
   const trueW = total > 0 ? ((pol.records_true ?? 0) / total) * 100 : 0
   const falseW = total > 0 ? ((pol.records_false ?? 0) / total) * 100 : 0
   const partW = total > 0 ? ((pol.records_partial ?? 0) / total) * 100 : 0
@@ -145,7 +159,7 @@ export default async function PoliticianPage({ params }: Props) {
   )
 
   const chips = [
-    { n: pol.records_true ?? 0, label: 'Adevărate', bg: 'var(--green-bg)', fg: 'var(--green)' },
+    { n: pol.records_true ?? 0, label: 'Verdict pozitive', bg: 'var(--green-bg)', fg: 'var(--green)' },
     { n: pol.records_false ?? 0, label: 'False', bg: 'var(--red-bg)', fg: 'var(--red)' },
     { n: pol.records_partial ?? 0, label: 'Parțiale', bg: 'var(--amber-bg)', fg: 'var(--amber)' },
     { n: pol.records_pending ?? 0, label: 'În verificare', bg: 'var(--slate-bg)', fg: 'var(--slate)' },
@@ -218,7 +232,7 @@ export default async function PoliticianPage({ params }: Props) {
                           <div style={{ width: `${partW}%`, background: 'var(--amber)' }} className="transition-all duration-[var(--duration-1)]" />
                         </div>
                         <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 font-mono text-[10px] sm:justify-start">
-                          <span className="text-[var(--green)]">{pol.records_true ?? 0} adevărate</span>
+                          <span className="max-w-md text-[var(--green)]">{positiveVerdictLine}</span>
                           <span className="text-[var(--red)]">{pol.records_false ?? 0} false</span>
                           <span className="text-[var(--amber)]">{pol.records_partial ?? 0} parțiale</span>
                           <span className="text-[var(--gray-500)]">{pol.records_pending ?? 0} în verificare</span>

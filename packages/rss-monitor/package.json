@@ -4,7 +4,8 @@
   "private": true,
   "exports": {
     "./feed-watcher": "./src/feed-watcher.ts",
-    "./sources.config": "./src/sources.config.ts"
+    "./sources.config": "./src/sources.config.ts",
+    "./resolve-record-type": "./src/resolve-record-type.ts"
   },
   "scripts": {
     "watch": "tsx src/feed-watcher.ts"

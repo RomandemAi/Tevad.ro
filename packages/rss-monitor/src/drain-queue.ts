@@ -14,6 +14,7 @@ import { createClient } from '@supabase/supabase-js'
 import { getLean, getSourceTier, TIER0_SOURCES } from './sources.config'
 import type { SourceLean } from './sources.config'
 import type { CrossCheckInput } from '@tevad/verifier/cross-check'
+import { resolveRecordTypeFromQueue } from './resolve-record-type'
 
 // Load repo `.env` (and optionally apps/web/.env.local)
 {
@@ -49,11 +50,6 @@ function hostFromUrl(url: string): string {
   } catch {
     return ''
   }
-}
-
-function normalizeRecordType(t: string | null): 'promise' | 'statement' | 'vote' {
-  if (t === 'promise' || t === 'statement' || t === 'vote') return t
-  return 'statement'
 }
 
 function getSupabase() {
@@ -112,6 +108,7 @@ export async function run(opts: { limit?: number } = {}) {
       const lean = (getLean(host) ?? undefined) as SourceLean | undefined
 
       const statementText = (row.extracted_quote as string | null)?.trim() || (row.article_title as string)
+      const resolvedType = resolveRecordTypeFromQueue(row.record_type as string | null, statementText)
       const pub = row.pub_date || row.created_at
       const dateMade = pub ? new Date(pub as string).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
       const slug = `vq-${queueId}`
@@ -128,7 +125,7 @@ export async function run(opts: { limit?: number } = {}) {
         .insert({
           politician_id: politicianId,
           slug,
-          type: normalizeRecordType(row.record_type as string | null),
+          type: resolvedType,
           text: statementText,
           topic: (row.topic as string | null) ?? null,
           status: 'pending',
@@ -173,7 +170,7 @@ export async function run(opts: { limit?: number } = {}) {
         politicianId,
         statementText,
         statementDate: dateMade,
-        statementType: normalizeRecordType(row.record_type as string | null),
+        statementType: resolvedType,
         sources: crossSources,
       }
 

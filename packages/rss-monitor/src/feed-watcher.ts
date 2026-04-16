@@ -15,6 +15,7 @@ import dotenv from 'dotenv'
 import { createClient } from '@supabase/supabase-js'
 import { classifyArticle } from '@tevad/verifier/models'
 import { TIER1_SOURCES, TIER2_SOURCES, getSourceTier } from './sources.config'
+import { resolveRecordTypeFromQueue } from './resolve-record-type'
 
 // When running via tsx/cron, Next's env loading won't run automatically.
 // Load repo-root `.env` (and optionally `apps/web/.env.local`) so SUPABASE_* and ANTHROPIC_* are available.
@@ -210,18 +211,12 @@ function resolvePoliticianId(rows: PoliticianRow[], matched: string | null): str
   return null
 }
 
-function normalizeRecordType(v: string | null): string | null {
-  if (!v || v === 'null') return null
-  if (v === 'promise' || v === 'statement' || v === 'vote') return v
-  return null
-}
-
 async function queueArticle(
   item: RssItem,
   outlet: string,
   tier: number | null,
   politicianId: string,
-  recordType: string | null,
+  recordType: 'promise' | 'statement' | 'vote',
   topic: string | null,
   extractedQuote: string | null,
   confidence: number
@@ -424,12 +419,15 @@ export async function run() {
       }
       matchedPoliticianOk++
 
+      const quoteForType = (classified.extractedQuote ?? item.title ?? '').toString().trim()
+      const queuedRecordType = resolveRecordTypeFromQueue(classified.recordType, quoteForType)
+
       const ok = await queueArticle(
         item,
         feed.outlet,
         feed.tier,
         politicianId,
-        normalizeRecordType(classified.recordType),
+        queuedRecordType,
         classified.topic,
         classified.extractedQuote,
         classified.confidence

@@ -8,9 +8,9 @@ export function verdictBadgeLabel(type: RecordVerdictType, status: RecordVerdict
   if (type === 'statement') {
     switch (status) {
       case 'true':
-        return 'CONFIRMAT'
+        return 'DECL. CONFIRMATĂ'
       case 'false':
-        return 'INFIRMAT'
+        return 'DECL. INFIRMATĂ'
       case 'partial':
         return 'PARȚIAL'
       case 'pending':
@@ -45,10 +45,10 @@ export function verdictBadgeLabel(type: RecordVerdictType, status: RecordVerdict
 export function verdictMeaningSummary(type: RecordVerdictType, status: RecordVerdictStatus): string {
   if (type === 'statement') {
     if (status === 'true') {
-      return 'Afirmația este susținută de sursele citate — nu înseamnă „promisiune îndeplinită”.'
+      return 'Declarație confirmată de surse — nu înseamnă promisiune îndeplinită.'
     }
     if (status === 'false') {
-      return 'Afirmația este contrazisă sau neconfirmată de sursele citate.'
+      return 'Declarație infirmată de surse (contrazisă sau neconfirmată).'
     }
     if (status === 'partial') {
       return 'Sursele publice susțin doar o parte din afirmație.'

@@ -4,6 +4,7 @@ import { assertCronSecret } from '@/lib/cron-auth'
 import { getSourceTier, getLean, TIER0_SOURCES } from '@tevad/rss-monitor/sources.config'
 import type { SourceLean } from '@tevad/rss-monitor/sources.config'
 import type { CrossCheckInput } from '@tevad/verifier/cross-check'
+import { resolveRecordTypeFromQueue } from '@tevad/rss-monitor/resolve-record-type'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -32,11 +33,6 @@ function hostFromUrl(url: string): string {
   } catch {
     return ''
   }
-}
-
-function normalizeRecordType(t: string | null): 'promise' | 'statement' | 'vote' {
-  if (t === 'promise' || t === 'statement' || t === 'vote') return t
-  return 'statement'
 }
 
 function assertVerifyEnv(): NextResponse | null {
@@ -118,6 +114,7 @@ export async function GET(req: NextRequest) {
       const lean = (getLean(host) ?? undefined) as SourceLean | undefined
 
       const statementText = (row.extracted_quote as string | null)?.trim() || (row.article_title as string)
+      const resolvedType = resolveRecordTypeFromQueue(row.record_type as string | null, statementText)
       const pub = row.pub_date || row.created_at
       const dateMade = pub ? new Date(pub as string).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)
       const slug = `vq-${queueId}`
@@ -134,7 +131,7 @@ export async function GET(req: NextRequest) {
         .insert({
           politician_id: politicianId,
           slug,
-          type: normalizeRecordType(row.record_type as string | null),
+          type: resolvedType,
           text: statementText,
           topic: (row.topic as string | null) ?? null,
           status: 'pending',
@@ -179,7 +176,7 @@ export async function GET(req: NextRequest) {
         politicianId,
         statementText,
         statementDate: dateMade,
-        statementType: normalizeRecordType(row.record_type as string | null),
+        statementType: resolvedType,
         sources: crossSources,
       }
 

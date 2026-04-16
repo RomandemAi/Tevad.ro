@@ -92,7 +92,7 @@ export default function PoliticianCard({ pol, rank, flash, showLive }: Politicia
 
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="hidden flex-wrap items-center gap-3 font-mono text-[11px] md:flex">
-              <span className="text-[var(--green)]">✓ {pol.records_true ?? 0} ținute</span>
+              <span className="text-[var(--green)]">✓ {pol.records_true ?? 0} verdict pozitive</span>
               <span className="text-[var(--red)]">✗ {pol.records_false ?? 0} false</span>
               <span className="text-[var(--gray-500)]">◷ {pol.records_pending ?? 0} pending</span>
             </div>
