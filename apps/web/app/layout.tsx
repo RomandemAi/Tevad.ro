@@ -4,6 +4,8 @@ import SiteJsonLd from '@/components/SiteJsonLd'
 import { getSiteUrl } from '@/lib/site-url'
 import './critical.css'
 import './globals.css'
+import { appearanceBootScript } from '@/lib/appearance'
+import AppearanceLayoutEffect from '@/components/AppearanceLayoutEffect'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -66,12 +68,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ro" className={`${dmSans.variable} ${dmMono.variable}`}>
+    <html lang="ro" className={`${dmSans.variable} ${dmMono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: appearanceBootScript }} />
+      </head>
       <body className="bg-[var(--gray-50)] text-[var(--gray-900)] antialiased">
+        <AppearanceLayoutEffect />
         <SiteJsonLd />
         <a
           href="#main-content"
-          className="pointer-events-none fixed left-4 top-4 z-[100] -translate-y-24 rounded-md bg-[var(--navy)] px-4 py-2 font-mono text-[12px] font-medium text-white opacity-0 transition-transform focus:pointer-events-auto focus:translate-y-0 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] focus:ring-offset-2"
+          className="pointer-events-none fixed left-4 top-4 z-[100] -translate-y-24 rounded-md bg-[var(--navy)] px-4 py-2 font-mono text-[12px] font-medium text-white opacity-0 transition-transform focus:pointer-events-auto focus:translate-y-0 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-[var(--cyan)] focus:ring-offset-2 focus:ring-offset-[var(--surface)]"
         >
           Sari la conținut
         </a>

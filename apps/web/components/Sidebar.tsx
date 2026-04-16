@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import AppearanceControl from './AppearanceControl'
 
 const INDEX = [
   { href: '/', label: 'Politicieni', exact: true as const },
@@ -288,7 +289,8 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
         </Link>
       </nav>
 
-      <div className="border-t border-[rgba(255,255,255,0.06)] p-4">
+      <div className="border-t border-[rgba(255,255,255,0.06)] space-y-4 p-4">
+        <AppearanceControl variant="sidebar" />
         <p className="font-mono text-[9px] tracking-wide text-[rgba(255,255,255,0.2)]">
           OPEN SOURCE · MIT · v2.0
         </p>

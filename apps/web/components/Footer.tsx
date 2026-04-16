@@ -2,6 +2,7 @@
 'use client'
 
 import Link from 'next/link'
+import AppearanceControl from './AppearanceControl'
 
 const GH_REPO = 'https://github.com/RomandemAi/Tevad.ro' as const
 
@@ -9,6 +10,9 @@ export default function Footer() {
   return (
     <footer className="tev-chrome-navy mt-auto border-t border-[rgba(255,255,255,0.08)] px-4 py-6 md:px-6">
       <div className="mx-auto flex max-w-[1100px] flex-col gap-3">
+        <div className="md:hidden">
+          <AppearanceControl variant="footer" />
+        </div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[10px] tracking-wide text-[rgba(255,255,255,0.72)]">
           <Link
             href="/legal"

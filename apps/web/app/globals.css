@@ -11,6 +11,9 @@
   --gray-100: #f1f5f9;
   --gray-200: #e2e8f0;
   --gray-500: #64748b;
+  --gray-300: #cbd5e1;
+  --gray-600: #475569;
+  --gray-700: #334155;
   --gray-900: #0f172a;
   --blue: #1d6ef5;
   --blue-light: #dbeafe;
@@ -250,7 +253,7 @@ body {
 @layer components {
   /* List / registry cards — token shadows, no layout shift on hover (border + shadow only) */
   .tev-card-surface {
-    @apply border border-[var(--gray-200)] bg-white;
+    @apply border border-[var(--gray-200)] bg-[var(--surface)];
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-card);
     transition: box-shadow var(--duration-2) var(--ease-out), border-color var(--duration-1) var(--ease-out),
@@ -396,5 +399,248 @@ body {
     background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
     background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
     background-position: center, center, center, center;
+  }
+}
+
+/* --- Appearance: întunecat + sistem (prefers-color-scheme) --- */
+html.tev-theme-dark {
+  color-scheme: dark;
+  --gray-50: #0c1222;
+  --gray-100: #151d2e;
+  --gray-200: #2a3548;
+  --gray-300: #3d4d63;
+  --gray-500: #8b9cb3;
+  --gray-600: #aebccf;
+  --gray-700: #c9d2e0;
+  --gray-900: #eef2f7;
+  --white: #1a2334;
+  --surface: #1a2334;
+  --surface2: #151d2e;
+  --border: var(--gray-200);
+  --border2: #3d4d63;
+  --text: var(--gray-900);
+  --text2: var(--gray-500);
+  --text3: #6b7c90;
+  --bg: var(--gray-50);
+  --blue-light: rgba(29, 110, 245, 0.22);
+  --green-bg: rgba(22, 163, 74, 0.18);
+  --red-bg: rgba(220, 38, 38, 0.2);
+  --amber-bg: rgba(217, 119, 6, 0.18);
+  --slate-bg: rgba(30, 41, 59, 0.55);
+  --slate: var(--gray-500);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.28);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.25);
+  --shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.25), 0 6px 20px rgba(0, 0, 0, 0.3);
+  --ring-focus-offset: #1a2334;
+  --tev-ro-wash-light: linear-gradient(
+    100deg,
+    rgba(0, 43, 127, 0.2) 0%,
+    rgba(252, 209, 22, 0.06) 42%,
+    transparent 55%,
+    rgba(206, 17, 38, 0.1) 100%
+  );
+  --tev-ro-mesh-light:
+    radial-gradient(ellipse 88% 62% at 8% 4%, rgba(29, 110, 245, 0.14) 0%, transparent 54%),
+    radial-gradient(ellipse 72% 52% at 94% 14%, rgba(252, 209, 22, 0.07) 0%, transparent 50%),
+    radial-gradient(ellipse 78% 58% at 72% 98%, rgba(206, 17, 38, 0.08) 0%, transparent 56%);
+  --tev-page-scrim: linear-gradient(
+    180deg,
+    rgba(12, 18, 34, 0.88) 0%,
+    rgba(15, 23, 42, 0.92) 45%,
+    rgba(12, 18, 34, 0.96) 100%
+  );
+  --tev-stats-scrim: linear-gradient(
+    180deg,
+    rgba(26, 35, 52, 0.55) 0%,
+    rgba(12, 18, 34, 0.38) 100%
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  html.tev-theme-system {
+    color-scheme: dark;
+    --gray-50: #0c1222;
+    --gray-100: #151d2e;
+    --gray-200: #2a3548;
+    --gray-300: #3d4d63;
+    --gray-500: #8b9cb3;
+    --gray-600: #aebccf;
+    --gray-700: #c9d2e0;
+    --gray-900: #eef2f7;
+    --white: #1a2334;
+    --surface: #1a2334;
+    --surface2: #151d2e;
+    --border: var(--gray-200);
+    --border2: #3d4d63;
+    --text: var(--gray-900);
+    --text2: var(--gray-500);
+    --text3: #6b7c90;
+    --bg: var(--gray-50);
+    --blue-light: rgba(29, 110, 245, 0.22);
+    --green-bg: rgba(22, 163, 74, 0.18);
+    --red-bg: rgba(220, 38, 38, 0.2);
+    --amber-bg: rgba(217, 119, 6, 0.18);
+    --slate-bg: rgba(30, 41, 59, 0.55);
+    --slate: var(--gray-500);
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.28);
+    --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.25);
+    --shadow-nav: 0 1px 0 rgba(0, 0, 0, 0.25), 0 6px 20px rgba(0, 0, 0, 0.3);
+    --ring-focus-offset: #1a2334;
+    --tev-ro-wash-light: linear-gradient(
+      100deg,
+      rgba(0, 43, 127, 0.2) 0%,
+      rgba(252, 209, 22, 0.06) 42%,
+      transparent 55%,
+      rgba(206, 17, 38, 0.1) 100%
+    );
+    --tev-ro-mesh-light:
+      radial-gradient(ellipse 88% 62% at 8% 4%, rgba(29, 110, 245, 0.14) 0%, transparent 54%),
+      radial-gradient(ellipse 72% 52% at 94% 14%, rgba(252, 209, 22, 0.07) 0%, transparent 50%),
+      radial-gradient(ellipse 78% 58% at 72% 98%, rgba(206, 17, 38, 0.08) 0%, transparent 56%);
+    --tev-page-scrim: linear-gradient(
+      180deg,
+      rgba(12, 18, 34, 0.88) 0%,
+      rgba(15, 23, 42, 0.92) 45%,
+      rgba(12, 18, 34, 0.96) 100%
+    );
+    --tev-stats-scrim: linear-gradient(
+      180deg,
+      rgba(26, 35, 52, 0.55) 0%,
+      rgba(12, 18, 34, 0.38) 100%
+    );
+  }
+}
+
+html.tev-theme-dark .tev-neutrality-section {
+  border-bottom-color: var(--gray-200);
+  background-color: var(--gray-50);
+  background-image: linear-gradient(
+      180deg,
+      rgba(15, 31, 61, 0.38) 0%,
+      rgba(12, 18, 34, 0.22) 18%,
+      transparent 40%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.95) 0%,
+      rgba(12, 18, 34, 0.9) 38%,
+      rgba(15, 23, 42, 0.96) 100%
+    ),
+    var(--tev-ro-wash-light),
+    var(--tev-ro-mesh-light);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+  background-position: center, center, center, center;
+}
+
+@media (prefers-color-scheme: dark) {
+  html.tev-theme-system .tev-neutrality-section {
+    border-bottom-color: var(--gray-200);
+    background-color: var(--gray-50);
+    background-image: linear-gradient(
+        180deg,
+        rgba(15, 31, 61, 0.38) 0%,
+        rgba(12, 18, 34, 0.22) 18%,
+        transparent 40%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(15, 23, 42, 0.95) 0%,
+        rgba(12, 18, 34, 0.9) 38%,
+        rgba(15, 23, 42, 0.96) 100%
+      ),
+      var(--tev-ro-wash-light),
+      var(--tev-ro-mesh-light);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-position: center, center, center, center;
+  }
+}
+
+@media (min-width: 1536px) {
+  html.tev-theme-dark .tev-page-fill,
+  html.tev-theme-dark .tev-audit-wrap {
+    background-image: linear-gradient(
+        90deg,
+        rgba(12, 18, 34, 0.82) 0%,
+        transparent 7%,
+        transparent 93%,
+        rgba(12, 18, 34, 0.82) 100%
+      ),
+      var(--tev-page-scrim), var(--tev-ro-wash-light), var(--tev-ro-mesh-light);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-position: center, center, center, center;
+  }
+}
+
+@media (min-width: 1536px) and (prefers-color-scheme: dark) {
+  html.tev-theme-system .tev-page-fill,
+  html.tev-theme-system .tev-audit-wrap {
+    background-image: linear-gradient(
+        90deg,
+        rgba(12, 18, 34, 0.82) 0%,
+        transparent 7%,
+        transparent 93%,
+        rgba(12, 18, 34, 0.82) 100%
+      ),
+      var(--tev-page-scrim), var(--tev-ro-wash-light), var(--tev-ro-mesh-light);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-position: center, center, center, center;
+  }
+}
+
+html.tev-theme-dark ::selection {
+  background: rgba(29, 110, 245, 0.35);
+  color: var(--gray-900);
+}
+
+@media (prefers-color-scheme: dark) {
+  html.tev-theme-system ::selection {
+    background: rgba(29, 110, 245, 0.35);
+    color: var(--gray-900);
+  }
+}
+
+html.tev-theme-dark .bg-white {
+  background-color: var(--surface) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html.tev-theme-system .bg-white {
+    background-color: var(--surface) !important;
+  }
+}
+
+html.tev-theme-dark .bg-white\/95 {
+  background-color: color-mix(in srgb, var(--surface) 95%, transparent) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html.tev-theme-system .bg-white\/95 {
+    background-color: color-mix(in srgb, var(--surface) 95%, transparent) !important;
+  }
+}
+
+html.tev-theme-dark .bg-white\/80 {
+  background-color: color-mix(in srgb, var(--surface) 80%, transparent) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html.tev-theme-system .bg-white\/80 {
+    background-color: color-mix(in srgb, var(--surface) 80%, transparent) !important;
+  }
+}
+
+html.tev-theme-dark .skeleton {
+  background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+  background-size: 800px 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  html.tev-theme-system .skeleton {
+    background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+    background-size: 800px 100%;
   }
 }
