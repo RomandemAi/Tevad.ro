@@ -16,6 +16,7 @@
     "contradict": "tsx src/contradict.ts",
     "backfill-annotations": "tsx src/backfill-annotations.ts",
     "backfill:fingerprint-trust": "tsx src/backfill-fingerprint-trust.ts",
+    "grok:smoke": "tsx src/grok-smoke.ts",
     "demo": "tsx src/verify.ts --demo",
     "resolve:pending": "tsx src/resolve-pending.ts"
   },

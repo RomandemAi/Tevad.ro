@@ -74,6 +74,11 @@ export async function runGrokModel(
     })
 
     const rawJson = (await res.json()) as any
+    if (!res.ok) {
+      const errSnippet = JSON.stringify(rawJson ?? {}).slice(0, 600)
+      console.warn(`[model-runner] Grok HTTP ${res.status}:`, errSnippet)
+      return null
+    }
     const rawText = String(rawJson?.choices?.[0]?.message?.content ?? '')
     const parsed = parseJsonFromRaw(rawText)
     return { parsed, rawText }

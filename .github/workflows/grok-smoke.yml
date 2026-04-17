@@ -1,0 +1,27 @@
+# Manual check: xAI Grok API + JSON path used by @tevad/verifier cross-check.
+# Repo secret: XAI_API_KEY (Settings → Secrets and variables → Actions).
+
+name: Grok smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  grok-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Grok API smoke test
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+        run: npm run grok:smoke -w @tevad/verifier

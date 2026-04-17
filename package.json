@@ -30,6 +30,7 @@
     "verify:run": "tsx packages/verifier/src/verify.ts",
     "score:recalc": "tsx packages/verifier/src/score.ts",
     "verify:pilot": "npm run verify:pilot -w @tevad/verifier",
+    "grok:smoke": "npm run grok:smoke -w @tevad/verifier",
     "verify:contradict": "tsx packages/verifier/src/contradict.ts",
     "seed-program": "npm run seed-program -w @tevad/scraper",
     "build:party-logos": "node scripts/build-party-logos.mjs"
