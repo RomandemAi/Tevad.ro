@@ -14,6 +14,7 @@
     "verify:pilot": "tsx src/run-verify-from-manifest.ts",
     "score": "tsx src/score.ts",
     "contradict": "tsx src/contradict.ts",
+    "backfill-annotations": "tsx src/backfill-annotations.ts",
     "demo": "tsx src/verify.ts --demo",
     "resolve:pending": "tsx src/resolve-pending.ts"
   },
