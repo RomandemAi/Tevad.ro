@@ -10,3 +10,6 @@
 
 [functions]
   included_files = ["packages/**", "prompts/**", "apps/web/prompts/**"]
+  # Cron API routes use `export const maxDuration = 60` (same as verify / rss-watch).
+  # If external callers still time out, raise their client timeout (e.g. cron-job.org ≥ 60s)
+  # and/or raise Netlify: Site configuration → Functions → Function timeout (plan limits apply).

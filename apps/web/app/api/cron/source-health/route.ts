@@ -3,7 +3,14 @@ import { assertCronSecret } from '@/lib/cron-auth'
 import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
+/** Same ceiling as `/api/cron/verify`, `rss-watch`, etc. (Next.js / Netlify). */
 export const maxDuration = 60
+
+/** Parallel outbound checks so external crons (e.g. 30s client timeout) can complete. */
+const HEAD_CONCURRENCY = 12
+const HEAD_TIMEOUT_MS = 4_500
+/** Default batch size tuned for ~30s total wall time with parallel HEADs. */
+const DEFAULT_LIMIT = 12
 
 function getServiceSupabaseUrl(): string {
   return process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -26,11 +33,35 @@ function safeHost(url: string): string {
 
 async function headStatus(url: string): Promise<number | null> {
   try {
-    const res = await fetch(url, { method: 'HEAD', redirect: 'follow', signal: AbortSignal.timeout(8_000) })
+    const res = await fetch(url, {
+      method: 'HEAD',
+      redirect: 'follow',
+      signal: AbortSignal.timeout(HEAD_TIMEOUT_MS),
+    })
     return res.status
   } catch {
     return null
   }
+}
+
+async function checkRowsInParallel(
+  rows: any[]
+): Promise<Array<{ id: string; host: string; status: number | null }>> {
+  const out: Array<{ id: string; host: string; status: number | null }> = []
+  for (let i = 0; i < rows.length; i += HEAD_CONCURRENCY) {
+    const chunk = rows.slice(i, i + HEAD_CONCURRENCY)
+    const part = await Promise.all(
+      chunk.map(async r => {
+        const id = String(r.id)
+        const url = String(r.url || '')
+        const host = safeHost(url)
+        const status = url ? await headStatus(url) : null
+        return { id, host, status }
+      })
+    )
+    out.push(...part)
+  }
+  return out
 }
 
 const MIGRATION_028_HINT =
@@ -41,7 +72,7 @@ export async function GET(req: NextRequest) {
     const denied = assertCronSecret(req)
     if (denied) return denied
 
-    const limit = Math.min(60, Math.max(1, Number(req.nextUrl.searchParams.get('limit') ?? 25)))
+    const limit = Math.min(60, Math.max(1, Number(req.nextUrl.searchParams.get('limit') ?? DEFAULT_LIMIT)))
 
     const supabase = getServiceSupabase()
     if (!supabase) {
@@ -74,16 +105,12 @@ export async function GET(req: NextRequest) {
     }
 
     const now = new Date().toISOString()
-    const results: Array<{ id: string; host: string; status: number | null }> = []
+    const rowList = (rows ?? []) as any[]
+
+    const results = await checkRowsInParallel(rowList)
+
     let updated = 0
-
-    for (const r of (rows ?? []) as any[]) {
-      const id = String(r.id)
-      const url = String(r.url || '')
-      const host = safeHost(url)
-      const status = url ? await headStatus(url) : null
-      results.push({ id, host, status })
-
+    for (const { id, status } of results) {
       const { error: uErr } = await supabase
         .from('sources')
         .update({
