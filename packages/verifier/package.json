@@ -15,6 +15,7 @@
     "score": "tsx src/score.ts",
     "contradict": "tsx src/contradict.ts",
     "backfill-annotations": "tsx src/backfill-annotations.ts",
+    "backfill:fingerprint-trust": "tsx src/backfill-fingerprint-trust.ts",
     "demo": "tsx src/verify.ts --demo",
     "resolve:pending": "tsx src/resolve-pending.ts"
   },

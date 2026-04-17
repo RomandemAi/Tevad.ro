@@ -4,8 +4,8 @@
  *
  * Master score (weights sum to 1.0):
  *
- * score = (score_promises * 0.28) + (score_declaratii * 0.12)
- *       + (score_reactions * 0.18) + (score_sources * 0.22) + (score_consistency * 0.20)
+ * score = (score_promises * 0.25) + (score_declaratii * 0.12)
+ *       + (score_reactions * 0.15) + (score_sources * 0.28) + (score_consistency * 0.20)
  *
  * `score_promises` uses only type=promise; `score_declaratii` only type=statement.
  * Rows with opinion_exempt=true are excluded from those two subscores (non-falsifiable / no verdict on record).
@@ -69,7 +69,20 @@ interface ScoreComponents {
   total: number
 }
 
-// ---- Component: score_promises (28% of total) — promises only ----
+function clamp(n: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, n))
+}
+
+function daysBetween(a: Date, b: Date): number {
+  return Math.floor((b.getTime() - a.getTime()) / (1000 * 60 * 60 * 24))
+}
+
+function monthsAgo(from: Date, to: Date): number {
+  const days = daysBetween(from, to)
+  return days / 30.4375
+}
+
+// ---- Component: score_promises (25% of total) — promises only ----
 async function calcPromises(politicianId: string): Promise<number> {
   const { data: records } = await supabase
     .from('records')
@@ -112,35 +125,67 @@ async function calcDeclaratii(politicianId: string): Promise<number> {
   return Math.round(((kept * 1.0) + (partial * 0.5)) / total * 100)
 }
 
-// ---- Component: score_reactions (18%) ----
+// ---- Component: score_reactions (15%) — trust-weighted ----
 async function calcReactions(politicianId: string): Promise<number> {
-  const { data: records } = await supabase
+  const { data: recRows } = await supabase
     .from('records')
-    .select('likes, dislikes')
+    .select('id')
     .eq('politician_id', politicianId)
 
-  if (!records || records.length === 0) return 50
+  const recordIds = (recRows ?? []).map((r: any) => String(r.id))
+  if (recordIds.length === 0) return 50
 
-  const reactionSum = records.reduce(
-    (acc, r) => acc + (r.likes ?? 0) + (r.dislikes ?? 0),
-    0
-  )
-  if (reactionSum === 0) return 50
+  // Pull raw reactions so we can trust-weight by fingerprint.
+  const { data: reactions } = await supabase
+    .from('reactions')
+    .select('record_id, type, fingerprint, created_at')
+    .in('record_id', recordIds)
 
-  const sentiments = records.map(r => {
-    const total = (r.likes ?? 0) + (r.dislikes ?? 0)
-    if (total === 0) return null
-    return (r.likes ?? 0) / total
-  })
+  if (!reactions || reactions.length === 0) return 50
 
-  const withReactions = sentiments.filter((s): s is number => s !== null)
-  if (withReactions.length === 0) return 50
+  type ReactionRow = { record_id: string; type: 'like' | 'dislike'; fingerprint: string; created_at: string }
+  const rr = reactions as unknown as ReactionRow[]
+  const fingerprints = Array.from(new Set(rr.map(r => r.fingerprint).filter(Boolean)))
+  const trustByFp = new Map<string, number>()
 
-  const avg = withReactions.reduce((a, b) => a + b, 0) / withReactions.length
+  if (fingerprints.length > 0) {
+    const { data: trustRows } = await supabase
+      .from('reaction_fingerprint_trust')
+      .select('fingerprint, trust_score')
+      .in('fingerprint', fingerprints)
+
+    for (const t of (trustRows ?? []) as any[]) {
+      const fp = String(t.fingerprint)
+      const ts = Number(t.trust_score)
+      trustByFp.set(fp, Number.isFinite(ts) ? clamp(ts, 0, 3) : 1)
+    }
+  }
+
+  // For each record, compute trust-weighted sentiment.
+  const byRecord = new Map<string, ReactionRow[]>()
+  for (const r of rr) {
+    if (!byRecord.has(r.record_id)) byRecord.set(r.record_id, [])
+    byRecord.get(r.record_id)!.push(r)
+  }
+
+  const sentiments: number[] = []
+  for (const [, list] of Array.from(byRecord.entries())) {
+    let wLike = 0
+    let wTotal = 0
+    for (const r of list) {
+      const w = trustByFp.get(r.fingerprint) ?? 1
+      wTotal += w
+      if (r.type === 'like') wLike += w
+    }
+    if (wTotal > 0) sentiments.push(wLike / wTotal)
+  }
+
+  if (sentiments.length === 0) return 50
+  const avg = sentiments.reduce((a, b) => a + b, 0) / sentiments.length
   return Math.round(avg * 100)
 }
 
-// ---- Component: score_sources (22%) ----
+// ---- Component: score_sources (28%) — freshness + ≥3 sources bonus ----
 async function calcSources(politicianId: string): Promise<number> {
   const { data: records } = await supabase
     .from('records')
@@ -153,12 +198,19 @@ async function calcSources(politicianId: string): Promise<number> {
 
   const { data: sources } = await supabase
     .from('sources')
-    .select('record_id, tier, outlet')
+    .select('record_id, tier, outlet, published_at, last_checked_at, http_status')
     .in('record_id', recordIds)
 
   if (!sources || sources.length === 0) return 50
 
-  type Row = { record_id: string; tier: string; outlet: string }
+  type Row = {
+    record_id: string
+    tier: string
+    outlet: string
+    published_at: string | null
+    last_checked_at: string | null
+    http_status: number | null
+  }
   const byRecord = new Map<string, Row[]>()
   for (const s of sources as Row[]) {
     if (!byRecord.has(s.record_id)) byRecord.set(s.record_id, [])
@@ -169,74 +221,100 @@ async function calcSources(politicianId: string): Promise<number> {
     const rows = byRecord.get(r.id) ?? []
     if (rows.length === 0) return 0.3
 
+    const now = new Date()
     const tiers = rows.map(x => x.tier)
+    const hasTier0 = tiers.some(t => t === '0')
+    const hasTier1 = tiers.some(t => t === '1')
+    const hasTier2 = tiers.some(t => t === '2')
+
+    const published = rows
+      .map(x => (x.published_at ? new Date(String(x.published_at)) : null))
+      .filter((d): d is Date => d != null && !Number.isNaN(d.getTime()))
+
+    const agesMonths = published.map(d => monthsAgo(d, now))
+    const allUnder18mo = agesMonths.length > 0 && agesMonths.every(m => m >= 0 && m < 18)
+    const anyTier1Fresh12 = hasTier1 && agesMonths.some(m => m >= 0 && m < 12)
+    const anyTier2Fresh12 = hasTier2 && agesMonths.some(m => m >= 0 && m < 12)
+
+    // 1.0 requires Tier-1 + official context.
+    // 0.8 for fresh Tier-1, 0.6 for fresh Tier-2, else 0.3.
     let quality = 0.3
-    if (tiers.some(t => t === '0')) quality = 1.0
-    else if (tiers.some(t => t === '1')) quality = 1.0
-    else if (tiers.some(t => t === '2')) quality = 0.6
+    if (hasTier0 && hasTier1) quality = 1.0
+    else if (anyTier1Fresh12) quality = 0.8
+    else if (anyTier2Fresh12) quality = 0.6
 
     const distinctOutlets = new Set(rows.map(x => x.outlet).filter(Boolean)).size
-    const multiSourceBonus = distinctOutlets >= 2 ? 0.1 : 0
-    return Math.min(quality + multiSourceBonus, 1.0)
+    const multiSourceBonus = distinctOutlets >= 3 ? 0.15 : 0
+    const freshnessBonus = allUnder18mo ? 0.1 : 0
+    return clamp(quality + multiSourceBonus + freshnessBonus, 0, 1)
   })
 
   const avg = recordScores.reduce((a, b) => a + b, 0) / recordScores.length
   return Math.round(avg * 100)
 }
 
-// ---- Component: score_consistency (20%) ----
+// ---- Component: score_consistency (20%) — contradiction_pairs + time decay ----
 async function calcConsistency(politicianId: string): Promise<number> {
-  const { data: records } = await supabase
-    .from('records')
-    .select('id, topic, status, date_made')
-    .eq('politician_id', politicianId)
-    .not('status', 'eq', 'pending')
-    .order('date_made', { ascending: true })
+  const [{ data: pol }, { data: pairs }] = await Promise.all([
+    supabase.from('politicians').select('mandate_start, mandate_end').eq('id', politicianId).maybeSingle(),
+    supabase
+      .from('contradiction_pairs')
+      .select('topic, record_b_date')
+      .eq('politician_id', politicianId),
+  ])
 
-  if (!records || records.length < 3) return 50
+  const mandateStart = pol?.mandate_start ? new Date(String(pol.mandate_start)) : null
+  const mandateEnd = pol?.mandate_end ? new Date(String(pol.mandate_end)) : null
+  const now = new Date()
 
-  const byTopic = new Map<string, typeof records>()
-  for (const r of records) {
-    if (!r.topic) continue
-    if (!byTopic.has(r.topic)) byTopic.set(r.topic, [])
-    byTopic.get(r.topic)!.push(r)
+  // If no topics/pairs or too little data, stay neutral.
+  const list = (pairs ?? []) as Array<{ topic: string; record_b_date: string | null }>
+  if (!list || list.length === 0) return 50
+
+  // Count contradictions by topic with weights:
+  // - same mandate: double penalty
+  // - older than 2 years: time-decayed penalty
+  const byTopic = new Map<string, Array<{ date: Date | null; weight: number }>>()
+  for (const p of list) {
+    const topic = String(p.topic || '')
+    if (!topic) continue
+    const d = p.record_b_date ? new Date(String(p.record_b_date)) : null
+    const inMandate =
+      d &&
+      mandateStart &&
+      d.getTime() >= mandateStart.getTime() &&
+      (mandateEnd ? d.getTime() <= mandateEnd.getTime() : true)
+    const ageYears = d ? monthsAgo(d, now) / 12 : 999
+    const decay = ageYears > 2 ? 0.5 : 1.0
+    const w = (inMandate ? 2.0 : 1.0) * decay
+    if (!byTopic.has(topic)) byTopic.set(topic, [])
+    byTopic.get(topic)!.push({ date: d, weight: w })
   }
 
-  let contradictions = 0
-  let totalTopics = 0
+  const topics = Array.from(byTopic.keys())
+  if (topics.length === 0) return 50
 
-  Array.from(byTopic.values()).forEach(topicRecords => {
-    if (topicRecords.length < 2) return
-    totalTopics++
+  // We treat any topic with at least one contradiction pair as "contradicted topic".
+  const totalTopics = topics.length
+  const contradictionWeightSum = topics.reduce((acc, t) => {
+    const ws = byTopic.get(t) ?? []
+    const maxW = ws.reduce((m, x) => Math.max(m, x.weight), 0)
+    return acc + maxW
+  }, 0)
 
-    for (let i = 1; i < topicRecords.length; i++) {
-      const prev = topicRecords[i - 1]
-      const curr = topicRecords[i]
-      if (
-        (prev.status === 'true' && curr.status === 'false') ||
-        (prev.status === 'false' && curr.status === 'true')
-      ) {
-        contradictions++
-        break
-      }
-    }
-  })
-
-  if (totalTopics === 0) return 50
-  const ratio = 1 - (contradictions / totalTopics)
-  return Math.round(Math.max(ratio, 0) * 100)
+  const ratio = 1 - contradictionWeightSum / Math.max(totalTopics, 1)
+  return Math.round(clamp(ratio, 0, 1) * 100)
 }
 
-/** No verified verdicts yet — keep neutral baseline (SCORING.md “no signal”). Pending-only rows used to distort sources (e.g. ~30%). */
-async function hasVerifiedRecord(politicianId: string): Promise<boolean> {
-  const { data, error } = await supabase
+/** v1.3.0 gate: minimum 10 verified records before score leaves neutral 50. */
+async function verifiedRecordCount(politicianId: string): Promise<number> {
+  const { count, error } = await supabase
     .from('records')
-    .select('id')
+    .select('id', { count: 'exact', head: true })
     .eq('politician_id', politicianId)
     .in('status', ['true', 'false', 'partial'])
-    .limit(1)
   if (error) throw new Error(error.message)
-  return (data?.length ?? 0) > 0
+  return count ?? 0
 }
 
 // ---- Master score calculator ----
@@ -250,7 +328,8 @@ export async function recalcScore(politicianId: string): Promise<ScoreComponents
     total: 50,
   }
 
-  if (!(await hasVerifiedRecord(politicianId))) {
+  const verifiedCount = await verifiedRecordCount(politicianId)
+  if (verifiedCount < 10) {
     return neutral
   }
 
@@ -263,10 +342,10 @@ export async function recalcScore(politicianId: string): Promise<ScoreComponents
   ])
 
   const total = Math.round(
-    promises * 0.28 +
+    promises * 0.25 +
     declaratii * 0.12 +
-    reactions * 0.18 +
-    sources * 0.22 +
+    reactions * 0.15 +
+    sources * 0.28 +
     consistency * 0.2
   )
 

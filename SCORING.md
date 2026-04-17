@@ -1,5 +1,8 @@
 # Credibility Score Formula — Tevad.ro
 
+**Version:** v1.3.0 “Tank-Proof”  
+**Effective from:** 2026-04-17
+
 The credibility score is a number between 0 and 100. It is calculated automatically from **five** public components. The formula is version-controlled, and cannot be changed without community review.
 
 ---
@@ -8,10 +11,10 @@ The credibility score is a number between 0 and 100. It is calculated automatica
 
 ```
 credibility_score = round(
-  (score_promises     * 0.28) +
-  (score_declaratii  * 0.12) +
-  (score_reactions    * 0.18) +
-  (score_sources      * 0.22) +
+  (score_promises     * 0.25) +
+  (score_declaratii   * 0.12) +
+  (score_reactions    * 0.15) +
+  (score_sources      * 0.28) +
   (score_consistency  * 0.20)
 )
 ```
@@ -20,9 +23,16 @@ All component scores are integers from 0 to 100. Weights sum to **1.0**.
 
 ---
 
+## Global “Tank-Proof” rules (v1.3.0)
+
+- **Neutral baseline gate**: minimum **10 verified records** (any type; status in true/false/partial) before the score can move off **50**.
+- **Never let low-evidence cases look precise**: where a component has no usable signal, it returns **50**.
+
+---
+
 ## Component Definitions
 
-### score_promises (weight: 28%)
+### score_promises (weight: 25%)
 
 Measures the ratio of kept vs broken **promises** only (`records.type = 'promise'`). Rows with **`opinion_exempt = true`** are excluded: they are not treated as checkable factual claims for scoring.
 
@@ -65,7 +75,7 @@ If there are **no** verified statement rows, `score_declaratii = 50` (neutral de
 
 ---
 
-### score_reactions (weight: 18%)
+### score_reactions (weight: 15% — anti-bot armor)
 
 Measures public sentiment across all records for this politician.
 
@@ -78,37 +88,40 @@ score_reactions = round(
 )
 ```
 
-Reactions are rate-limited per fingerprint (1 reaction per record per device per 24h) to prevent manipulation.
+Reactions are rate-limited per fingerprint to prevent manipulation. In v1.3.0, reactions are **trust-weighted** (e.g. fingerprint longevity + behavior signals) and may be capped daily per politician to dampen coordinated spikes.
 
 If a politician has zero reactions, `score_reactions = 50` (neutral default).
 
 ---
 
-### score_sources (weight: 22%)
+### score_sources (weight: 28% — increased)
 
 Measures the quality and quantity of verified sources across all records.
 
 ```
 For each record:
-  source_quality = 1.0 if any Tier-1 source exists
-                   0.6 if only Tier-2 sources exist
-                   0.3 if only Tier-3 sources exist (not recommended)
-                   1.2 if official government source exists (capped at 1.0)
+  source_quality = 1.0 (Tier-1 + official), 0.8 (fresh Tier-1 <12mo), 0.6 (fresh Tier-2), 0.3 (old/Tier-3)
+  multi_source_bonus = +0.15 if ≥3 independent sources
+  freshness_bonus = +0.1 if ALL sources <18 months old
 
-  multi_source_bonus = 0.1 if record has ≥ 2 independent sources (capped at 1.0 total)
-
-  record_source_score = min(source_quality + multi_source_bonus, 1.0)
+  record_source_score = clamp(source_quality + multi_source_bonus + freshness_bonus, 0.0, 1.0)
 
 score_sources = round(
   average(record_source_score for all records) * 100
 )
 ```
 
+**Link-rot rule:** Minimum 2 sources after 30 days → auto-pending re-verification.
+
 ---
 
 ### score_consistency (weight: 20%)
 
 Measures whether a politician's positions are consistent over time.
+
+New in v1.3.0:
+- Contradictions in the same mandate = **double penalty**
+- Add time_decay for records >2 years old
 
 ```
 contradictions = count of record pairs where:
@@ -164,8 +177,16 @@ Any change to weights or component formulas requires:
 5. Recalculation of all existing scores with the new formula
 6. Public announcement
 
-**Current version: v1.2.0**  
-**Effective from: 2026-04-16**
+**Current version: v1.3.0**  
+**Effective from: 2026-04-17**
+
+### v1.3.0 (tank-proof hardening)
+
+- Weights updated: sources ↑, reactions ↓, promises ↓ (see formula).
+- Add global gate: minimum **10 verified records** before score moves off neutral 50.
+- `score_sources`: freshness + ≥3 source bonus; link-rot reverify rule.
+- `score_consistency`: double penalty for same-mandate contradictions; time-decay for older contradictions.
+- `score_reactions`: trust-weighted + daily caps.
 
 ### v1.2.0 (declarații materiality)
 
