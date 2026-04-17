@@ -155,10 +155,11 @@ export default function AboutPage() {
                   public, atribuibil și, unde e posibil, arhivat (ex. Wayback).
                 </li>
                 <li>
-                  <strong className="text-[var(--gray-900)]">AI transparent:</strong> motorul rulează{' '}
-                  <strong className="text-[var(--gray-900)]">Claude Sonnet + Haiku</strong> în paralel, cu{' '}
-                  <strong className="text-[var(--gray-900)]">Grok (xAI)</strong> opțional când este activat în
-                  infrastructură; payload-ul rămâne <strong className="text-[var(--gray-900)]">blind</strong> (fără
+                  <strong className="text-[var(--gray-900)]">AI transparent:</strong> motorul rulează în paralel{' '}
+                  <strong className="text-[var(--gray-900)]">Claude Sonnet</strong>,{' '}
+                  <strong className="text-[var(--gray-900)]">Claude Haiku</strong> și{' '}
+                  <strong className="text-[var(--gray-900)]">Grok (xAI)</strong>; payload-ul rămâne{' '}
+                  <strong className="text-[var(--gray-900)]">blind</strong> (fără
                   nume/partid în promptul de verdict), iar răspunsurile sunt validate ca{' '}
                   <strong className="text-[var(--gray-900)]">JSON strict</strong> cu{' '}
                   <strong className="text-[var(--gray-900)]">vot majoritar</strong>. Deciziile și sursele trimise pot fi

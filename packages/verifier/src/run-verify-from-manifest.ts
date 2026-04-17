@@ -1,8 +1,8 @@
 /**
- * Curated pilot: upsert records + sources from JSON, run dual-model blind verification,
+ * Curated pilot: upsert records + sources from JSON, run 3-model blind verification,
  * persist verdict + audit log, recalc politician score.
  *
- * Env: ANTHROPIC_API_KEY, SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL), SUPABASE_SERVICE_ROLE_KEY
+ * Env: ANTHROPIC_API_KEY, XAI_API_KEY, SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL), SUPABASE_SERVICE_ROLE_KEY
  * Optional: copy repo-root `.env` into process (see loadEnvFiles below).
  *
  * Run from repo root:
@@ -181,6 +181,10 @@ async function main() {
   loadEnvFiles()
   if (!process.env.ANTHROPIC_API_KEY) {
     console.error('[verify:pilot] Missing ANTHROPIC_API_KEY')
+    process.exit(1)
+  }
+  if (!process.env.XAI_API_KEY?.trim()) {
+    console.error('[verify:pilot] Missing XAI_API_KEY (Grok is part of the verification ensemble)')
     process.exit(1)
   }
 

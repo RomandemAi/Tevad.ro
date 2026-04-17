@@ -50,6 +50,13 @@ export async function GET(req: NextRequest) {
   const denied = assertCronSecret(req)
   if (denied) return denied
 
+  if (!process.env.ANTHROPIC_API_KEY?.trim()) {
+    return NextResponse.json({ error: 'Missing ANTHROPIC_API_KEY' }, { status: 503 })
+  }
+  if (!process.env.XAI_API_KEY?.trim()) {
+    return NextResponse.json({ error: 'Missing XAI_API_KEY (Grok is part of the verification ensemble)' }, { status: 503 })
+  }
+
   const limit = Math.min(25, Math.max(1, Number(req.nextUrl.searchParams.get('limit') ?? 10)))
 
   const supabase = getServiceSupabase()

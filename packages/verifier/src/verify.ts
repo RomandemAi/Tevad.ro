@@ -119,7 +119,7 @@ export async function runModel(payload: BlindPayload, model: string): Promise<Mo
   return out?.parsed ?? null
 }
 
-/** Dual-model blind verification (Sonnet + Haiku). */
+/** 3-model blind verification (Sonnet + Haiku + Grok); majority in cross-check. */
 export async function verifyStatement(input: VerificationInput): Promise<VerificationResult> {
   const r = await crossCheckVerify({
     politicianName: input.politicianName,
@@ -156,7 +156,11 @@ export async function saveVerification(
 
 async function demo() {
   loadEnvFiles()
-  console.log('[verify] Running BLIND dual-model demo (--demo)...\n')
+  if (!process.env.XAI_API_KEY?.trim()) {
+    console.error('[verify] Missing XAI_API_KEY — Grok is required for the ensemble demo.')
+    process.exit(1)
+  }
+  console.log('[verify] Running BLIND 3-model ensemble demo (--demo)...\n')
 
   const testInput: VerificationInput = {
     politicianName: 'Marcel Ciolacu',
@@ -200,6 +204,9 @@ async function runPending(): Promise<void> {
 
   if (!process.env.ANTHROPIC_API_KEY?.trim()) {
     throw new Error('Missing ANTHROPIC_API_KEY')
+  }
+  if (!process.env.XAI_API_KEY?.trim()) {
+    throw new Error('Missing XAI_API_KEY (Grok is part of the verification ensemble)')
   }
 
   const supabase = getServiceSupabase()

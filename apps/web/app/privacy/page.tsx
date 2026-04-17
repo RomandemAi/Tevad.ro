@@ -61,7 +61,7 @@ export default function PrivacyPage() {
               <ul className="mt-4 list-disc space-y-2 pl-5 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
                 <li>Supabase (EU West, Ireland) — stocare date politicieni</li>
                 <li>Anthropic Claude API — verificare automată (Sonnet + Haiku)</li>
-                <li>xAI API (opțional) — al treilea model în ansamblu când este activat</li>
+                <li>xAI API — al treilea model (Grok) în ansamblul de verificare</li>
                 <li>Netlify — hosting (EU CDN)</li>
               </ul>
               <p className="mt-4 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">

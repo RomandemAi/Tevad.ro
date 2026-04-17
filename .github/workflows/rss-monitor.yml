@@ -1,6 +1,6 @@
 # Poll RSS feeds, classify with Haiku, enqueue matches into verification_queue.
 # Repo secrets: Settings → Secrets and variables → Actions → New repository secret
-#   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY
+#   SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ANTHROPIC_API_KEY, XAI_API_KEY (Grok — required when drain verifies)
 # Optional: set NEXT_PUBLIC_SUPABASE_URL to the same value as SUPABASE_URL if you only store one.
 
 name: RSS monitor
@@ -32,3 +32,4 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}

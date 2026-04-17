@@ -62,6 +62,7 @@ function getSupabase() {
 
 export async function run(opts: { limit?: number } = {}) {
   if (!process.env.ANTHROPIC_API_KEY?.trim()) throw new Error('Missing ANTHROPIC_API_KEY')
+  if (!process.env.XAI_API_KEY?.trim()) throw new Error('Missing XAI_API_KEY (Grok is part of the verification ensemble)')
 
   const limit = Math.min(25, Math.max(1, Number(opts.limit) || 10))
   const supabase = getSupabase()

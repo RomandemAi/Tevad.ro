@@ -48,6 +48,9 @@ function assertVerifyEnv(): NextResponse | null {
   if (!process.env.ANTHROPIC_API_KEY?.trim()) {
     return NextResponse.json({ error: 'Missing ANTHROPIC_API_KEY' }, { status: 503 })
   }
+  if (!process.env.XAI_API_KEY?.trim()) {
+    return NextResponse.json({ error: 'Missing XAI_API_KEY (Grok is part of the verification ensemble)' }, { status: 503 })
+  }
   return null
 }
 

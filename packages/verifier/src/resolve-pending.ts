@@ -133,6 +133,7 @@ export async function runResolvePending(options?: { limit?: number }): Promise<{
 }> {
   loadEnvFiles()
   if (!process.env.ANTHROPIC_API_KEY?.trim()) throw new Error('Missing ANTHROPIC_API_KEY')
+  if (!process.env.XAI_API_KEY?.trim()) throw new Error('Missing XAI_API_KEY (Grok is part of the verification ensemble)')
 
   const limit = Math.min(20, Math.max(1, options?.limit ?? (Number(process.env.VERIFY_RESOLVE_LIMIT) || 5)))
   const supabase = getServiceSupabase()

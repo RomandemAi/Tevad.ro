@@ -50,12 +50,6 @@ export interface CrossCheckResult {
   statementImpactLevel: ImpactLevel | null
 }
 
-function verdictsAgree(a: Verdict, b: Verdict): boolean {
-  if (a === b) return true
-  if ((a === 'partial' || a === 'pending') && (b === 'partial' || b === 'pending')) return true
-  return false
-}
-
 export interface CrossCheckInput {
   politicianName: string
   politicianId: string
@@ -198,17 +192,13 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
   const userPrompt = buildBlindUserPrompt(blindPayload)
   const systemPrompt = getVerificationSystemPrompt()
 
-  const enableGrok = String(process.env.ENABLE_GROK_ENSEMBLE || '').toLowerCase() === 'true'
-
   console.log(`[cross-check] Running verification (blind)...`)
-  console.log(
-    `[cross-check] Models: ${PRIMARY_MODEL}, ${SECONDARY_MODEL}${enableGrok ? `, ${GROK_MODEL}` : ''}`
-  )
+  console.log(`[cross-check] Models: ${PRIMARY_MODEL}, ${SECONDARY_MODEL}, ${GROK_MODEL}`)
 
   const [primaryOut, secondaryOut, grokOut] = await Promise.all([
     runVerificationModel(PRIMARY_MODEL, userPrompt, systemPrompt),
     runVerificationModel(SECONDARY_MODEL, userPrompt, systemPrompt),
-    enableGrok ? runGrokModel(userPrompt, systemPrompt) : Promise.resolve(null),
+    runGrokModel(userPrompt, systemPrompt),
   ])
 
   const responsePrimaryRaw = primaryOut?.rawText ?? null
@@ -219,9 +209,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
     null
   const secondary = validateStrictModelResult(input.statementType, secondaryOut?.parsed, secondaryOut?.rawText ?? '') ??
     null
-  const grok = enableGrok
-    ? validateStrictModelResult(input.statementType, grokOut?.parsed, grokOut?.rawText ?? '') ?? null
-    : null
+  const grok = validateStrictModelResult(input.statementType, grokOut?.parsed, grokOut?.rawText ?? '') ?? null
 
   // If any model produces prompt-integrity-violation JSON, treat it as a strong signal to go pending.
   const integrityHit =
@@ -235,10 +223,10 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
       primaryVerdict: 'pending',
       primaryConfidence: 0,
       primaryReasoning: INTEGRITY_PENDING.reasoning,
-      secondaryModel: enableGrok ? SECONDARY_MODEL : SECONDARY_MODEL,
-      secondaryVerdict: enableGrok ? 'pending' : secondary?.verdict ?? null,
-      secondaryConfidence: enableGrok ? 0 : secondary?.confidence ?? null,
-      modelsAgreed: enableGrok ? null : null,
+      secondaryModel: SECONDARY_MODEL,
+      secondaryVerdict: secondary?.verdict ?? null,
+      secondaryConfidence: secondary?.confidence ?? null,
+      modelsAgreed: null,
       forcedPending: true,
       blindVerified: true,
       responsePrimaryRaw,
@@ -276,7 +264,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
   const models = [
     { model: PRIMARY_MODEL, parsed: primary, rawText: responsePrimaryRaw ?? '' },
     { model: SECONDARY_MODEL, parsed: secondary, rawText: responseSecondaryRaw ?? '' },
-    ...(enableGrok ? [{ model: GROK_MODEL, parsed: grok, rawText: responseGrokRaw ?? '' }] : []),
+    { model: GROK_MODEL, parsed: grok, rawText: responseGrokRaw ?? '' },
   ]
 
   const { final: majority, agreed } = chooseMajority(models)
@@ -294,10 +282,10 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
       primaryVerdict: primary.verdict,
       primaryConfidence: primary.confidence,
       primaryReasoning: primary.reasoning,
-      secondaryModel: enableGrok ? SECONDARY_MODEL : secondary ? SECONDARY_MODEL : null,
+      secondaryModel: SECONDARY_MODEL,
       secondaryVerdict: secondary?.verdict ?? null,
       secondaryConfidence: secondary?.confidence ?? null,
-      modelsAgreed: enableGrok ? agreed : secondary ? verdictsAgree(primary.verdict, secondary.verdict) : null,
+      modelsAgreed: agreed,
       forcedPending: true,
       blindVerified: true,
       responsePrimaryRaw,
@@ -313,18 +301,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
     flaggedForReview = true
   }
 
-  if (enableGrok) {
-    console.log(
-      `[cross-check] Majority: ${finalVerdict} (agreed=${String(agreed)})`
-    )
-  } else {
-    if (secondary) {
-      const twoAgree = verdictsAgree(primary.verdict, secondary.verdict)
-      console.log(`[cross-check] Models ${twoAgree ? 'AGREE' : 'DISAGREE'}: Sonnet=${primary.verdict} Haiku=${secondary.verdict}`)
-    } else {
-      console.log('[cross-check] Secondary unavailable — using primary only')
-    }
-  }
+  console.log(`[cross-check] Majority: ${finalVerdict} (agreed=${String(agreed)})`)
   console.log(`[cross-check] → Politician: ${input.politicianName} (ID: ${input.politicianId})`)
 
   return {
@@ -336,7 +313,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
     secondaryModel: secondary ? SECONDARY_MODEL : null,
     secondaryVerdict: secondary?.verdict ?? null,
     secondaryConfidence: secondary?.confidence ?? null,
-    modelsAgreed: enableGrok ? agreed : secondary ? verdictsAgree(primary.verdict, secondary.verdict) : null,
+    modelsAgreed: agreed,
     forcedPending: finalVerdict === 'pending',
     blindVerified: true,
     responsePrimaryRaw,

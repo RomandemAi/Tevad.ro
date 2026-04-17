@@ -73,9 +73,9 @@ export default function CumFunctioneazaPage() {
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
                 Verdictul este generat automat, <strong className="text-[var(--gray-900)]">blind</strong>: în prompt nu
                 intră numele politicianului sau partidul — doar textul, data, tipul înregistrării și extrase din surse.
-                Rulăm în paralel <strong className="text-[var(--gray-900)]">Claude Sonnet</strong> și{' '}
-                <strong className="text-[var(--gray-900)]">Claude Haiku</strong>; când infrastructura o permite, intră
-                și un <strong className="text-[var(--gray-900)]">al treilea model (Grok / xAI)</strong>. Fiecare răspuns
+                Rulăm în paralel <strong className="text-[var(--gray-900)]">Claude Sonnet</strong>,{' '}
+                <strong className="text-[var(--gray-900)]">Claude Haiku</strong> și{' '}
+                <strong className="text-[var(--gray-900)]">Grok (xAI)</strong>. Fiecare răspuns
                 trebuie să fie <strong className="text-[var(--gray-900)]">JSON valid</strong> pe schema fixă; la neacord
                 sau ieșire suspectă, verdictul merge în <strong className="text-[var(--gray-900)]">în verificare</strong>{' '}
                 (pending). Fiecare verdict are pagină de audit.

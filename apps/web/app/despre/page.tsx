@@ -49,8 +49,8 @@ export default function DesprePage() {
               </h2>
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
                 Sistemul monitorizează automat sursele de presă Tier-1 (Recorder.ro, HotNews.ro, G4Media.ro), extrage
-                declarații atribuibile politicienilor și le verifică cu un ansamblu de modele AI independente (Claude
-                Sonnet + Haiku; opțional al treilea model, Grok/xAI, când este activat în infrastructură) —{' '}
+                declarații atribuibile politicienilor și le verifică cu un ansamblu de trei modele AI independente (Claude
+                Sonnet + Haiku + Grok/xAI) —{' '}
                 <strong className="text-[var(--gray-900)]">blind</strong>, fără nume de politician în promptul de
                 verdict, cu <strong className="text-[var(--gray-900)]">JSON strict</strong> și{' '}
                 <strong className="text-[var(--gray-900)]">vot majoritar</strong> (2/3 sau acord 2/2). Fiecare verdict

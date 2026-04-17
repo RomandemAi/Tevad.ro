@@ -48,8 +48,8 @@ export default function NeutralitatePage() {
                 </li>
                 <li>În lipsă de dovezi, statusul rămâne „în verificare”.</li>
                 <li>
-                  <strong className="text-[var(--gray-900)]">Ansamblu de modele (v1.3.0):</strong> Sonnet + Haiku (+ opțional
-                  Grok); acord majoritar (2/2 sau 2/3). Fără acord → „în verificare”.
+                  <strong className="text-[var(--gray-900)]">Ansamblu de modele (v1.3.0):</strong> Sonnet + Haiku + Grok
+                  (xAI); acord majoritar (minim două din trei pe același verdict). Fără acord → „în verificare”.
                 </li>
                 <li>
                   <strong className="text-[var(--gray-900)]">Ieșire strictă:</strong> răspunsurile trebuie să respecte
