@@ -2,7 +2,7 @@
 
 > **"Te văd."** — I see you.
 
-Romania’s open-source political accountability platform. Promises and public statements are tracked on the record, verified with **Anthropic Claude**, and cited to **archived public sources**. Neutral by design: no editorial column, auditable math for the credibility score.
+Romania’s open-source political accountability platform. Promises and public statements are tracked on the record, verified with a **multi-model ensemble** (Anthropic **Claude Sonnet + Haiku**, plus optional **xAI Grok** when enabled), **strict JSON** validation, and **majority vote** (2/3 or 2/2 agreement). Everything is cited to **archived public sources**. Neutral by design: no editorial column, auditable math for the credibility score (**SCORING.md v1.3.0 “Tank-Proof”**).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Status: Beta](https://img.shields.io/badge/Status-Beta-orange)]()
@@ -45,9 +45,9 @@ Not a threat. Not a judgment. Just a fact. The permanent, calm, undeniable prese
 |--------|--------------|
 | Frontend | Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS |
 | Database | Supabase (PostgreSQL, RLS, migrations under `supabase/migrations/`) |
-| AI verification | Anthropic Claude (`packages/verifier`) |
+| AI verification | `packages/verifier` — blind payload, **v1.3.0** system prompt, Claude Sonnet + Haiku + optional Grok (xAI), majority verdict |
 | Hosting | **Netlify** (`netlify.toml`, `@netlify/plugin-nextjs`) |
-| Scheduled work | Next.js **Route Handlers** under `apps/web/app/api/cron/*` (secured with `CRON_SECRET`) |
+| Scheduled work | Next.js **Route Handlers** under `apps/web/app/api/cron/*` (secured with `CRON_SECRET`) — RSS, verify queue, **source-health** (link checks), **reverify-sources** (under-sourced records), scrapers, score recalc, contradict, … |
 | RSS ingestion | `packages/rss-monitor` |
 | Parliament & gov scrapers | `packages/scraper` (cdep, senat, gov, BEC, ANI, etc.) |
 | Monorepo | npm workspaces + **Turborepo** |
@@ -90,15 +90,15 @@ Full methodology: **[SCORING.md](SCORING.md)**
 
 ```
 credibility_score = round(
-  (score_promises     * 0.28) +
+  (score_promises     * 0.25) +
   (score_declaratii   * 0.12) +
-  (score_reactions    * 0.18) +
-  (score_sources      * 0.22) +
+  (score_reactions    * 0.15) +
+  (score_sources      * 0.28) +
   (score_consistency  * 0.20)
 )
 ```
 
-All subscores are integers **0–100**; weights sum to **1.0**.
+All subscores are integers **0–100**; weights sum to **1.0**. **v1.3.0** adds a **minimum 10 verified records** gate before the headline score can move off **50**, **trust-weighted** reactions with daily caps, **source freshness / link-rot** signals, and stronger **consistency** rules (e.g. contradiction double-penalty). See [SCORING.md](SCORING.md).
 
 ---
 
@@ -115,7 +115,7 @@ Tevad.ro/
 ├── packages/
 │   ├── scraper/                  # Parliament & government data collectors
 │   ├── rss-monitor/            # Feed watcher + queue drain
-│   └── verifier/               # Claude verify pipeline, scoring, contradictions helper
+│   └── verifier/               # Multi-model verify, SCORING v1.3, contradictions, CLI + imports for cron
 ├── supabase/
 │   ├── migrations/               # Schema evolution (001+, votes, queue, scoring, …)
 │   └── seed.sql
@@ -139,6 +139,7 @@ Tevad.ro/
 | `npm run score:recalc` | Recompute politician scores |
 | `npm run rss:watch` / `npm run rss:drain` | RSS monitor |
 | `npm run verify:contradict` | Contradiction pass (Sonnet path in verifier) |
+| `npm run grok:smoke` | Optional: validate **xAI Grok** API + JSON path (needs `XAI_API_KEY`) |
 | `npm run scrape:cdep` / `scrape:senat` / `scrape:gov` / … | Scraper entrypoints |
 | `npm run audit:parliament -w @tevad/scraper` | Roster audit (read-only; needs service role in env) |
 
@@ -157,6 +158,7 @@ npm install
 cp apps/web/.env.example apps/web/.env.local
 # Fill at least: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY,
 # SUPABASE_SERVICE_ROLE_KEY (server/cron), ANTHROPIC_API_KEY, CRON_SECRET (production crons)
+# Optional 3rd model: XAI_API_KEY + ENABLE_GROK_ENSEMBLE=true (see apps/web/.env.example)
 ```
 
 **Supabase (local):**
@@ -183,8 +185,9 @@ npm run dev
 - Build: `npm ci --include=dev && npm run build -w web` (see `netlify.toml`)  
 - Set **`CRON_SECRET`** and call cron routes with `Authorization: Bearer <CRON_SECRET>`  
 - Set **`NEXT_PUBLIC_APP_URL`** to your canonical public URL (e.g. `https://tevad.org`)  
+- External schedulers (e.g. cron-job.org): use a **request timeout ≥ 60s** for heavy routes (`verify`, `reverify-sources`).  
 
-Cron entrypoints live under `apps/web/app/api/cron/` (RSS watch, verify, scrapers, score recalc, contradict, etc.).
+Cron entrypoints live under `apps/web/app/api/cron/` (RSS watch, verify, **source-health**, **reverify-sources**, scrapers, score recalc, contradict, etc.).
 
 ---
 

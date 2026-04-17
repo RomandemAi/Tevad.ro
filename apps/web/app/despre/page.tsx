@@ -49,8 +49,14 @@ export default function DesprePage() {
               </h2>
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
                 Sistemul monitorizează automat sursele de presă Tier-1 (Recorder.ro, HotNews.ro, G4Media.ro), extrage
-                declarații atribuibile politicienilor și le verifică cu două modele AI independente — blind, fără să știe
-                cui aparțin. Fiecare verdict are un jurnal de audit public.
+                declarații atribuibile politicienilor și le verifică cu un ansamblu de modele AI independente (Claude
+                Sonnet + Haiku; opțional al treilea model, Grok/xAI, când este activat în infrastructură) —{' '}
+                <strong className="text-[var(--gray-900)]">blind</strong>, fără nume de politician în promptul de
+                verdict, cu <strong className="text-[var(--gray-900)]">JSON strict</strong> și{' '}
+                <strong className="text-[var(--gray-900)]">vot majoritar</strong> (2/3 sau acord 2/2). Fiecare verdict
+                are jurnal de audit public. Scorul de credibilitate urmează formula{' '}
+                <strong className="text-[var(--gray-900)]">v1.3.0 „Tank-Proof”</strong> din repository (ponderi,
+                praguri, reacții ponderate, semnale de prospețime / link-uri moarte).
               </p>
             </section>
 
@@ -58,8 +64,8 @@ export default function DesprePage() {
               <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">Neutralitate</h2>
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
                 Tevad.org nu are opinie politică. Nu suntem de stânga sau de dreapta. Nu suntem finanțați de niciun
-                partid sau organizație. Verificăm toți politicienii cu același sistem. Promptul AI este public. Formula
-                scorului este publică. Dacă nu ai încredere în noi — verifică codul sursă.
+                partid sau organizație. Verificăm toți politicienii cu același sistem. Promptul de sistem (v1.3.0) și
+                formula de scor sunt publice în GitHub. Dacă nu ai încredere în noi — verifică codul sursă.
               </p>
             </section>
 

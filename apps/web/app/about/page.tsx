@@ -47,7 +47,8 @@ export default function AboutPage() {
             <p className="mt-4 font-sans text-xl font-semibold leading-snug text-[var(--gray-900)] md:text-2xl">
               Tevad este o platformă deschisă (licență MIT) pentru responsabilitate politică în România: urmărește ce au
               spus și au promis aleșii, cu legături către surse publice și un scor de credibilitate calculat automat după
-              o formulă publică.
+              formula publică <strong className="text-[var(--gray-900)]">v1.3.0 „Tank-Proof”</strong> (ponderi, prag de
+              minimum zece înregistrări verificate, reacții și surse întărite împotriva manipulării).
             </p>
             <p className="mt-6 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
               Nu există rubrică de opinie: fiecare rând din baza de date descrie un fapt verificabil (ce s-a spus,
@@ -154,10 +155,18 @@ export default function AboutPage() {
                   public, atribuibil și, unde e posibil, arhivat (ex. Wayback).
                 </li>
                 <li>
-                  <strong className="text-[var(--gray-900)]">AI transparent:</strong> în codul de verificare se
-                  folosește un payload „blind” (fără nume/partid în promptul de verdict), iar unde există loguri,
-                  deciziile pot fi urmărite în auditul înregistrării. Modelele și sursele trimise trebuie să rămână
-                  reconstituibile din artefactele versionate.
+                  <strong className="text-[var(--gray-900)]">AI transparent:</strong> motorul rulează{' '}
+                  <strong className="text-[var(--gray-900)]">Claude Sonnet + Haiku</strong> în paralel, cu{' '}
+                  <strong className="text-[var(--gray-900)]">Grok (xAI)</strong> opțional când este activat în
+                  infrastructură; payload-ul rămâne <strong className="text-[var(--gray-900)]">blind</strong> (fără
+                  nume/partid în promptul de verdict), iar răspunsurile sunt validate ca{' '}
+                  <strong className="text-[var(--gray-900)]">JSON strict</strong> cu{' '}
+                  <strong className="text-[var(--gray-900)]">vot majoritar</strong>. Deciziile și sursele trimise pot fi
+                  reconstituite din auditul înregistrării și din fișierele versionate (inclusiv{' '}
+                  <code className="rounded bg-[var(--gray-100)] px-1 font-mono text-[12px]">
+                    prompts/neutrality-system-prompt.md
+                  </code>
+                  ).
                 </li>
                 <li>
                   <strong className="text-[var(--gray-900)]">Scorul este matematică:</strong> ponderile și definițiile

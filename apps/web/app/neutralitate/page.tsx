@@ -47,6 +47,14 @@ export default function NeutralitatePage() {
                   Tier‑1).
                 </li>
                 <li>În lipsă de dovezi, statusul rămâne „în verificare”.</li>
+                <li>
+                  <strong className="text-[var(--gray-900)]">Ansamblu de modele (v1.3.0):</strong> Sonnet + Haiku (+ opțional
+                  Grok); acord majoritar (2/2 sau 2/3). Fără acord → „în verificare”.
+                </li>
+                <li>
+                  <strong className="text-[var(--gray-900)]">Ieșire strictă:</strong> răspunsurile trebuie să respecte
+                  schema JSON; încercările de ocolire a regulilor duc la pending și revizuire.
+                </li>
               </ul>
               <p className="mt-4 font-mono text-[12px]">
                 <a
@@ -63,8 +71,19 @@ export default function NeutralitatePage() {
             <section className="mt-8 border-t border-[var(--gray-100)] pt-6">
               <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">AI transparent</h2>
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
-                Promptul de sistem și regulile sunt publice; orice schimbare majoră trebuie să fie vizibilă în istoricul
-                GitHub.
+                Promptul de sistem este versionat (acum <strong className="text-[var(--gray-900)]">v1.3.0</strong> în
+                repository) și aceleași reguli se aplică tuturor modelelor din ansamblu; orice schimbare majoră trebuie
+                să fie vizibilă în istoricul GitHub.
+              </p>
+              <p className="mt-4 font-mono text-[12px]">
+                <a
+                  href={`${GH}/blob/main/prompts/neutrality-system-prompt.md`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--blue)] hover:underline"
+                >
+                  neutrality-system-prompt.md →
+                </a>
               </p>
             </section>
 

@@ -59,10 +59,11 @@ export default function LegalPage() {
             <section className="mt-8 border-t border-[var(--gray-100)] pt-6">
               <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">Verificare AI</h2>
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
-                Verificarea declarațiilor se realizează automat prin două modele AI independente (Claude Sonnet + Claude
-                Haiku, Anthropic) cu verificare anonimizată (blind verification — modelele nu cunosc identitatea
-                politicianului în momentul verificării). Niciun verdict nu este emis de o persoană fizică. Promptul de
-                sistem folosit este public și permanent:{' '}
+                Verificarea se realizează automat printr-un ansamblu de modele AI independente (în mod curent Claude
+                Sonnet + Claude Haiku, Anthropic; opțional al treilea model Grok, xAI, când este activat în
+                infrastructură), cu verificare anonimizată (blind verification — modelele nu cunosc identitatea
+                politicianului în momentul verdictului) și validare strictă a răspunsului (JSON). Niciun verdict nu
+                este emis manual de o persoană fizică. Promptul de sistem folosit este public și versionat:{' '}
                 <code className="rounded bg-[var(--gray-100)] px-1.5 py-0.5 font-mono text-[11px] text-[var(--gray-800)]">
                   prompts/neutrality-system-prompt.md
                 </code>

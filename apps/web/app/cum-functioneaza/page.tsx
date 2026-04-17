@@ -38,11 +38,21 @@ export default function CumFunctioneazaPage() {
             </p>
 
             <section className="mt-8 border-t border-[var(--gray-100)] pt-6">
-              <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">Scor (0–100)</h2>
+              <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">
+                Scor (0–100) — v1.3.0 „Tank-Proof”
+              </h2>
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
-                Scorul combină măsurători cu ponderi fixe și publice: promisiuni, reacții (like/dislike limitate per
-                dispozitiv), calitatea surselor și consistența pe subiect. Formula și schimbările sunt publice în
-                repository.
+                Scorul combină cinci componente cu ponderi fixe și publice:{' '}
+                <strong className="text-[var(--gray-900)]">promisiuni (25%)</strong>,{' '}
+                <strong className="text-[var(--gray-900)]">declarații materiale (12%)</strong>,{' '}
+                <strong className="text-[var(--gray-900)]">reacții (15%)</strong> — ponderate după încrederea
+                amprentei și plafon zilnic anti-spike —,{' '}
+                <strong className="text-[var(--gray-900)]">surse (28%)</strong> — inclusiv prospețime și bonus pentru
+                mai multe surse independente — și <strong className="text-[var(--gray-900)]">consistență (20%)</strong>{' '}
+                (contradicții în același mandat penalizate mai sever). Până la minimum{' '}
+                <strong className="text-[var(--gray-900)]">10 înregistrări verificate</strong>, scorul principal rămâne
+                ancorat la linia neutră <strong className="text-[var(--gray-900)]">50</strong>, ca să nu pară „precis”
+                pe eșantion mic.
               </p>
               <p className="mt-4 font-mono text-[12px]">
                 <a
@@ -58,11 +68,40 @@ export default function CumFunctioneazaPage() {
 
             <section className="mt-8 border-t border-[var(--gray-100)] pt-6">
               <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">
-                Verificare (blind)
+                Verificare (blind) — v1.3.0 „Missile-Proof”
               </h2>
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
-                Verdictul este generat automat, blind: în prompt nu se transmite identitatea politicianului, ci textul,
-                data și extrase din surse. Fiecare verdict are o pagină de audit.
+                Verdictul este generat automat, <strong className="text-[var(--gray-900)]">blind</strong>: în prompt nu
+                intră numele politicianului sau partidul — doar textul, data, tipul înregistrării și extrase din surse.
+                Rulăm în paralel <strong className="text-[var(--gray-900)]">Claude Sonnet</strong> și{' '}
+                <strong className="text-[var(--gray-900)]">Claude Haiku</strong>; când infrastructura o permite, intră
+                și un <strong className="text-[var(--gray-900)]">al treilea model (Grok / xAI)</strong>. Fiecare răspuns
+                trebuie să fie <strong className="text-[var(--gray-900)]">JSON valid</strong> pe schema fixă; la neacord
+                sau ieșire suspectă, verdictul merge în <strong className="text-[var(--gray-900)]">în verificare</strong>{' '}
+                (pending). Fiecare verdict are pagină de audit.
+              </p>
+              <p className="mt-4 font-mono text-[12px]">
+                <a
+                  href={`${GH}/blob/main/prompts/neutrality-system-prompt.md`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--blue)] hover:underline"
+                >
+                  prompts/neutrality-system-prompt.md →
+                </a>
+              </p>
+            </section>
+
+            <section className="mt-8 border-t border-[var(--gray-100)] pt-6">
+              <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">
+                Operațiuni automate (cron)
+              </h2>
+              <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
+                Pe lângă monitorizarea RSS și coada de verificare, rulăm periodic verificări de{' '}
+                <strong className="text-[var(--gray-900)]">sănătate URL</strong> (status HTTP, timestamp) pentru sursele
+                citate și un pas de <strong className="text-[var(--gray-900)]">re-verificare</strong> pentru înregistrări
+                vechi cu prea puține surse — ca să ținem legătura cu realitatea publică, nu doar cu textul salvat o
+                dată.
               </p>
             </section>
 

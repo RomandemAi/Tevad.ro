@@ -91,16 +91,18 @@ Undeclared conflicts of interest result in the contribution being rejected and t
 
 ### Rule 08 — AI Transparency
 Every AI-generated verdict must include:
-- The Claude model version used (primary and secondary)
-- The exact sources fed to the model
+- The model identifiers used (primary, secondary, and optional third when the Grok ensemble is enabled)
+- The exact sources fed to the models
 - The confidence score (0–100)
 - The reasoning summary
 
-The exact system prompt sent to Claude is public and version-controlled in [`prompts/neutrality-system-prompt.md`](prompts/neutrality-system-prompt.md).
+The exact **system prompt** (same text for all providers) is public and version-controlled in [`prompts/neutrality-system-prompt.md`](prompts/neutrality-system-prompt.md) (current line: **v1.3.0 “Missile-Proof”**).
 
-**Blind verification:** The politician's name and party are never sent to Claude during verification. Only the statement text, date, and source excerpts are provided. This prevents any subconscious model bias. Politician identity is attached to the verdict only after Claude has responded.
+**Blind verification:** The politician's name and party are **never** sent to any model during verification. Only the statement text, date, and source excerpts are provided. This reduces identity-driven bias. Politician identity is attached to the saved verdict only after the models respond.
 
-**Multi-model cross-check:** Every verification runs through two independent models (Claude Sonnet + Claude Haiku). If they disagree, the verdict is forced to PENDING and flagged for human review. One model is never the sole source of truth.
+**Multi-model cross-check (v1.3.0):** Every verification runs **Claude Sonnet** and **Claude Haiku** in parallel. When **`ENABLE_GROK_ENSEMBLE=true`** and **`XAI_API_KEY`** are set, a third model (**xAI Grok**) runs as well. Each model must return **valid strict JSON** matching the schema; malformed or instruction-violating output is treated as a safety signal and can force **PENDING**.
+
+**Majority vote:** With two models, both must agree on the verdict or the result is **PENDING** (flagged for review). With three models, **at least two** must agree on the same verdict; otherwise **PENDING**. One model is never the sole source of truth.
 
 **Full audit log:** Every verification decision is permanently logged in `verdict_audit_logs` and publicly readable via `/audit/[record-id]`.
 
