@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { assertCronSecret } from '@/lib/cron-auth'
 import { createClient } from '@supabase/supabase-js'
 import { TIER1_SOURCES, TIER2_SOURCES, getSourceTier } from '@tevad/rss-monitor/sources.config'
+import { run as runFeedWatcher } from '@tevad/rss-monitor/feed-watcher'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -38,6 +39,20 @@ function assertRssEnv(): NextResponse | null {
     )
   }
   return null
+}
+
+function qInt(
+  sp: URLSearchParams,
+  key: string,
+  fallback: number,
+  min: number,
+  max: number
+): number {
+  const raw = sp.get(key)
+  if (raw == null || raw === '') return fallback
+  const n = Number(raw)
+  if (!Number.isFinite(n)) return fallback
+  return Math.min(max, Math.max(min, Math.floor(n)))
 }
 
 type RssItem = { title: string; link: string; pubDate: string; description?: string }
@@ -92,6 +107,65 @@ async function urlSeen(supabase: ReturnType<typeof getServiceSupabase>, url: str
   return !!q
 }
 
+/** Legacy one-feed / no-LLM path (use `?mode=lite` to force). */
+async function runLite(supabase: ReturnType<typeof getServiceSupabase>) {
+  const { chosen, idx, total } = await pickNextFeed(supabase)
+  if (!chosen) return { ok: true as const, queued: 0, reason: 'no sources configured' as const }
+
+  const res = await fetch(chosen.rssUrl, {
+    headers: {
+      'User-Agent': 'Tevad.org RSS Monitor (cron)',
+      Accept: 'application/rss+xml, application/xml, text/xml',
+    },
+    signal: AbortSignal.timeout(8_000),
+  })
+  const xml = res.ok ? await res.text() : ''
+  const items = xml ? parseRss(xml) : []
+
+  const { data: politicians } = await supabase.from('politicians').select('id, name').eq('is_active', true)
+  const pols = politicians ?? []
+
+  const MAX_ITEMS = 5
+  let processed = 0
+  let queued = 0
+  for (const item of items.slice(0, MAX_ITEMS)) {
+    processed++
+    if (await urlSeen(supabase, item.link)) continue
+
+    const hay = `${item.title} ${(item.description ?? '')}`.toLowerCase()
+    const match = pols.find(p => (p.name as string).toLowerCase() && hay.includes((p.name as string).toLowerCase()))
+    if (!match) continue
+
+    const tier = getSourceTier(new URL(item.link).hostname.replace(/^www\./i, ''))
+    if (tier === null) continue
+
+    const d = new Date(item.pubDate)
+    const pub = Number.isNaN(d.getTime()) ? null : d.toISOString()
+
+    const { error: insErr } = await supabase.from('verification_queue').insert({
+      politician_id: match.id,
+      article_url: item.link,
+      article_title: item.title,
+      outlet: chosen.outlet,
+      tier: tier ?? undefined,
+      record_type: 'statement',
+      topic: null,
+      extracted_quote: null,
+      confidence: 55,
+      pub_date: pub,
+    })
+    if (!insErr) queued++
+  }
+
+  return {
+    ok: true as const,
+    ran: 'rss-watch-lite' as const,
+    feed: { outlet: chosen.outlet, domain: chosen.domain, index: idx, total },
+    processed,
+    queued,
+  }
+}
+
 export async function GET(req: NextRequest) {
   const denied = assertCronSecret(req)
   if (denied) return denied
@@ -99,64 +173,44 @@ export async function GET(req: NextRequest) {
   const envDenied = assertRssEnv()
   if (envDenied) return envDenied
 
+  const sp = req.nextUrl.searchParams
+  const mode = (sp.get('mode') || '').toLowerCase()
+  const forceLite = mode === 'lite'
+  const hasAnthropic = !!process.env.ANTHROPIC_API_KEY?.trim()
+
   try {
     const supabase = getServiceSupabase()
-    const { chosen, idx, total } = await pickNextFeed(supabase)
-    if (!chosen) return NextResponse.json({ ok: true, queued: 0, reason: 'no sources configured' })
 
-    const res = await fetch(chosen.rssUrl, {
-      headers: {
-        'User-Agent': 'Tevad.org RSS Monitor (cron)',
-        Accept: 'application/rss+xml, application/xml, text/xml',
-      },
-      signal: AbortSignal.timeout(8_000),
-    })
-    const xml = res.ok ? await res.text() : ''
-    const items = xml ? parseRss(xml) : []
+    if (!forceLite && hasAnthropic) {
+      const batchSize = qInt(sp, 'batch', 2, 1, 8)
+      const maxItemsPerFeed = qInt(sp, 'items', 12, 5, 40)
+      const maxClassifyCalls = qInt(sp, 'classify', 12, 1, 40)
+      const maxExcerptFetches = qInt(sp, 'excerpts', 3, 0, 12)
 
-    // Load politicians once (heuristic match; fast, no LLM).
-    const { data: politicians } = await supabase.from('politicians').select('id, name').eq('is_active', true)
-    const pols = politicians ?? []
-
-    const MAX_ITEMS = 5
-    let processed = 0
-    let queued = 0
-    for (const item of items.slice(0, MAX_ITEMS)) {
-      processed++
-      if (await urlSeen(supabase, item.link)) continue
-
-      const hay = `${item.title} ${(item.description ?? '')}`.toLowerCase()
-      const match = pols.find(p => (p.name as string).toLowerCase() && hay.includes((p.name as string).toLowerCase()))
-      if (!match) continue
-
-      const tier = getSourceTier(new URL(item.link).hostname.replace(/^www\./i, ''))
-      if (tier === null) continue
-
-      const d = new Date(item.pubDate)
-      const pub = Number.isNaN(d.getTime()) ? null : d.toISOString()
-
-      const { error: insErr } = await supabase.from('verification_queue').insert({
-        politician_id: match.id,
-        article_url: item.link,
-        article_title: item.title,
-        outlet: chosen.outlet,
-        tier: tier ?? undefined,
-        record_type: 'statement',
-        topic: null,
-        extracted_quote: null,
-        confidence: 55,
-        pub_date: pub,
+      const summary = await runFeedWatcher({
+        batchSize,
+        maxItemsPerFeed,
+        maxClassifyCalls,
+        maxExcerptFetches,
       })
-      if (!insErr) queued++
+
+      return NextResponse.json({
+        ok: true,
+        ran: 'rss-watch-full',
+        summary: summary ?? null,
+        skippedFull: !summary,
+        caps: { batchSize, maxItemsPerFeed, maxClassifyCalls, maxExcerptFetches },
+        at: new Date().toISOString(),
+      })
     }
 
+    const lite = await runLite(supabase)
     return NextResponse.json({
-      ok: true,
-      ran: 'rss-watch-lite',
-      feed: { outlet: chosen.outlet, domain: chosen.domain, index: idx, total },
-      processed,
-      queued,
+      ...lite,
       at: new Date().toISOString(),
+      hint: forceLite
+        ? undefined
+        : 'ANTHROPIC_API_KEY not set — ran rss-watch-lite (one feed, substring name match). Add the key on Netlify for the same Haiku pipeline as the old GitHub Action.',
     })
   } catch (e) {
     console.error('[cron/rss]', e)
@@ -164,7 +218,7 @@ export async function GET(req: NextRequest) {
       {
         ok: false,
         error: String(e),
-        hint: 'Check the terminal running `next dev` for the full stack trace. Often this is a bad Supabase URL/key or a network error fetching RSS feeds.',
+        hint: 'Full watcher needs ANTHROPIC_API_KEY and time within the host limit (Netlify 60s). Try ?mode=lite or lower ?classify= / ?batch=.',
       },
       { status: 500 }
     )

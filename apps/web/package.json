@@ -11,6 +11,7 @@
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "cron:rss": "node ./scripts/trigger-cron.mjs /api/cron/rss-watch",
+    "cron:verify": "node ./scripts/trigger-cron.mjs /api/cron/verify",
     "cron:cdep-steno": "node ./scripts/trigger-cron.mjs /api/cron/scrape-cdep-steno"
   },
   "dependencies": {

@@ -84,7 +84,7 @@ function lastNameOf(fullName: string): string | null {
 
 function titleMentionsAnyLastName(title: string, lastNames: Set<string>): boolean {
   const t = normalizeText(title)
-  for (const ln of lastNames) {
+  for (const ln of Array.from(lastNames)) {
     // Match name at word-ish boundaries, allowing punctuation (e.g. "Ciolacu:", "Ciolacu," etc).
     // Use ASCII boundaries because we normalize to a-z and spaces/hyphens.
     // eslint-disable-next-line security/detect-non-literal-regexp
@@ -247,7 +247,27 @@ async function queueArticle(
   return true
 }
 
-export async function run() {
+/** Optional caps for serverless crons (e.g. Netlify 60s). Omit fields for CLI / long runs. */
+export interface FeedWatcherRunOptions {
+  batchSize?: number
+  maxItemsPerFeed?: number
+  /** Stop after this many Haiku classify calls (still scans RSS; skips remaining items). */
+  maxClassifyCalls?: number
+  maxExcerptFetches?: number
+}
+
+export interface FeedWatcherSummary {
+  fetchedTotal: number
+  considered: number
+  seenSkipped: number
+  classifiedOk: number
+  matchedPoliticianOk: number
+  queued: number
+  classifyCalls: number
+  stoppedForCap: boolean
+}
+
+export async function run(opts?: FeedWatcherRunOptions): Promise<FeedWatcherSummary | undefined> {
   console.log('[rss] Starting feed watch cycle...')
 
   const politicians = await loadPoliticians()
@@ -264,7 +284,7 @@ export async function run() {
 
   if (!process.env.ANTHROPIC_API_KEY || politicianNames.length === 0) {
     console.warn('[rss] ANTHROPIC_API_KEY or politicians missing — classification skipped.')
-    return
+    return undefined
   }
 
   const allSources = [
@@ -276,7 +296,13 @@ export async function run() {
   // Deterministic rotation by time window so repeated invocations distribute coverage.
   const windowMs = 30 * 60 * 1000
   const windowIndex = Number(process.env.RSS_WINDOW_INDEX ?? '') || Math.floor(Date.now() / windowMs)
-  const batchSize = Math.max(1, Math.min(8, Number(process.env.RSS_BATCH_SIZE ?? '') || 4))
+  const batchSize = Math.max(
+    1,
+    Math.min(
+      8,
+      opts?.batchSize ?? (Number(process.env.RSS_BATCH_SIZE ?? '') || 4)
+    )
+  )
   const start = allSources.length ? windowIndex % allSources.length : 0
   const selected = allSources.length
     ? Array.from({ length: Math.min(batchSize, allSources.length) }, (_, i) => {
@@ -303,11 +329,28 @@ export async function run() {
   let matchedPoliticianOk = 0
   let queued = 0
   let excerptFetchesUsed = 0
+  let classifyCalls = 0
+  let stoppedForCap = false
 
-  const maxExcerptFetches = 5
-  const maxItemsPerFeed = Math.max(5, Math.min(60, Number(process.env.RSS_MAX_ITEMS ?? '') || 30))
+  const maxExcerptFetches = Math.max(
+    0,
+    Math.min(
+      12,
+      opts?.maxExcerptFetches ?? (Number(process.env.RSS_MAX_EXCERPT_FETCH ?? '') || 5)
+    )
+  )
+  const maxItemsPerFeed = Math.max(
+    5,
+    Math.min(
+      60,
+      opts?.maxItemsPerFeed ?? (Number(process.env.RSS_MAX_ITEMS ?? '') || 30)
+    )
+  )
+  const maxClassifyCalls =
+    opts?.maxClassifyCalls ??
+    (process.env.RSS_MAX_CLASSIFY ? Math.max(1, Number(process.env.RSS_MAX_CLASSIFY)) : undefined)
 
-  for (const feed of results) {
+  feedLoop: for (const feed of results) {
     const items = feed.items.slice(0, maxItemsPerFeed)
     if (feed.items.length > items.length) {
       console.log(`[rss] ${feed.outlet}: processing ${items.length}/${feed.items.length} items (RSS_MAX_ITEMS=${maxItemsPerFeed})`)
@@ -385,6 +428,13 @@ export async function run() {
         confidence: 0,
       }
 
+      if (maxClassifyCalls != null && classifyCalls >= maxClassifyCalls) {
+        console.log(`[rss] Stopping early: maxClassifyCalls=${maxClassifyCalls}`)
+        stoppedForCap = true
+        break feedLoop
+      }
+      classifyCalls++
+
       try {
         classified = await classifyArticle(item.title, excerpt, politicianNames)
       } catch (e) {
@@ -439,8 +489,20 @@ export async function run() {
   console.log(
     `[rss] Cycle complete. fetched=${fetchedTotal} considered=${considered} seenSkipped=${seenSkipped} ` +
       `titlePrefilterHits=${titlePrefilterHits} excerptFetches=${excerptFetchOk}/${excerptFetchAttempts} (cap=${maxExcerptFetches}) ` +
-      `nameHits=${nameHits} classifiedOk=${classifiedOk} matchedPoliticianOk=${matchedPoliticianOk} queued=${queued}`
+      `nameHits=${nameHits} classifiedOk=${classifiedOk} matchedPoliticianOk=${matchedPoliticianOk} queued=${queued}` +
+      (stoppedForCap ? ' (stopped: classify cap)' : '')
   )
+
+  return {
+    fetchedTotal,
+    considered,
+    seenSkipped,
+    classifiedOk,
+    matchedPoliticianOk,
+    queued,
+    classifyCalls,
+    stoppedForCap,
+  }
 }
 
 if (process.argv[1]?.replace(/\\/g, '/').includes('feed-watcher.ts')) {
