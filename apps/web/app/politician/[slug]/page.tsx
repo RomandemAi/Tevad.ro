@@ -9,6 +9,7 @@ import PoliticianAvatar from '@/components/PoliticianAvatar'
 import ScoreBreakdown from '@/components/ScoreBreakdown'
 import WealthDeclarationsPanel from '@/components/WealthDeclarationsPanel'
 import RecordsSection from '@/components/RecordsSection'
+import ScoreHistoryLineChart from '@/components/politicians/ScoreHistoryLineChart'
 import PartyLogo from '@/components/PartyLogo'
 import { chamberBadgeLabelPublic, executiveChamberRank, EXECUTIVE_SPOTLIGHT_CHAMBERS } from '@/lib/executive-chamber'
 import { partyBadgeBackground, partyProfileHeaderStyle } from '@/lib/party-logo'
@@ -121,7 +122,7 @@ export default async function PoliticianPage({ params }: Props) {
 
   const { data: records } = await supabase
     .from('records')
-    .select(`id, slug, type, text, status, date_made, created_at, impact_level, likes, dislikes, ai_confidence, opinion_exempt, ai_reasoning,
+    .select(`id, slug, type, text, status, date_made, created_at, impact_level, likes, dislikes, ai_confidence, opinion_exempt, ai_reasoning, plain_summary, ai_explain, ai_model_votes,
       sources (id, tier, outlet, url, archived_url, published_at)`)
     .eq('politician_id', pol.id)
     .order('date_made', { ascending: false })
@@ -153,6 +154,12 @@ export default async function PoliticianPage({ params }: Props) {
     .eq('politician_id', pol.id)
     .order('detected_at', { ascending: false })
     .limit(8)
+
+  const { data: scoreHistory } = await supabase
+    .from('score_history')
+    .select('recorded_at, score_new')
+    .eq('politician_id', pol.id)
+    .order('recorded_at', { ascending: true })
 
   const displayCredibility = displayScore(pol.score)
   const total = pol.total_records ?? 0
@@ -304,6 +311,21 @@ export default async function PoliticianPage({ params }: Props) {
                   />
                 </div>
               </aside>
+            </div>
+
+            <div className="border-t border-[var(--gray-100)] bg-white px-6 py-6 md:px-8 md:py-7">
+              <h2 className="font-mono text-[11px] uppercase tracking-[0.12em] text-[var(--gray-500)]">
+                Evoluție scor credibilitate
+              </h2>
+              <p className="mt-2 max-w-[62ch] font-sans text-[13px] leading-relaxed text-[var(--gray-600)]">
+                Linie temporală din <span className="font-mono text-[11px]">score_history</span> — fiecare punct
+                reflectă o recalculare automată a scorului.
+              </p>
+              <div className="mt-6">
+                <ScoreHistoryLineChart
+                  points={(scoreHistory ?? []) as { recorded_at: string; score_new: number }[]}
+                />
+              </div>
             </div>
 
             {(contradictionRows ?? []).length > 0 && (

@@ -20,6 +20,9 @@ interface RecordData {
   ai_confidence?: number
   opinion_exempt?: boolean
   ai_reasoning?: string | null
+  plain_summary?: string | null
+  ai_explain?: string | null
+  ai_model_votes?: unknown
   sources: any[]
 }
 

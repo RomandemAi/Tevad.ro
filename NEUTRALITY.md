@@ -96,11 +96,11 @@ Every AI-generated verdict must include:
 - The confidence score (0–100)
 - The reasoning summary
 
-The exact **system prompt** (same text for Anthropic and xAI) is public and version-controlled in [`prompts/neutrality-system-prompt.md`](prompts/neutrality-system-prompt.md) (current line: **v1.3.0 “Missile-Proof”**).
+The exact **system prompt** (same text for Anthropic and xAI) is public and version-controlled in [`prompts/neutrality-system-prompt.md`](prompts/neutrality-system-prompt.md) (current line: **v1.4.0 “AI transparency”**).
 
 **Blind verification:** The politician's name and party are **never** sent to any model (Claude or Grok) during verification. Only the statement text, date, and source excerpts are provided. This reduces identity-driven bias. Politician identity is attached to the saved verdict only after the models respond.
 
-**Multi-model cross-check (v1.3.0):** Every verification runs **Claude Sonnet**, **Claude Haiku**, and **xAI Grok** in parallel (production requires **`XAI_API_KEY`** alongside Anthropic). Each model must return **valid strict JSON** matching the schema; malformed or instruction-violating output is treated as a safety signal and can force **PENDING**.
+**Multi-model cross-check (v1.4.0):** Every verification runs **Claude Sonnet**, **Claude Haiku**, and **xAI Grok** in parallel (production requires **`XAI_API_KEY`** alongside Anthropic). Each model must return **valid strict JSON** including **`plain_summary`** and **`ai_explain`** (Romanian); malformed or instruction-violating output is treated as a safety signal and can force **PENDING**.
 
 **Majority vote:** **At least two** of the three models must agree on the same verdict. If fewer than two valid model outputs exist (e.g. one provider is down), the code falls back to the two-model rule: **both** remaining outputs must agree or the result is **PENDING**. One model is never the sole source of truth.
 

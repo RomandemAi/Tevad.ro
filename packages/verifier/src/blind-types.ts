@@ -27,8 +27,26 @@ export interface ModelResult {
   canBeDecided: boolean
   requiresMoreSources: boolean
   /**
+   * Short Romanian sentence, max ~25 words, non-technical.
+   * Required in model JSON for all statement types (v1.4.0+).
+   */
+  plain_summary: string
+  /**
+   * Romanian: which models/sources led to the verdict, contradictions, confidence — 3–5 sentences max.
+   * Required in model JSON for all statement types (v1.4.0+).
+   */
+  ai_explain: string
+  /**
    * Only for STATEMENT type in the user prompt: materiality (public-policy vs personal).
    * Persisted to `records.impact_level` for declarații only. Promises/votes must omit this key.
    */
   impact_level?: 'high' | 'medium' | 'low'
+}
+
+/** Persisted on `records.ai_model_votes` for UI + audit. */
+export interface AiModelVotePublic {
+  label: string
+  modelId: string
+  verdict: Verdict
+  confidence: number
 }

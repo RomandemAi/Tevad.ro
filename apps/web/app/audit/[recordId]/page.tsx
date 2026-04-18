@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import AppShell from '@/components/AppShell'
 import PoliticianAvatar from '@/components/PoliticianAvatar'
+import AiVerdictTransparency from '@/components/AiVerdictTransparency'
 
 export const revalidate = 0
 
@@ -43,7 +44,7 @@ export default async function AuditPage({ params }: Props) {
     .select(
       `
       id, slug, type, text, status, date_made, ai_confidence, ai_reasoning, ai_model,
-      ai_verified_at, politicians (*)
+      ai_verified_at, plain_summary, ai_explain, ai_model_votes, politicians (*)
     `
     )
     .eq('id', params.recordId)
@@ -56,7 +57,7 @@ export default async function AuditPage({ params }: Props) {
         .select(
           `
           id, slug, type, text, status, date_made, ai_confidence, ai_reasoning, ai_model,
-          ai_verified_at, politicians (*)
+          ai_verified_at, plain_summary, ai_explain, ai_model_votes, politicians (*)
         `
         )
         .eq('slug', params.recordId)
@@ -163,6 +164,13 @@ export default async function AuditPage({ params }: Props) {
               </span>
             </span>
           </div>
+          <AiVerdictTransparency
+            plainSummary={
+              (record as { plain_summary?: string | null }).plain_summary ?? null
+            }
+            aiExplain={(record as { ai_explain?: string | null }).ai_explain ?? null}
+            modelVotes={(record as { ai_model_votes?: unknown }).ai_model_votes}
+          />
         </div>
 
         {(annotations ?? []).length > 0 && (

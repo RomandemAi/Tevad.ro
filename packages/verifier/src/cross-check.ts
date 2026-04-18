@@ -11,7 +11,7 @@ import type { SourceLean } from '../../rss-monitor/src/sources.config'
 import { buildBlindPayload } from './blind-payload'
 import { buildBlindUserPrompt } from './prompt-utils'
 import { getVerificationSystemPrompt, GROK_MODEL, runGrokModel, runVerificationModel } from './model-runner'
-import type { BlindPayload, ModelResult } from './blind-types'
+import type { AiModelVotePublic, BlindPayload, ModelResult } from './blind-types'
 
 function getServiceSupabaseUrl(): string {
   return process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -48,6 +48,12 @@ export interface CrossCheckResult {
   flaggedForReview: boolean
   /** Set only when verifying type=statement; used to persist `records.impact_level`. */
   statementImpactLevel: ImpactLevel | null
+  /** Short Romanian summary for citizens (from winning model, or primary / fallback). */
+  plainSummary: string
+  /** Romanian transparency narrative + post-processed ensemble context. */
+  aiExplain: string
+  /** Sonnet, Haiku, Grok votes for UI. */
+  modelVotes: AiModelVotePublic[]
 }
 
 export interface CrossCheckInput {
@@ -67,28 +73,47 @@ export interface CrossCheckInput {
   }>
 }
 
+const PRIMARY_MODEL = 'claude-sonnet-4-6'
+const SECONDARY_MODEL = 'claude-haiku-4-5-20251001'
+export const PROMPT_VERSION = 'v1.4.0'
+
+const INTEGRITY_REASONING = 'Prompt integrity violation detected'
+
+const INTEGRITY_PENDING_CORE = {
+  verdict: 'pending' as const,
+  confidence: 0,
+  reasoning: INTEGRITY_REASONING,
+  plain_summary: 'Verificarea a fost oprită din motive de securitate.',
+  ai_explain:
+    'Sistemul a detectat o încercare de ocolire a regulilor de neutralitate. Fiecare model primește același prompt orb; verdictul este suspendat până la revizuire umană. Nu se publică un verdict true/false în această stare.',
+  canBeDecided: false,
+  requiresMoreSources: true,
+} as const
+
+function integrityModelResult(statementType: CrossCheckInput['statementType']): ModelResult {
+  if (statementType === 'statement') {
+    return { ...INTEGRITY_PENDING_CORE, impact_level: 'medium' }
+  }
+  return { ...INTEGRITY_PENDING_CORE }
+}
+
 /** AI materiality for declarații only; null for promise/vote (we do not overwrite impact_level). */
 export function resolveStatementImpactLevel(
   statementType: CrossCheckInput['statementType'],
-  primary: ModelResult | null
+  source: ModelResult | null
 ): ImpactLevel | null {
   if (statementType !== 'statement') return null
-  const v = primary?.impact_level
+  const v = source?.impact_level
   if (v === 'high' || v === 'medium' || v === 'low') return v
   return 'medium'
 }
 
-const PRIMARY_MODEL = 'claude-sonnet-4-6'
-const SECONDARY_MODEL = 'claude-haiku-4-5-20251001'
-const PROMPT_VERSION = 'v1.3.0'
-
-const INTEGRITY_PENDING = {
-  verdict: 'pending' as const,
-  confidence: 0,
-  reasoning: 'Prompt integrity violation detected',
-  canBeDecided: false,
-  requiresMoreSources: true,
-} as const
+export function modelPublicLabel(modelId: string): string {
+  if (modelId === PRIMARY_MODEL) return 'Claude Sonnet'
+  if (modelId === SECONDARY_MODEL) return 'Claude Haiku'
+  if (modelId === GROK_MODEL) return 'Grok (xAI)'
+  return modelId
+}
 
 function isVerdict(x: unknown): x is Verdict {
   return x === 'true' || x === 'false' || x === 'partial' || x === 'pending'
@@ -98,16 +123,21 @@ function isImpact(x: unknown): x is ImpactLevel {
   return x === 'high' || x === 'medium' || x === 'low'
 }
 
+function wordCount(s: string): number {
+  const t = s.trim()
+  if (!t) return 0
+  return t.split(/\s+/).filter(Boolean).length
+}
+
 function looksLikeJailbreak(raw: string): boolean {
   const t = raw.toLowerCase()
   if (!t) return true
-  // Not exhaustive; just obvious prompt-injection patterns.
   return (
     t.includes('ignore previous') ||
     t.includes('system prompt') ||
     t.includes('developer message') ||
     t.includes('you are chatgpt') ||
-    t.includes('begin') && t.includes('instructions')
+    (t.includes('begin') && t.includes('instructions'))
   )
 }
 
@@ -121,8 +151,25 @@ function validateStrictModelResult(
   if (!parsed || typeof parsed !== 'object') return null
   const obj = parsed as Record<string, unknown>
 
-  const allowedBase = new Set(['verdict', 'confidence', 'reasoning', 'canBeDecided', 'requiresMoreSources'])
-  const allowedStatement = new Set(['verdict', 'confidence', 'reasoning', 'canBeDecided', 'requiresMoreSources', 'impact_level'])
+  const allowedBase = new Set([
+    'verdict',
+    'confidence',
+    'reasoning',
+    'canBeDecided',
+    'requiresMoreSources',
+    'plain_summary',
+    'ai_explain',
+  ])
+  const allowedStatement = new Set([
+    'verdict',
+    'confidence',
+    'reasoning',
+    'canBeDecided',
+    'requiresMoreSources',
+    'plain_summary',
+    'ai_explain',
+    'impact_level',
+  ])
   const allowed = statementType === 'statement' ? allowedStatement : allowedBase
 
   for (const k of Object.keys(obj)) {
@@ -136,6 +183,13 @@ function validateStrictModelResult(
   if (typeof obj.canBeDecided !== 'boolean') return null
   if (typeof obj.requiresMoreSources !== 'boolean') return null
 
+  if (typeof obj.plain_summary !== 'string' || obj.plain_summary.trim().length < 4) return null
+  const wc = wordCount(obj.plain_summary)
+  if (wc < 2 || wc > 32) return null
+
+  if (typeof obj.ai_explain !== 'string' || obj.ai_explain.trim().length < 40) return null
+  if (obj.ai_explain.length > 2400) return null
+
   if (statementType === 'statement') {
     if (!isImpact(obj.impact_level)) return null
   } else {
@@ -148,34 +202,130 @@ function validateStrictModelResult(
 function chooseMajority(models: Array<{ model: string; parsed: ModelResult | null; rawText: string }>): {
   final: ModelResult | null
   agreed: boolean | null
+  winnerModel: string | null
 } {
   const valid = models.filter(m => m.parsed != null) as Array<{
     model: string
     parsed: ModelResult
     rawText: string
   }>
-  if (valid.length < 2) return { final: valid[0]?.parsed ?? null, agreed: null }
+  if (valid.length === 0) return { final: null, agreed: null, winnerModel: null }
+  if (valid.length < 2) {
+    const only = valid[0]!
+    return { final: only.parsed, agreed: null, winnerModel: only.model }
+  }
 
-  const byVerdict = new Map<Verdict, Array<typeof valid[number]>>()
+  const byVerdict = new Map<Verdict, Array<(typeof valid)[number]>>()
   for (const v of valid) {
     const key = v.parsed.verdict
     if (!byVerdict.has(key)) byVerdict.set(key, [])
     byVerdict.get(key)!.push(v)
   }
 
-  // 2/3 majority required when 3 models present; when 2 valid models, agreement is that both match.
   const buckets = Array.from(byVerdict.entries()).sort((a, b) => b[1].length - a[1].length)
   const top = buckets[0]
-  if (!top) return { final: null, agreed: null }
+  if (!top) return { final: null, agreed: null, winnerModel: null }
 
   if (valid.length >= 3) {
-    if (top[1].length >= 2) return { final: top[1][0]!.parsed, agreed: true }
-    return { final: null, agreed: false }
+    if (top[1].length >= 2) {
+      const w = top[1][0]!
+      return { final: w.parsed, agreed: true, winnerModel: w.model }
+    }
+    return { final: null, agreed: false, winnerModel: null }
   }
 
-  // valid.length === 2
-  if (top[1].length === 2) return { final: top[1][0]!.parsed, agreed: true }
-  return { final: null, agreed: false }
+  if (top[1].length === 2) {
+    const w = top[1][0]!
+    return { final: w.parsed, agreed: true, winnerModel: w.model }
+  }
+  return { final: null, agreed: false, winnerModel: null }
+}
+
+function buildModelVotes(
+  primary: ModelResult | null,
+  secondary: ModelResult | null,
+  grok: ModelResult | null
+): AiModelVotePublic[] {
+  const row = (modelId: string, parsed: ModelResult | null): AiModelVotePublic => ({
+    label: modelPublicLabel(modelId),
+    modelId,
+    verdict: parsed?.verdict ?? 'pending',
+    confidence: parsed?.confidence ?? 0,
+  })
+  return [row(PRIMARY_MODEL, primary), row(SECONDARY_MODEL, secondary), row(GROK_MODEL, grok)]
+}
+
+function fallbackPlainSummary(finalVerdict: Verdict): string {
+  if (finalVerdict === 'pending') {
+    return 'Nu există încă verdict final clar — lipsește consensul între modele sau dovezi insuficiente.'
+  }
+  return 'Verdict calculat; rezumatul detaliat nu a putut fi extras din răspunsul modelului.'
+}
+
+function fallbackAiExplain(votes: AiModelVotePublic[], finalVerdict: Verdict): string {
+  const lines = votes.map(v => `${v.label}: ${v.verdict} (${v.confidence}%).`).join(' ')
+  if (finalVerdict === 'pending') {
+    return `${lines} Regula majorității 2/3 nu s-a îndeplinit sau verificarea a fost forțată în pending; nu publicăm un verdict ferm până la alinierea modelelor sau surselor.`
+  }
+  return `${lines} Verdict final agregat: ${finalVerdict}.`
+}
+
+function resolveTransparencyFields(
+  majority: ModelResult | null,
+  primary: ModelResult | null,
+  finalVerdict: Verdict,
+  votes: AiModelVotePublic[]
+): { plainSummary: string; aiExplain: string } {
+  const winner = majority
+  const fromWinner = winner?.plain_summary?.trim()
+  const fromPrimary = primary?.plain_summary?.trim()
+  const plainSummary = (fromWinner || fromPrimary || '').trim() || fallbackPlainSummary(finalVerdict)
+
+  const explainWinner = winner?.ai_explain?.trim()
+  const explainPrimary = primary?.ai_explain?.trim()
+  let aiExplain = (explainWinner || explainPrimary || '').trim()
+  if (!aiExplain) aiExplain = fallbackAiExplain(votes, finalVerdict)
+  else if (finalVerdict === 'pending' && !majority) {
+    const tally = votes.map(v => `${v.label}: ${v.verdict}`).join('; ')
+    aiExplain = `${aiExplain}\n\nConsens ansamblu: ${tally}.`
+  }
+  return { plainSummary, aiExplain }
+}
+
+function baseResult(
+  partial: Omit<
+    CrossCheckResult,
+    'plainSummary' | 'aiExplain' | 'modelVotes' | 'blindVerified' | 'statementImpactLevel'
+  > & {
+    majority: ModelResult | null
+    primary: ModelResult | null
+    secondary: ModelResult | null
+    grok: ModelResult | null
+    statementImpactLevel: ImpactLevel | null
+  }
+): CrossCheckResult {
+  const votes = buildModelVotes(partial.primary, partial.secondary, partial.grok)
+  const { plainSummary, aiExplain } = resolveTransparencyFields(
+    partial.majority,
+    partial.primary,
+    partial.finalVerdict,
+    votes
+  )
+  const {
+    majority: _m,
+    primary: _p,
+    secondary: _s,
+    grok: _g,
+    ...rest
+  } = partial
+  return {
+    ...rest,
+    blindVerified: true,
+    statementImpactLevel: partial.statementImpactLevel,
+    plainSummary,
+    aiExplain,
+    modelVotes: votes,
+  }
 }
 
 export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossCheckResult> {
@@ -211,34 +361,42 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
     null
   const grok = validateStrictModelResult(input.statementType, grokOut?.parsed, grokOut?.rawText ?? '') ?? null
 
-  // If any model produces prompt-integrity-violation JSON, treat it as a strong signal to go pending.
   const integrityHit =
-    (primary && primary.verdict === 'pending' && primary.reasoning === INTEGRITY_PENDING.reasoning) ||
-    (secondary && secondary.verdict === 'pending' && secondary.reasoning === INTEGRITY_PENDING.reasoning) ||
-    (grok && grok.verdict === 'pending' && grok.reasoning === INTEGRITY_PENDING.reasoning)
+    (primary && primary.verdict === 'pending' && primary.reasoning === INTEGRITY_REASONING) ||
+    (secondary && secondary.verdict === 'pending' && secondary.reasoning === INTEGRITY_REASONING) ||
+    (grok && grok.verdict === 'pending' && grok.reasoning === INTEGRITY_REASONING)
   if (integrityHit) {
-    return {
+    const im = integrityModelResult(input.statementType)
+    const displayPrimary =
+      primary && primary.reasoning === INTEGRITY_REASONING && primary.plain_summary ? primary : im
+    return baseResult({
       finalVerdict: 'pending',
       primaryModel: PRIMARY_MODEL,
       primaryVerdict: 'pending',
       primaryConfidence: 0,
-      primaryReasoning: INTEGRITY_PENDING.reasoning,
+      primaryReasoning: INTEGRITY_REASONING,
       secondaryModel: SECONDARY_MODEL,
       secondaryVerdict: secondary?.verdict ?? null,
       secondaryConfidence: secondary?.confidence ?? null,
       modelsAgreed: null,
       forcedPending: true,
-      blindVerified: true,
       responsePrimaryRaw,
       responseSecondaryRaw,
       blindPayload,
       flaggedForReview: true,
       statementImpactLevel: resolveStatementImpactLevel(input.statementType, null),
-    }
+      majority: null,
+      primary: displayPrimary,
+      secondary,
+      grok,
+    })
   }
 
   if (!primary) {
     console.error('[cross-check] Primary model failed — returning PENDING')
+    const votes = buildModelVotes(null, secondary, grok)
+    const plainSummary = fallbackPlainSummary('pending')
+    const aiExplain = fallbackAiExplain(votes, 'pending')
     return {
       finalVerdict: 'pending',
       primaryModel: PRIMARY_MODEL,
@@ -256,6 +414,9 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
       blindPayload,
       flaggedForReview: true,
       statementImpactLevel: resolveStatementImpactLevel(input.statementType, null),
+      plainSummary,
+      aiExplain,
+      modelVotes: votes,
     }
   }
 
@@ -269,14 +430,13 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
 
   const { final: majority, agreed } = chooseMajority(models)
 
-  // Majority rule: if 2/3 (or 2/2) agree -> accept that verdict; else pending.
   const finalVerdict = majority?.verdict ?? 'pending'
 
   if (!diversityCheck.passes && finalVerdict === 'false') {
     console.warn(`[cross-check] Source diversity check failed: ${diversityCheck.reason}`)
     console.warn('[cross-check] Forcing PENDING due to source diversity requirement')
     flaggedForReview = true
-    return {
+    return baseResult({
       finalVerdict: 'pending',
       primaryModel: PRIMARY_MODEL,
       primaryVerdict: primary.verdict,
@@ -287,13 +447,16 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
       secondaryConfidence: secondary?.confidence ?? null,
       modelsAgreed: agreed,
       forcedPending: true,
-      blindVerified: true,
       responsePrimaryRaw,
       responseSecondaryRaw,
       blindPayload,
       flaggedForReview,
-      statementImpactLevel: resolveStatementImpactLevel(input.statementType, primary),
-    }
+      statementImpactLevel: resolveStatementImpactLevel(input.statementType, majority ?? primary),
+      majority,
+      primary,
+      secondary,
+      grok,
+    })
   }
 
   if (!majority) {
@@ -304,7 +467,7 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
   console.log(`[cross-check] Majority: ${finalVerdict} (agreed=${String(agreed)})`)
   console.log(`[cross-check] → Politician: ${input.politicianName} (ID: ${input.politicianId})`)
 
-  return {
+  return baseResult({
     finalVerdict,
     primaryModel: PRIMARY_MODEL,
     primaryVerdict: primary.verdict,
@@ -315,13 +478,16 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
     secondaryConfidence: secondary?.confidence ?? null,
     modelsAgreed: agreed,
     forcedPending: finalVerdict === 'pending',
-    blindVerified: true,
     responsePrimaryRaw,
     responseSecondaryRaw,
     blindPayload,
     flaggedForReview,
     statementImpactLevel: resolveStatementImpactLevel(input.statementType, majority ?? primary),
-  }
+    majority,
+    primary,
+    secondary,
+    grok,
+  })
 }
 
 export async function saveCrossCheckResult(
@@ -346,6 +512,9 @@ export async function saveCrossCheckResult(
     ai_models_agreed: result.modelsAgreed,
     ai_verified_at: new Date().toISOString(),
     date_verified: new Date().toISOString(),
+    plain_summary: result.plainSummary,
+    ai_explain: result.aiExplain,
+    ai_model_votes: result.modelVotes,
   }
   if (result.statementImpactLevel != null) {
     recordPatch.impact_level = result.statementImpactLevel

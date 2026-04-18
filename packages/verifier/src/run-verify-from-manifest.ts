@@ -134,6 +134,9 @@ async function upsertRecordAndSources(
         ai_model: null,
         ai_verified_at: null,
         date_verified: null,
+        plain_summary: null,
+        ai_explain: null,
+        ai_model_votes: null,
       })
       .eq('id', recordId)
     if (uErr) throw new Error(`Update record ${e.record_slug}: ${uErr.message}`)

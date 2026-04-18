@@ -48,7 +48,7 @@ export default function NeutralitatePage() {
                 </li>
                 <li>În lipsă de dovezi, statusul rămâne „în verificare”.</li>
                 <li>
-                  <strong className="text-[var(--gray-900)]">Ansamblu de modele (v1.3.0):</strong> Sonnet + Haiku + Grok
+                  <strong className="text-[var(--gray-900)]">Ansamblu de modele (v1.4.0):</strong> Sonnet + Haiku + Grok
                   (xAI); acord majoritar (minim două din trei pe același verdict). Fără acord → „în verificare”.
                 </li>
                 <li>
@@ -71,9 +71,10 @@ export default function NeutralitatePage() {
             <section className="mt-8 border-t border-[var(--gray-100)] pt-6">
               <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">AI transparent</h2>
               <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
-                Promptul de sistem este versionat (acum <strong className="text-[var(--gray-900)]">v1.3.0</strong> în
-                repository) și aceleași reguli se aplică tuturor modelelor din ansamblu; orice schimbare majoră trebuie
-                să fie vizibilă în istoricul GitHub.
+                Promptul de sistem este versionat (acum <strong className="text-[var(--gray-900)]">v1.4.0</strong> în
+                repository) și aceleași reguli se aplică tuturor modelelor din ansamblu; fiecare verdict include{' '}
+                <strong className="text-[var(--gray-900)]">plain_summary</strong> și{' '}
+                <strong className="text-[var(--gray-900)]">ai_explain</strong> pentru transparență publică.
               </p>
               <p className="mt-4 font-mono text-[12px]">
                 <a

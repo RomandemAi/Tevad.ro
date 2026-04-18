@@ -32,7 +32,7 @@ export async function runAnthropicModel(
     const anthropic = getClient()
     const response = await anthropic.messages.create({
       model,
-      max_tokens: 500,
+      max_tokens: 1024,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
     })
@@ -65,7 +65,7 @@ export async function runGrokModel(
       body: JSON.stringify({
         model: GROK_MODEL,
         temperature: 0,
-        max_tokens: 650,
+        max_tokens: 900,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },

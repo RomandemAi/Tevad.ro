@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { getStatusHint } from '@/lib/record-status-hint'
 import { verdictBadgeLabel } from '@/lib/record-verdict-display'
 import StatusHintIcon from '@/components/StatusHintIcon'
+import AiVerdictTransparency from '@/components/AiVerdictTransparency'
 
 interface Source {
   id: string
@@ -29,6 +30,9 @@ interface PoliticianRecord {
   ai_confidence?: number
   opinion_exempt?: boolean
   ai_reasoning?: string | null
+  plain_summary?: string | null
+  ai_explain?: string | null
+  ai_model_votes?: unknown
   sources: Source[]
 }
 
@@ -169,6 +173,13 @@ export default function RecordCard({ record, politicianId: _politicianId }: { re
         <p className="mt-3 rounded-lg border border-[rgba(29,110,245,0.25)] bg-[var(--blue-light)] px-3 py-2 font-mono text-[10px] leading-relaxed text-[var(--blue)]">
           Promisiune în curs de verificare — verdict disponibil după implementare
         </p>
+      )}
+      {!record.opinion_exempt && (
+        <AiVerdictTransparency
+          plainSummary={record.plain_summary}
+          aiExplain={record.ai_explain}
+          modelVotes={record.ai_model_votes}
+        />
       )}
       {shouldTruncate && (
         <button

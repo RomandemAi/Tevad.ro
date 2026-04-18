@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "private": true,
   "exports": {
+    "./blind-types": "./src/blind-types.ts",
     "./cross-check": "./src/cross-check.ts",
     "./score": "./src/score.ts",
     "./models": "./src/models.ts",

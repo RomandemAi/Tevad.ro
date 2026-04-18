@@ -18,7 +18,14 @@ import { getVerificationSystemPrompt, runVerificationModel } from './model-runne
 import { crossCheckVerify, saveCrossCheckResult, type CrossCheckResult } from './cross-check'
 import type { BlindPayload, ModelResult, StatementType, Verdict } from './blind-types'
 
-export type { BlindPayload, BlindSource, ModelResult, StatementType, Verdict } from './blind-types'
+export type {
+  AiModelVotePublic,
+  BlindPayload,
+  BlindSource,
+  ModelResult,
+  StatementType,
+  Verdict,
+} from './blind-types'
 export { buildBlindPayload } from './blind-payload'
 export { saveCrossCheckResult } from './cross-check'
 
