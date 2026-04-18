@@ -224,6 +224,7 @@ export async function classifyClaim(input: {
     system:
       'You are a neutral classifier for a Romanian political accountability platform. ' +
       'Your job: classify falsifiability/measurability and whether the text is a future commitment (promise) vs a factual claim (statement) vs a vote. ' +
+      'The "reasoning" field must be Romanian (one short neutral sentence) or null. ' +
       'No political framing. Return JSON only.',
     messages: [
       {
@@ -238,7 +239,7 @@ Return JSON:
   "measurability": "high|medium|low|non_falsifiable",
   "suggested_type": "promise|statement|vote",
   "confidence": 0-100,
-  "reasoning": "one short factual sentence or null"
+  "reasoning": "o singură propoziție scurtă, factuală, în limba română, sau null"
 }`,
       },
     ],

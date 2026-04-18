@@ -31,10 +31,10 @@ const VERDICT_DARK: Record<
   { ring: string; bg: string; text: string; glow: string }
 > = {
   true: {
-    ring: 'ring-emerald-500/40',
-    bg: 'bg-emerald-500/15',
-    text: 'text-emerald-200',
-    glow: 'shadow-[0_0_40px_-8px_rgba(52,211,153,0.35)]',
+    ring: 'ring-teal-500/25',
+    bg: 'bg-teal-500/10',
+    text: 'text-teal-100',
+    glow: 'shadow-[0_0_36px_-10px_rgba(45,212,191,0.12)]',
   },
   false: {
     ring: 'ring-rose-500/40',
@@ -57,7 +57,7 @@ const VERDICT_DARK: Record<
 }
 
 const VOTE_BADGE: Record<VerdictKey, string> = {
-  true: 'bg-emerald-500/20 text-emerald-100 ring-1 ring-emerald-400/30',
+  true: 'bg-teal-500/15 text-teal-100 ring-1 ring-teal-400/25',
   false: 'bg-rose-500/20 text-rose-100 ring-1 ring-rose-400/30',
   partial: 'bg-amber-500/20 text-amber-50 ring-1 ring-amber-400/25',
   pending: 'bg-slate-600/40 text-slate-200 ring-1 ring-slate-500/30',
@@ -67,6 +67,26 @@ const TYPE_RO: Record<string, string> = {
   promise: 'Promisiune',
   statement: 'Declarație',
   vote: 'Vot',
+}
+
+const CLAIM_KIND_RO: Record<string, string> = {
+  future_promise: 'Angajament viitor',
+  present_fact: 'Afirmație factuală',
+  opinion_only: 'Preponderent opinie',
+  mixed: 'Amestec (fapt + opinie)',
+}
+
+const MEASURABILITY_RO: Record<string, string> = {
+  high: 'Verificabilitate ridicată',
+  medium: 'Verificabilitate medie',
+  low: 'Verificabilitate scăzută',
+  non_falsifiable: 'Nefalsificabilă',
+}
+
+function mapEnumRo(map: Record<string, string>, raw: unknown): string {
+  const s = typeof raw === 'string' ? raw.trim() : ''
+  if (!s) return '—'
+  return map[s] ?? s
 }
 
 function verdictKey(v: string | null | undefined): VerdictKey {
@@ -351,22 +371,31 @@ export default async function AuditPage({ params }: Props) {
               <div className="rounded-2xl border border-white/[0.07] bg-white/[0.04] p-6 shadow-[0_16px_40px_-20px_rgba(0,0,0,0.45)] md:p-8">
                 <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                   <h2 className="font-sans text-[16px] font-medium text-slate-200">Clasificare automată (orientativ)</h2>
-                  <span className="rounded-full bg-amber-500/15 px-3 py-1 font-mono text-[9px] uppercase tracking-wide text-amber-200/90 ring-1 ring-amber-400/20">
-                    poate greși
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {ann.measurability ? (
+                      <span className="rounded-full bg-slate-500/10 px-2.5 py-1 font-mono text-[9px] uppercase tracking-wide text-slate-400 ring-1 ring-white/[0.08]">
+                        {mapEnumRo(MEASURABILITY_RO, ann.measurability)}
+                      </span>
+                    ) : null}
+                    <span className="rounded-full bg-amber-500/12 px-3 py-1 font-mono text-[9px] uppercase tracking-wide text-amber-200/85 ring-1 ring-amber-400/18">
+                      poate greși
+                    </span>
+                  </div>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-xl border border-white/[0.06] bg-[#0a1018] p-4">
                     <p className="font-mono text-[9px] uppercase tracking-wider text-slate-500">Tip de afirmație</p>
-                    <p className="mt-2 font-sans text-[15px] text-slate-200">{String(ann.claim_kind ?? '—')}</p>
+                    <p className="mt-2 font-sans text-[15px] text-slate-200">{mapEnumRo(CLAIM_KIND_RO, ann.claim_kind)}</p>
                   </div>
                   <div className="rounded-xl border border-white/[0.06] bg-[#0a1018] p-4">
                     <p className="font-mono text-[9px] uppercase tracking-wider text-slate-500">Cât de măsurabilă</p>
-                    <p className="mt-2 font-sans text-[15px] text-slate-200">{String(ann.measurability ?? '—')}</p>
+                    <p className="mt-2 font-sans text-[15px] text-slate-200">{mapEnumRo(MEASURABILITY_RO, ann.measurability)}</p>
                   </div>
                   <div className="rounded-xl border border-white/[0.06] bg-[#0a1018] p-4">
                     <p className="font-mono text-[9px] uppercase tracking-wider text-slate-500">Tip sugerat</p>
-                    <p className="mt-2 font-sans text-[15px] text-slate-200">{String(ann.suggested_type ?? '—')}</p>
+                    <p className="mt-2 font-sans text-[15px] text-slate-200">
+                      {mapEnumRo(TYPE_RO, ann.suggested_type)}
+                    </p>
                   </div>
                   <div className="rounded-xl border border-white/[0.06] bg-[#0a1018] p-4">
                     <p className="font-mono text-[9px] uppercase tracking-wider text-slate-500">Încredere estimată</p>
@@ -374,8 +403,11 @@ export default async function AuditPage({ params }: Props) {
                   </div>
                   {ann.reasoning ? (
                     <div className="sm:col-span-2 rounded-xl border border-white/[0.06] bg-[#0a1018] p-4">
-                      <p className="font-mono text-[9px] uppercase tracking-wider text-slate-500">Notă scurtă</p>
+                      <p className="font-mono text-[9px] uppercase tracking-wider text-slate-500">Verdict scurt (clasificator)</p>
                       <p className="mt-2 font-sans text-[15px] leading-relaxed text-slate-300">{String(ann.reasoning)}</p>
+                      <p className="mt-3 font-mono text-[9px] text-slate-600">
+                        Text generat automat; înregistrările noi folosesc limba română în prompt.
+                      </p>
                     </div>
                   ) : null}
                 </div>
@@ -502,7 +534,7 @@ export default async function AuditPage({ params }: Props) {
                           <span className="rounded-md bg-sky-500/10 px-2 py-0.5 text-sky-300/90">Verificare oarbă</span>
                         ) : null}
                         {l.models_agreed === true ? (
-                          <span className="rounded-md bg-emerald-500/10 px-2 py-0.5 text-emerald-300/90">Modele aliniate</span>
+                          <span className="rounded-md bg-teal-500/10 px-2 py-0.5 text-teal-200/90">Modele aliniate</span>
                         ) : null}
                         {l.models_agreed === false ? (
                           <span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-amber-200/90">Fără consens majoritar</span>
