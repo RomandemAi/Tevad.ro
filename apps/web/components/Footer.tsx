@@ -35,6 +35,13 @@ export default function Footer() {
             Despre
           </Link>
           <span className="text-[rgba(255,255,255,0.25)]">·</span>
+          <Link
+            href="/tevad-vs-factual"
+            className="cursor-pointer transition-colors duration-200 ease-out hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cyan)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--navy)]"
+          >
+            Tevad vs Factual
+          </Link>
+          <span className="text-[rgba(255,255,255,0.25)]">·</span>
           <a
             href={GH_REPO}
             target="_blank"

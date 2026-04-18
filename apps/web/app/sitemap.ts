@@ -27,6 +27,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteBase}/about`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.65 },
     { url: `${siteBase}/cum-functioneaza`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.75 },
     { url: `${siteBase}/neutralitate`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.75 },
+    { url: `${siteBase}/politicians`, lastModified: now, changeFrequency: 'daily' as const, priority: 0.85 },
+    { url: `${siteBase}/tevad-vs-factual`, lastModified: now, changeFrequency: 'monthly' as const, priority: 0.7 },
     { url: `${siteBase}/legal`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.45 },
     { url: `${siteBase}/privacy`, lastModified: now, changeFrequency: 'yearly' as const, priority: 0.45 },
     ...politicianUrls,
