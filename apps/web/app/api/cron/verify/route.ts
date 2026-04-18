@@ -11,6 +11,11 @@ import { classifyClaim } from '@tevad/verifier/models'
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
+/**
+ * verification_queue → records: same blind cross-check ensemble, JSON discipline, and source rules as always.
+ * RSS may enqueue liberally; this route does not relax “tank proof” verification — only pending rows become verdicts here.
+ */
+
 /** Two Tier-0 official URLs so `passesSourceDiversityCheck` passes even when the article is Tier 2 only. */
 function officialContextSources(): CrossCheckInput['sources'] {
   return TIER0_SOURCES.slice(0, 2).map(s => ({

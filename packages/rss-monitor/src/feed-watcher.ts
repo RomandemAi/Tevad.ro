@@ -8,7 +8,8 @@
  * Run: npx tsx packages/rss-monitor/src/feed-watcher.ts
  * Cron: every 30 minutes
  *
- * Env: RSS_QUEUE_MIN_CONFIDENCE (default 62) — enqueue gate only; verify ensemble unchanged.
+ * Env: RSS_QUEUE_MIN_CONFIDENCE (default 58) — wide net for the queue only. Record verdicts stay
+ * tank-proof: same multi-model cross-check + JSON + diversity rules as /api/cron/verify (unchanged here).
  */
 
 import fs from 'node:fs'
@@ -284,8 +285,8 @@ export async function run(opts?: FeedWatcherRunOptions): Promise<FeedWatcherSumm
   console.log(`[rss] Loaded ${politicians.length} politicians for classifier.`)
   console.log(`[rss] Last-name prefilter: ${lastNames.size} unique last names.`)
 
-  /** Haiku gate for enqueueing only; ensemble verify stays strict on records. Default 62 (env RSS_QUEUE_MIN_CONFIDENCE). */
-  const minQueueConfidence = Math.min(90, Math.max(45, Number(process.env.RSS_QUEUE_MIN_CONFIDENCE ?? '') || 62))
+  /** Haiku gate for enqueueing only — permissive by design. Default 58 (env RSS_QUEUE_MIN_CONFIDENCE). */
+  const minQueueConfidence = Math.min(90, Math.max(45, Number(process.env.RSS_QUEUE_MIN_CONFIDENCE ?? '') || 58))
   console.log(`[rss] Queue min classifier confidence: ${minQueueConfidence}`)
 
   if (!process.env.ANTHROPIC_API_KEY || politicianNames.length === 0) {
