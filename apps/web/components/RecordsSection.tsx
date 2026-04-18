@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import RecordCard from './RecordCard'
-import { dedupeRecordsByArticleUrl } from '@/lib/dedupe-records-for-display'
+import { dedupePublicStatementRows } from '@/lib/dedupe-records-for-display'
 
 type RecordStatus = 'true' | 'false' | 'partial' | 'pending'
 type RecordType   = 'promise' | 'statement' | 'vote'
@@ -73,7 +73,7 @@ export default function RecordsSection({ records, politicianId }: RecordsSection
   const [typeFilter, setTypeFilter]     = useState<RecordType | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<RecordStatus | 'all'>('all')
 
-  const deduped = useMemo(() => dedupeRecordsByArticleUrl(records), [records])
+  const deduped = useMemo(() => dedupePublicStatementRows(records), [records])
 
   const filtered = useMemo(() => {
     return deduped.filter(r => {

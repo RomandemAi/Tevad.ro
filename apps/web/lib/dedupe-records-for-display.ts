@@ -10,7 +10,21 @@ export interface RecordRowForDedupe {
   date_made: string
   created_at?: string
   ai_confidence?: number
+  politician_id?: string
+  opinion_exempt?: boolean
+  ai_reasoning?: string | null
+  impact_level?: string
   sources?: Array<{ url?: string; tier?: string | number }>
+  /** Supabase join shape */
+  politicians?: { id?: string } | Array<{ id?: string }> | null
+}
+
+function extractPoliticianId(r: RecordRowForDedupe): string {
+  if (r.politician_id) return r.politician_id
+  const p = r.politicians
+  if (Array.isArray(p) && p[0]?.id) return String(p[0].id)
+  if (p && typeof p === 'object' && 'id' in p && (p as { id?: string }).id) return String((p as { id: string }).id)
+  return ''
 }
 
 /** Prefer media (tier 1/2) URL; else first source — matches verify cron insert order when possible. */
@@ -50,10 +64,17 @@ function pickBetterRecord<T extends RecordRowForDedupe>(a: T, b: T): T {
   return tA >= tB ? a : b
 }
 
+function sortByDateDesc<T extends RecordRowForDedupe>(rows: T[]): T[] {
+  return [...rows].sort((a, b) => {
+    const da = new Date(a.date_made).getTime()
+    const db = new Date(b.date_made).getTime()
+    return db - da
+  })
+}
+
 /**
- * Collapse duplicate politician records that share the same canonical article URL
- * (e.g. double queue / re-ingest). Keeps the stronger verification (confidence, then
- * verdict rank, then recency). Rows without a usable URL are all kept.
+ * Collapse duplicate rows per politician + canonical article URL (queue / re-ingest).
+ * Partition includes politician so multi-politician feeds (e.g. /declaratii) never merge across people.
  */
 export function dedupeRecordsByArticleUrl<T extends RecordRowForDedupe>(records: T[]): T[] {
   const byKey = new Map<string, T>()
@@ -61,6 +82,7 @@ export function dedupeRecordsByArticleUrl<T extends RecordRowForDedupe>(records:
 
   for (const r of records) {
     const raw = primaryArticleUrl(r.sources)
+    const pol = extractPoliticianId(r) || `_row_${r.id}`
     if (!raw) {
       passthrough.push(r)
       continue
@@ -70,16 +92,42 @@ export function dedupeRecordsByArticleUrl<T extends RecordRowForDedupe>(records:
       passthrough.push(r)
       continue
     }
-    const prev = byKey.get(k)
-    if (!prev) byKey.set(k, r)
-    else byKey.set(k, pickBetterRecord(prev, r))
+    const composite = `${pol}|${k}`
+    const prev = byKey.get(composite)
+    if (!prev) byKey.set(composite, r)
+    else byKey.set(composite, pickBetterRecord(prev, r))
   }
 
-  const merged = [...Array.from(byKey.values()), ...passthrough]
-  merged.sort((a, b) => {
-    const da = new Date(a.date_made).getTime()
-    const db = new Date(b.date_made).getTime()
-    return db - da
-  })
-  return merged
+  return sortByDateDesc([...Array.from(byKey.values()), ...passthrough])
+}
+
+function normalizeStatementText(text: string): string {
+  return text.trim().replace(/\s+/g, ' ').toLowerCase().slice(0, 800)
+}
+
+/**
+ * Second pass: same politician + same statement text (after the article-URL pass).
+ * Catches duplicates when sources were missing from the query or URLs differ slightly.
+ * Very short strings are not merged (avoids collapsing unrelated micro-lines).
+ */
+export function dedupeRecordsByPoliticianAndText<T extends RecordRowForDedupe>(records: T[]): T[] {
+  const byKey = new Map<string, T>()
+  for (const r of records) {
+    const pol = extractPoliticianId(r) || `_row_${r.id}`
+    const nt = normalizeStatementText(r.text)
+    if (nt.length < 24) {
+      byKey.set(`${pol}|__short__${r.id}`, r)
+      continue
+    }
+    const composite = `${pol}|${nt}`
+    const prev = byKey.get(composite)
+    if (!prev) byKey.set(composite, r)
+    else byKey.set(composite, pickBetterRecord(prev, r))
+  }
+  return sortByDateDesc(Array.from(byKey.values()))
+}
+
+/** URL dedupe then text dedupe — use for politician profile and /declaratii lists. */
+export function dedupePublicStatementRows<T extends RecordRowForDedupe>(records: T[]): T[] {
+  return dedupeRecordsByPoliticianAndText(dedupeRecordsByArticleUrl(records))
 }

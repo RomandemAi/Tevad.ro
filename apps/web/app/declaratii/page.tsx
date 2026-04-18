@@ -10,6 +10,7 @@ import {
 import StatusHintIcon from '@/components/StatusHintIcon'
 import { getStatusHint } from '@/lib/record-status-hint'
 import { verdictBadgeLabel } from '@/lib/record-verdict-display'
+import { dedupePublicStatementRows, type RecordRowForDedupe } from '@/lib/dedupe-records-for-display'
 
 const STATUS_QUERY_PARAM = 'status' as const
 
@@ -61,13 +62,16 @@ export default async function DeclaratiiPage({ searchParams }: Props) {
 
   const { data: recordsRaw } = await supabase
     .from('records')
-    .select(`id, slug, type, text, context, status, date_made, created_at, impact_level, ai_confidence, opinion_exempt, ai_reasoning,
-      politicians (*)`)
+    .select(`id, politician_id, slug, type, text, context, status, date_made, created_at, impact_level, ai_confidence, opinion_exempt, ai_reasoning,
+      politicians (*),
+      sources (id, tier, url)`)
     .eq('type', 'statement')
     .order('created_at', { ascending: false })
-    .limit(250)
+    .limit(500)
 
-  const records = statusFilter ? (recordsRaw ?? []).filter(r => r.status === statusFilter) : (recordsRaw ?? [])
+  const deduped = dedupePublicStatementRows((recordsRaw ?? []) as RecordRowForDedupe[])
+  const afterFilter = statusFilter ? deduped.filter(r => r.status === statusFilter) : deduped
+  const records = afterFilter.slice(0, 250)
 
   const breadcrumb = (
     <>
@@ -162,7 +166,7 @@ export default async function DeclaratiiPage({ searchParams }: Props) {
 
           {records.length === 0 && (
             <div className="flex items-center justify-center rounded-2xl border border-[var(--gray-200)] bg-white p-16 font-mono text-[12px] text-[var(--gray-500)] shadow-[0_1px_3px_rgba(0,0,0,0.08),0_1px_2px_rgba(0,0,0,0.06)]">
-              {(recordsRaw?.length ?? 0) > 0 && statusFilter ? 'Nicio înregistrare pentru filtrele alese' : 'Nicio înregistrare'}
+              {deduped.length > 0 && statusFilter ? 'Nicio înregistrare pentru filtrele alese' : 'Nicio înregistrare'}
             </div>
           )}
         </div>

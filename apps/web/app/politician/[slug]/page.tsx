@@ -122,7 +122,7 @@ export default async function PoliticianPage({ params }: Props) {
 
   const { data: records } = await supabase
     .from('records')
-    .select(`id, slug, type, text, status, date_made, created_at, impact_level, likes, dislikes, ai_confidence, opinion_exempt, ai_reasoning, plain_summary, ai_explain, ai_model_votes,
+    .select(`id, politician_id, slug, type, text, status, date_made, created_at, impact_level, likes, dislikes, ai_confidence, opinion_exempt, ai_reasoning, plain_summary, ai_explain, ai_model_votes,
       sources (id, tier, outlet, url, archived_url, published_at)`)
     .eq('politician_id', pol.id)
     .order('date_made', { ascending: false })
