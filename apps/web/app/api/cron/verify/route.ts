@@ -5,6 +5,7 @@ import { getSourceTier, getLean, TIER0_SOURCES } from '@tevad/rss-monitor/source
 import type { SourceLean } from '@tevad/rss-monitor/sources.config'
 import type { CrossCheckInput } from '@tevad/verifier/cross-check'
 import { resolveRecordTypeFromQueue } from '@tevad/rss-monitor/resolve-record-type'
+import { politicianHasRecordWithArticleUrl } from '@tevad/rss-monitor/article-dedupe'
 import { classifyClaim } from '@tevad/verifier/models'
 
 export const dynamic = 'force-dynamic'
@@ -127,6 +128,13 @@ export async function GET(req: NextRequest) {
       if (existing?.id) {
         await supabase.from('verification_queue').delete().eq('id', queueId)
         results.push({ queueId, ok: true, verdict: 'skipped_duplicate_slug' })
+        continue
+      }
+
+      const dupArticle = await politicianHasRecordWithArticleUrl(supabase, politicianId, articleUrl)
+      if (dupArticle) {
+        await supabase.from('verification_queue').delete().eq('id', queueId)
+        results.push({ queueId, ok: true, verdict: 'skipped_duplicate_article' })
         continue
       }
 

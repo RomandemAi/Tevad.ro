@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import RecordCard from './RecordCard'
+import { dedupeRecordsByArticleUrl } from '@/lib/dedupe-records-for-display'
 
 type RecordStatus = 'true' | 'false' | 'partial' | 'pending'
 type RecordType   = 'promise' | 'statement' | 'vote'
@@ -72,20 +73,22 @@ export default function RecordsSection({ records, politicianId }: RecordsSection
   const [typeFilter, setTypeFilter]     = useState<RecordType | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<RecordStatus | 'all'>('all')
 
+  const deduped = useMemo(() => dedupeRecordsByArticleUrl(records), [records])
+
   const filtered = useMemo(() => {
-    return records.filter(r => {
+    return deduped.filter(r => {
       if (typeFilter !== 'all'   && r.type   !== typeFilter)   return false
       if (statusFilter !== 'all' && r.status !== statusFilter) return false
       return true
     })
-  }, [records, typeFilter, statusFilter])
+  }, [deduped, typeFilter, statusFilter])
 
-  // Count per status for badges
+  // Count per status for badges (after article-URL dedupe)
   const counts = useMemo(() => {
     const c: Record<string, number> = {}
-    for (const r of records) c[r.status] = (c[r.status] ?? 0) + 1
+    for (const r of deduped) c[r.status] = (c[r.status] ?? 0) + 1
     return c
-  }, [records])
+  }, [deduped])
 
   return (
     <div>

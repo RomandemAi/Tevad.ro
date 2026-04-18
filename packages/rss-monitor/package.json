@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "private": true,
   "exports": {
+    "./article-dedupe": "./src/article-dedupe.ts",
     "./feed-watcher": "./src/feed-watcher.ts",
     "./sources.config": "./src/sources.config.ts",
     "./resolve-record-type": "./src/resolve-record-type.ts"

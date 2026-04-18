@@ -15,6 +15,7 @@ import { getLean, getSourceTier, TIER0_SOURCES } from './sources.config'
 import type { SourceLean } from './sources.config'
 import type { CrossCheckInput } from '@tevad/verifier/cross-check'
 import { resolveRecordTypeFromQueue } from './resolve-record-type'
+import { politicianHasRecordWithArticleUrl } from './article-dedupe'
 import { classifyClaim } from '@tevad/verifier/models'
 
 // Load repo `.env` (and optionally apps/web/.env.local)
@@ -119,6 +120,13 @@ export async function run(opts: { limit?: number } = {}) {
       if (existing?.id) {
         await supabase.from('verification_queue').delete().eq('id', queueId)
         results.push({ queueId, ok: true, verdict: 'skipped_duplicate_slug' })
+        continue
+      }
+
+      const dupArticle = await politicianHasRecordWithArticleUrl(supabase, politicianId, articleUrl)
+      if (dupArticle) {
+        await supabase.from('verification_queue').delete().eq('id', queueId)
+        results.push({ queueId, ok: true, verdict: 'skipped_duplicate_article' })
         continue
       }
 
