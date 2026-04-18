@@ -58,7 +58,8 @@ export async function classifyArticle(
     model: HAIKU,
     max_tokens: 300,
     system: `You are a classifier for a Romanian political accountability platform.
-Analyze the article and return JSON only. No other text.`,
+Analyze the article and return JSON only. No other text.
+When the article is primarily about one person from the list, matchedPolitician must be copied EXACTLY from that list (same spelling and Romanian diacritics). If unclear or not about a listed person, use null.`,
     messages: [
       {
         role: 'user',

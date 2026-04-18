@@ -7,6 +7,8 @@
  *
  * Run: npx tsx packages/rss-monitor/src/feed-watcher.ts
  * Cron: every 30 minutes
+ *
+ * Env: RSS_QUEUE_MIN_CONFIDENCE (default 62) — enqueue gate only; verify ensemble unchanged.
  */
 
 import fs from 'node:fs'
@@ -282,6 +284,10 @@ export async function run(opts?: FeedWatcherRunOptions): Promise<FeedWatcherSumm
   console.log(`[rss] Loaded ${politicians.length} politicians for classifier.`)
   console.log(`[rss] Last-name prefilter: ${lastNames.size} unique last names.`)
 
+  /** Haiku gate for enqueueing only; ensemble verify stays strict on records. Default 62 (env RSS_QUEUE_MIN_CONFIDENCE). */
+  const minQueueConfidence = Math.min(90, Math.max(45, Number(process.env.RSS_QUEUE_MIN_CONFIDENCE ?? '') || 62))
+  console.log(`[rss] Queue min classifier confidence: ${minQueueConfidence}`)
+
   if (!process.env.ANTHROPIC_API_KEY || politicianNames.length === 0) {
     console.warn('[rss] ANTHROPIC_API_KEY or politicians missing — classification skipped.')
     return undefined
@@ -442,9 +448,9 @@ export async function run(opts?: FeedWatcherRunOptions): Promise<FeedWatcherSumm
         continue
       }
 
-      if (classified.confidence <= 70) {
+      if (classified.confidence <= minQueueConfidence) {
         console.log(
-          `[rss] classifier: confidence=${classified.confidence} <= 70 — skip (matched="${classified.matchedPolitician ?? ''}")`
+          `[rss] classifier: confidence=${classified.confidence} <= ${minQueueConfidence} — skip (matched="${classified.matchedPolitician ?? ''}")`
         )
         continue
       }
@@ -455,7 +461,14 @@ export async function run(opts?: FeedWatcherRunOptions): Promise<FeedWatcherSumm
           `type="${classified.recordType ?? ''}" topic="${classified.topic ?? ''}"`
       )
 
-      const politicianId = resolvePoliticianId(politicians, classified.matchedPolitician)
+      let politicianId = resolvePoliticianId(politicians, classified.matchedPolitician)
+      if (!politicianId && hitIdx.length === 1) {
+        const only = normalizedPoliticians[hitIdx[0]!]!
+        politicianId = only.id
+        console.log(
+          `[rss] Politician resolved via unique in-text name hit: "${only.name}" (Haiku: "${classified.matchedPolitician ?? ''}")`
+        )
+      }
       if (!politicianId) {
         console.warn(
           `[rss] resolvePoliticianId failed for matched="${classified.matchedPolitician ?? ''}" ` +
