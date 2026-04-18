@@ -197,7 +197,7 @@ export default function AboutPage() {
 
             <p className="mt-10 font-mono text-[12px]">
               <Link href="/" className="text-[var(--blue)] hover:underline">
-                ← Înapoi la clasament
+                ← Înapoi la pagina principală
               </Link>
             </p>
           </article>

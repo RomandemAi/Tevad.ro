@@ -14,7 +14,7 @@ export default function NotFound() {
       <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#7a94b8]">404</p>
       <h1 className="mt-3 text-lg font-medium">Pagina nu există</h1>
       <Link href="/" className="mt-8 font-mono text-[11px] text-[#0ea5e9] hover:opacity-90">
-        ← Înapoi la clasament
+        ← Înapoi la pagina principală
       </Link>
     </div>
   )

@@ -36,8 +36,8 @@ export default function StatsBar({ total, broken, pending, avgScore }: StatsBarP
       value: avgScore,
       label: 'Scor mediu',
       color: scoreColor,
-      href: '/#clasament' as const,
-      aria: `Clasament după scor — mediu ${avgScore}`,
+      href: '/politicians' as const,
+      aria: `Leaderboard după scor — mediu ${avgScore}`,
     },
   ] as const
 

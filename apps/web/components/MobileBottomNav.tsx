@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
-type TabId = 'politicieni' | 'promises' | 'declaratii' | 'clasament' | 'false' | 'cauta'
+type TabId = 'politicieni' | 'promises' | 'declaratii' | 'leaderboard' | 'false' | 'cauta'
 
 export default function MobileBottomNav() {
   const pathname = usePathname()
@@ -21,8 +21,8 @@ export default function MobileBottomNav() {
     if (pathname === '/broken') return 'false'
     if (pathname === '/promises') return 'promises'
     if (pathname === '/declaratii') return 'declaratii'
+    if (pathname === '/politicians') return 'leaderboard'
     if (pathname !== '/') return null
-    if (hash === '#clasament') return 'clasament'
     if (hash === '#filter') return 'cauta'
     return 'politicieni'
   }
@@ -58,11 +58,11 @@ export default function MobileBottomNav() {
           )}
           Declarații
         </Link>
-        <Link href="/#clasament" className={tabClass('clasament')}>
-          {cur === 'clasament' && (
+        <Link href="/politicians" className={tabClass('leaderboard')}>
+          {cur === 'leaderboard' && (
             <span className="absolute top-0 left-1/2 h-0.5 w-10 -translate-x-1/2 rounded-full bg-[var(--cyan)]" aria-hidden />
           )}
-          Clasament
+          Leaderboard
         </Link>
         <Link href="/broken" className={tabClass('false')}>
           {cur === 'false' && (

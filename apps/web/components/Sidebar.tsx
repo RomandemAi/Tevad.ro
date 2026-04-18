@@ -7,7 +7,7 @@ import AppearanceControl from './AppearanceControl'
 
 const INDEX = [
   { href: '/', label: 'Politicieni', exact: true as const },
-  { href: '/#clasament', label: 'Clasament' },
+  { href: '/politicians', label: 'Leaderboard' },
   { href: '/promises', label: 'Toate promisiunile' },
   { href: '/declaratii', label: 'Declarații' },
 ] as const
@@ -38,10 +38,10 @@ function NavIconPolitician() {
   )
 }
 
-function NavIconChart() {
+function NavIconLeaderboard() {
   return (
     <svg className="h-4 w-4 opacity-70" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-      <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5H2v-5zM9 4a1 1 0 011-1h2a1 1 0 011 1v12H9V4zM16 8a1 1 0 011-1h2a1 1 0 011 1v8h-4V8z" />
+      <path d="M5 16h2V8H5v8zm4 0h2V4H9v12zm4 0h2v-6h-2v6zM3 18h14v2H3v-2z" />
     </svg>
   )
 }
@@ -102,7 +102,16 @@ function NavIconScale() {
   )
 }
 
-const INDEX_ICONS = [NavIconPolitician, NavIconChart, NavIconDoc, NavIconDoc]
+function NavIconVs() {
+  return (
+    <svg className="h-4 w-4 opacity-70" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+      <path d="M3 4h6v12H3V4zm8 0h6v12h-6V4z" opacity="0.85" />
+      <path d="M9.5 9h1v2h-1V9z" />
+    </svg>
+  )
+}
+
+const INDEX_ICONS = [NavIconPolitician, NavIconLeaderboard, NavIconDoc, NavIconDoc]
 const FILTER_ICONS = [NavIconWarn, NavIconCheck, NavIconWarn]
 
 interface SidebarProps {
@@ -140,10 +149,10 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
   const indexActive = (i: number) => {
     const item = INDEX[i]
     if (item.href === '/') {
-      const homeSub = ['#clasament', '#filter', '#cum-functioneaza']
+      const homeSub = ['#filter', '#cum-functioneaza']
       return pathname === '/' && !homeSub.includes(hash)
     }
-    if (item.href === '/#clasament') return pathname === '/' && hash === '#clasament'
+    if (item.href === '/politicians') return pathname === '/politicians'
     return routeActive(item.href, false)
   }
 
@@ -262,6 +271,14 @@ export default function Sidebar({ className = '', onNavigate }: SidebarProps) {
         >
           <NavIconScale />
           Neutralitate
+        </Link>
+        <Link
+          href="/tevad-vs-factual"
+          onClick={() => onNavigate?.()}
+          className={`${linkBase} ${routeActive('/tevad-vs-factual', true) ? linkActive : 'border-l-[3px] border-l-transparent'}`}
+        >
+          <NavIconVs />
+          Tevad vs Factual
         </Link>
         <Link
           href="/despre"
