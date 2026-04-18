@@ -98,11 +98,13 @@ export default function TevadVsFactualPage() {
               Tevad.org vs Factual.ro — altfel de responsabilitate, la scară națională
             </h1>
             <p className="mx-auto mt-3 max-w-[36ch] font-mono text-[11px] uppercase tracking-[0.12em] text-sky-200/70">
-              Verdict scurt
+              Câteva cuvinte
             </p>
             <p className="mx-auto mt-3 max-w-[62ch] font-sans text-[15px] leading-relaxed text-white/78 md:text-[16px]">
-              Dacă vrei un articol elegant despre o minciună, ai opțiuni. Dacă vrei un sistem care nu doarme când
-              politicienii votează la miezul nopții, ai deja tab-ul deschis greșit — corectează asta.
+              Presa care verifică atent o afirmație e o bucurie — și ne ridică tuturor ștacheta. Tevad vrea să stea
+              alături: un catalog deschis cu promisiuni, declarații și voturi, culese din surse publice, cu note de
+              încredere și drumul verificării la vedere. Nu înlocuiește „articolul perfect”; îl completează, pentru
+              momentele când vrei tabloul întreg, în timp.
             </p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Link
@@ -188,10 +190,11 @@ export default function TevadVsFactualPage() {
 
           <div className="mt-10 flex flex-col items-center justify-between gap-6 rounded-2xl border border-[var(--gray-200)] bg-[var(--gray-50)] px-6 py-8 md:flex-row md:px-10">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--gray-500)]">Pe scurt</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--gray-500)]">Pe îndelete</p>
               <p className="mt-2 max-w-[48ch] font-sans text-[15px] font-medium leading-snug text-[var(--gray-900)]">
-                Comparăm modele, nu oameni. Tevad.org e menținut ca infrastructură deschisă — cron-uri, surse tier,
-                audit public.
+                Tabelul de mai sus vorbește despre feluri de a lucra, nu despre oameni. Tevad.org e îngrijit ca o
+                infrastructură deschisă: surse stratificate, jurnal de audit, cod pe care îl poți citi. Dacă rezonează
+                cu tine, catalogul e la un click.
               </p>
             </div>
             <Link
