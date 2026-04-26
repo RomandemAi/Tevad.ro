@@ -189,7 +189,7 @@ export default async function AuditPage({ params }: Props) {
     .from('verdict_audit_logs')
     .select('*')
     .eq('record_id', record.id)
-    .order('recorded_at', { ascending: false })
+    .order('created_at', { ascending: false })
 
   const { data: annotations } = await supabase
     .from('record_ai_annotations')
@@ -226,11 +226,12 @@ export default async function AuditPage({ params }: Props) {
 
   const rawPayloads = (auditLogs ?? []).map((log, idx) => ({
     idx: idx + 1,
-    at: (log as { recorded_at?: string }).recorded_at,
+    at: (log as { created_at?: string; recorded_at?: string }).created_at ?? (log as { recorded_at?: string }).recorded_at,
     json: JSON.stringify(
       {
         audit_id: (log as { id?: string }).id,
-        verdict: (log as { verdict?: unknown }).verdict,
+        verdict: (log as { verdict?: unknown; final_verdict?: unknown }).verdict,
+        final_verdict: (log as { final_verdict?: unknown }).final_verdict,
         confidence: (log as { confidence?: unknown }).confidence,
         reasoning: (log as { reasoning?: unknown }).reasoning,
         model_version: (log as { model_version?: string }).model_version,
@@ -498,14 +499,16 @@ export default async function AuditPage({ params }: Props) {
                 {(auditLogs ?? []).map(log => {
                   const l = log as {
                     id: string
-                    verdict: string
+                    verdict?: string | null
+                    final_verdict?: string | null
                     confidence: number | null
                     reasoning: string | null
                     recorded_at: string
                     models_agreed: boolean | null
                     blind_verified?: boolean | null
                   }
-                  const lk = verdictKey(l.verdict)
+                  const verdictLabel = (l.verdict ?? l.final_verdict ?? 'pending') as string
+                  const lk = verdictKey(verdictLabel)
                   return (
                     <li
                       key={l.id}

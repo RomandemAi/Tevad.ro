@@ -220,7 +220,7 @@ async function runPending(): Promise<void> {
   const { recalcScore, saveScore } = await import('./score')
 
   const limitRaw = process.env.VERIFY_LIMIT
-  const limit = Math.min(50, Math.max(1, Number(limitRaw) || 10))
+  const limit = Math.min(200, Math.max(1, Number(limitRaw) || 20))
   const slugPrefix = process.env.VERIFY_SLUG_PREFIX?.trim()
 
   let pendingQuery = supabase

@@ -342,24 +342,62 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
   const userPrompt = buildBlindUserPrompt(blindPayload)
   const systemPrompt = getVerificationSystemPrompt()
 
-  console.log(`[cross-check] Running verification (blind)...`)
-  console.log(`[cross-check] Models: ${PRIMARY_MODEL}, ${SECONDARY_MODEL}, ${GROK_MODEL}`)
+  // ── 2-stage tiered verification ────────────────────────────────────────────
+  // Stage 1: Sonnet (Anthropic) + Grok (xAI) in parallel — two truly independent
+  //   providers. If they agree on the same non-pending verdict with ≥60%
+  //   confidence each, that is the final verdict. No Haiku needed.
+  //
+  // Stage 2 (contested): Only triggered when Sonnet ≠ Grok (or either is pending).
+  //   Haiku acts as tiebreaker. Final verdict = majority of all three.
+  //   This preserves the full 3-model ensemble for genuinely uncertain claims.
+  //
+  // Why this is MORE neutral, not less:
+  //   Sonnet and Haiku share Anthropic's training distribution. Running both in
+  //   stage 1 would give Anthropic 2 votes vs Grok's 1 by default.
+  //   Sonnet vs Grok is a true cross-provider independence check.
+  // ────────────────────────────────────────────────────────────────────────────
 
-  const [primaryOut, secondaryOut, grokOut] = await Promise.all([
+  console.log(`[cross-check] Running verification (blind)...`)
+
+  // Stage 1: Sonnet + Grok
+  console.log(`[cross-check] Stage 1: ${PRIMARY_MODEL} + ${GROK_MODEL}`)
+  const [primaryOut, grokOut] = await Promise.all([
     runVerificationModel(PRIMARY_MODEL, userPrompt, systemPrompt),
-    runVerificationModel(SECONDARY_MODEL, userPrompt, systemPrompt),
     runGrokModel(userPrompt, systemPrompt),
   ])
 
-  const responsePrimaryRaw = primaryOut?.rawText ?? null
-  const responseSecondaryRaw = secondaryOut?.rawText ?? null
-  const responseGrokRaw = grokOut?.rawText ?? null
+  const primaryStage1 = validateStrictModelResult(input.statementType, primaryOut?.parsed, primaryOut?.rawText ?? '') ?? null
+  const grokStage1    = validateStrictModelResult(input.statementType, grokOut?.parsed,    grokOut?.rawText    ?? '') ?? null
 
-  const primary = validateStrictModelResult(input.statementType, primaryOut?.parsed, primaryOut?.rawText ?? '') ??
-    null
-  const secondary = validateStrictModelResult(input.statementType, secondaryOut?.parsed, secondaryOut?.rawText ?? '') ??
-    null
-  const grok = validateStrictModelResult(input.statementType, grokOut?.parsed, grokOut?.rawText ?? '') ?? null
+  const sonnetVerdict = primaryStage1?.verdict ?? null
+  const grokVerdict   = grokStage1?.verdict    ?? null
+  const sonnetConf    = primaryStage1?.confidence ?? 0
+  const grokConf      = grokStage1?.confidence    ?? 0
+
+  const bothNonPending = sonnetVerdict && grokVerdict && sonnetVerdict !== 'pending' && grokVerdict !== 'pending'
+  const crossProviderAgree = bothNonPending && sonnetVerdict === grokVerdict && sonnetConf >= 60 && grokConf >= 60
+
+  let secondaryOut: Awaited<ReturnType<typeof runVerificationModel>> = null
+
+  if (crossProviderAgree) {
+    console.log(`[cross-check] Stage 1 consensus: ${sonnetVerdict} (Sonnet ${sonnetConf}% / Grok ${grokConf}%) — Haiku not needed`)
+  } else {
+    console.log(`[cross-check] Stage 2: Adding ${SECONDARY_MODEL} as tiebreaker (Sonnet=${sonnetVerdict ?? 'fail'} vs Grok=${grokVerdict ?? 'fail'})`)
+    secondaryOut = await runVerificationModel(SECONDARY_MODEL, userPrompt, systemPrompt)
+  }
+
+  console.log(`[cross-check] Models: ${PRIMARY_MODEL}, ${crossProviderAgree ? '(skipped)' : SECONDARY_MODEL}, ${GROK_MODEL}`)
+
+  const responsePrimaryRaw   = primaryOut?.rawText   ?? null
+  const responseSecondaryRaw = secondaryOut?.rawText ?? null
+  const responseGrokRaw      = grokOut?.rawText      ?? null
+
+  // Reuse already-validated stage-1 results; validate secondary only if it ran
+  const primary   = primaryStage1
+  const secondary = secondaryOut
+    ? (validateStrictModelResult(input.statementType, secondaryOut.parsed, secondaryOut.rawText ?? '') ?? null)
+    : null
+  const grok = grokStage1
 
   const integrityHit =
     (primary && primary.verdict === 'pending' && primary.reasoning === INTEGRITY_REASONING) ||
@@ -422,10 +460,12 @@ export async function crossCheckVerify(input: CrossCheckInput): Promise<CrossChe
 
   let flaggedForReview = false
 
+  // When Haiku was skipped (cross-provider agreement), we pass null for secondary
+  // so chooseMajority sees exactly 2 valid models and the agreed flag is correct.
   const models = [
-    { model: PRIMARY_MODEL, parsed: primary, rawText: responsePrimaryRaw ?? '' },
-    { model: SECONDARY_MODEL, parsed: secondary, rawText: responseSecondaryRaw ?? '' },
-    { model: GROK_MODEL, parsed: grok, rawText: responseGrokRaw ?? '' },
+    { model: PRIMARY_MODEL,   parsed: primary,   rawText: responsePrimaryRaw   ?? '' },
+    { model: SECONDARY_MODEL, parsed: secondary,  rawText: responseSecondaryRaw ?? '' },
+    { model: GROK_MODEL,      parsed: grok,       rawText: responseGrokRaw      ?? '' },
   ]
 
   const { final: majority, agreed } = chooseMajority(models)
@@ -524,37 +564,39 @@ export async function saveCrossCheckResult(
 
   if (error) throw error
 
+  // Column names must match `supabase/migrations/006_verdict_audit_logs.sql` + 007 extensions
+  // (legacy insert used final_verdict/model_primary etc. — PostgREST drops unknown keys, so
+  // required NOT NULL columns were never filled and the row was not created.)
   const auditInsert = {
     record_id: recordId,
     politician_id: politicianId,
 
-    model_primary: result.primaryModel,
-    model_secondary: result.secondaryModel,
-
-    final_verdict: result.finalVerdict,
-    verdict_primary: result.primaryVerdict,
-    verdict_secondary: result.secondaryVerdict,
-
+    verdict: result.finalVerdict,
     confidence: result.primaryConfidence,
     reasoning: result.primaryReasoning,
 
-    models_agreed: result.modelsAgreed,
-    flagged_for_review: result.flaggedForReview,
+    model_version: result.primaryModel,
     blind_verified: result.blindVerified,
 
-    prompt_version: PROMPT_VERSION,
-    blind_payload: result.blindPayload,
-    sources_fed: sourcesFed,
-    response_primary: result.responsePrimaryRaw,
-    response_secondary: result.responseSecondaryRaw,
+    secondary_model_version: result.secondaryModel,
+    secondary_verdict: result.secondaryVerdict,
+    secondary_confidence: result.secondaryConfidence,
 
+    models_agreed: result.modelsAgreed,
+    sources_fed: sourcesFed,
     can_be_decided: !result.forcedPending,
     requires_more_sources: result.forcedPending,
+
     diversity_check_passed: diversityCheck.passes,
     diversity_check_reason: diversityCheck.reason ?? null,
-    source_diversity_flag: !diversityCheck.passes,
 
-    processing_time_ms: null as number | null,
+    system_prompt_version: PROMPT_VERSION,
+    prompt_version: PROMPT_VERSION,
+    flagged_for_review: result.flaggedForReview,
+
+    blind_payload: result.blindPayload,
+    response_primary: result.responsePrimaryRaw,
+    response_secondary: result.responseSecondaryRaw,
   }
 
   const { error: insErr } = await supabase.from('verdict_audit_logs').insert(auditInsert as any)

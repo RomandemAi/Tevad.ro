@@ -265,7 +265,12 @@ async function tryParseResource(url: string, format: string): Promise<DeputyInpu
     return out
   }
   if (fmt.includes('CSV') || url.toLowerCase().endsWith('.csv')) {
-    const raw = await fetchText(url, { ...headers, Accept: 'text/csv,text/plain,*/*' })
+    const buf = await fetchBuffer(url, { ...headers, Accept: 'text/csv,text/plain,*/*' })
+    // data.gov.ro exports UTF-16 LE with BOM; fall back to UTF-8 for others
+    const isUtf16Le = buf[0] === 0xff && buf[1] === 0xfe
+    const raw = isUtf16Le
+      ? new TextDecoder('utf-16le').decode(buf.slice(2))
+      : buf.toString('utf-8')
     const parsed = parseCSV(raw)
     const out: DeputyInput[] = []
     for (const row of parsed) {
@@ -432,7 +437,22 @@ export async function run(): Promise<{ synced: number; errors: number; source: s
 
   const { deputies: list, source } = await fetchDeputyRoster()
 
-  const usedSlugs = new Set<string>()
+  // Pre-load existing active deputies so we can resolve the correct slug by name identity.
+  // The CSV uses LASTNAME FIRSTNAME order which produces different slugs than BEC-seeded records.
+  const existingSlugBySig = new Map<string, string>()
+  {
+    const { data: existing } = await supabase
+      .from('politicians')
+      .select('slug, name')
+      .eq('chamber', 'deputat')
+      .eq('is_active', true)
+    for (const row of existing ?? []) {
+      existingSlugBySig.set(nameIdentitySignature(row.name), row.slug)
+    }
+    console.log(`[cdep] Loaded ${existingSlugBySig.size} existing active deputies for slug resolution`)
+  }
+
+  const usedSlugs = new Set<string>(existingSlugBySig.values())
   let ok = 0
   let errors = 0
   const total = list.length
@@ -441,7 +461,8 @@ export async function run(): Promise<{ synced: number; errors: number; source: s
   for (let i = 0; i < list.length; i++) {
     const d = list[i]
     const idx = String(i + 1).padStart(pad, '0')
-    const slug = makeSlug(d.name, usedSlugs)
+    const sig = nameIdentitySignature(d.name)
+    const slug = existingSlugBySig.get(sig) ?? makeSlug(d.name, usedSlugs)
     const colors = partyColors(d.partyShort)
     try {
       if (i > 0) await sleep(120)

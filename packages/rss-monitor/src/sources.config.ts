@@ -26,6 +26,7 @@ export interface SourceConfig {
   lean: SourceLean
 }
 
+
 // ============================================================
 // TIER 1 — Verified Independent Romanian Media
 // ============================================================
@@ -161,6 +162,28 @@ export const TIER0_SOURCES = [
 ]
 
 // ============================================================
+// PRIMARY SOURCES — Direct politician statements (not journalism)
+// Treated as Tier 1 with lean='official'.
+// Pass diversity checks automatically (politician's own words need
+// no corroborating perspective — the statement IS the record).
+// ============================================================
+export const PRIMARY_SOURCES = [
+  {
+    outlet: 'X (Twitter)',
+    domain: 'x.com',
+    altDomain: 'twitter.com',
+    description: 'Direct posts from the politician\'s official verified X account.',
+    lean: 'official' as const,
+  },
+]
+
+export function isPrimarySource(domainOrUrl: string): boolean {
+  return PRIMARY_SOURCES.some(
+    s => domainOrUrl.includes(s.domain) || domainOrUrl.includes(s.altDomain)
+  )
+}
+
+// ============================================================
 // EXCLUDED — Never accepted as sources
 // ============================================================
 export const EXCLUDED_DOMAINS = [
@@ -175,6 +198,7 @@ export function isExcluded(domain: string): boolean {
 
 export function getSourceTier(domain: string): 0 | 1 | 2 | null {
   if (TIER0_SOURCES.some(s => domain.includes(s.domain))) return 0
+  if (isPrimarySource(domain)) return 1
   if (TIER1_SOURCES.some(s => domain.includes(s.domain))) return 1
   if (TIER2_SOURCES.some(s => domain.includes(s.domain))) return 2
   if (isExcluded(domain)) return null
@@ -184,6 +208,7 @@ export function getSourceTier(domain: string): 0 | 1 | 2 | null {
 export function getSourceLean(domain: string): SourceLean | null {
   const t0 = TIER0_SOURCES.find(s => domain.includes(s.domain))
   if (t0) return t0.lean
+  if (isPrimarySource(domain)) return 'official'
   const t1 = TIER1_SOURCES.find(s => domain.includes(s.domain))
   if (t1) return t1.lean
   const t2 = TIER2_SOURCES.find(s => domain.includes(s.domain))
@@ -240,4 +265,9 @@ export function passesSourceDiversityCheck(
   }
 
   return { passes: true }
+}
+
+/** True if the URL is a direct politician statement (X/Twitter post). */
+export function isDirectStatement(url: string): boolean {
+  return isPrimarySource(url)
 }

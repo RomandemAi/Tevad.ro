@@ -34,7 +34,10 @@
     "grok:smoke": "npm run grok:smoke -w @tevad/verifier",
     "verify:contradict": "tsx packages/verifier/src/contradict.ts",
     "seed-program": "npm run seed-program -w @tevad/scraper",
-    "build:party-logos": "node scripts/build-party-logos.mjs"
+    "build:party-logos": "node scripts/build-party-logos.mjs",
+    "x:handles": "tsx packages/scraper/src/x-handles.ts",
+    "x:tweets": "tsx packages/scraper/src/x-tweets.ts",
+    "x:drain": "npm run rss:drain -- --limit 25"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
