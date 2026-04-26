@@ -4,12 +4,18 @@
  *
  * Master score (weights sum to 1.0):
  *
- * score = (score_promises * 0.25) + (score_declaratii * 0.12)
- *       + (score_reactions * 0.15) + (score_sources * 0.28) + (score_consistency * 0.20)
+ * score = (score_promises * 0.30) + (score_declaratii * 0.18)
+ *       + (score_reactions * 0.15) + (score_sources * 0.22) + (score_consistency * 0.15)
+ *
+ * Design principle: credibility is asymmetric.
+ *   - Keeping a promise = expected, modest positive.
+ *   - Breaking a promise = severe negative (3× weight vs kept).
+ *   - Making an accurate statement = baseline, tiny positive.
+ *   - Making a false statement = significant negative (lying erodes trust).
  *
  * `score_promises` uses only type=promise; `score_declaratii` only type=statement.
- * Rows with opinion_exempt=true are excluded from those two subscores (non-falsifiable / no verdict on record).
- * For statements only, impact_level='low' is excluded from score_declaratii (AI materiality; promises never use this).
+ * Rows with opinion_exempt=true are excluded (non-falsifiable claims).
+ * For statements only, impact_level='low' is excluded from score_declaratii.
  *
  * Run: npx tsx packages/verifier/src/score.ts [politician-slug]
  * Cron: triggered after every new record or reaction batch
@@ -82,7 +88,10 @@ function monthsAgo(from: Date, to: Date): number {
   return days / 30.4375
 }
 
-// ---- Component: score_promises (25% of total) — promises only ----
+// ---- Component: score_promises (30% of total) — promises only ----
+// Asymmetric: a broken promise hurts 3× more than a kept one helps.
+// Rationale: voters expect promises to be kept; breaking one is an active
+// breach of trust, not merely the absence of a benefit.
 async function calcPromises(politicianId: string): Promise<number> {
   const { data: records } = await supabase
     .from('records')
@@ -97,13 +106,23 @@ async function calcPromises(politicianId: string): Promise<number> {
   const kept    = records.filter(r => r.status === 'true').length
   const broken  = records.filter(r => r.status === 'false').length
   const partial = records.filter(r => r.status === 'partial').length
-  const total   = kept + broken + partial
 
-  if (total === 0) return 50
-  return Math.round(((kept * 1.0) + (partial * 0.5)) / total * 100)
+  if (kept + broken + partial === 0) return 50
+
+  // Weighted pool: kept=+2, partial=+0.5, broken=-3 (asymmetric accountability)
+  const positivePool = kept * 2 + partial * 0.5
+  const negativePool = broken * 3
+  const totalPool    = positivePool + negativePool
+
+  if (totalPool === 0) return 50
+  return clamp(Math.round((positivePool / totalPool) * 100), 0, 100)
 }
 
-// ---- Component: score_declaratii (12% of total) — statements only ----
+// ---- Component: score_declaratii (18% of total) — statements only ----
+// Honesty-deficit model: start at 100, subtract for false claims.
+// A confirmed TRUE statement = baseline expected behaviour (tiny bonus, capped).
+// A FALSE statement = significant penalty — politicians should not lie.
+// A PARTIAL statement = small penalty — careless with facts.
 async function calcDeclaratii(politicianId: string): Promise<number> {
   const { data: records } = await supabase
     .from('records')
@@ -116,13 +135,21 @@ async function calcDeclaratii(politicianId: string): Promise<number> {
 
   if (!records || records.length === 0) return 50
 
-  const kept = records.filter(r => r.status === 'true').length
-  const broken = records.filter(r => r.status === 'false').length
-  const partial = records.filter(r => r.status === 'partial').length
-  const total = kept + broken + partial
+  const accurate = records.filter(r => r.status === 'true').length
+  const lies     = records.filter(r => r.status === 'false').length
+  const partial  = records.filter(r => r.status === 'partial').length
 
-  if (total === 0) return 50
-  return Math.round(((kept * 1.0) + (partial * 0.5)) / total * 100)
+  if (accurate + lies + partial === 0) return 50
+
+  // Base 100: innocent until proven dishonest.
+  // False claim: -18 pts each (lying erodes trust severely).
+  // Partial claim: -5 pts each (factual carelessness).
+  // True claim: +2 pts each, capped at +15 (accuracy is expected, not exceptional).
+  const falseHit    = lies    * -18
+  const partialHit  = partial * -5
+  const trueBonus   = Math.min(accurate * 2, 15)
+
+  return clamp(Math.round(100 + falseHit + partialHit + trueBonus), 0, 100)
 }
 
 // ---- Component: score_reactions (15%) — trust-weighted ----
@@ -342,11 +369,11 @@ export async function recalcScore(politicianId: string): Promise<ScoreComponents
   ])
 
   const total = Math.round(
-    promises * 0.25 +
-    declaratii * 0.12 +
-    reactions * 0.15 +
-    sources * 0.28 +
-    consistency * 0.2
+    promises    * 0.30 +   // PRIMARY: do they keep their word?
+    declaratii  * 0.18 +   // HONESTY: do they make accurate claims?
+    reactions   * 0.15 +   // PUBLIC: how do citizens react?
+    sources     * 0.22 +   // COVERAGE: quality media presence
+    consistency * 0.15     // CONSISTENCY: no self-contradiction
   )
 
   return { promises, declaratii, reactions, sources, consistency, total }

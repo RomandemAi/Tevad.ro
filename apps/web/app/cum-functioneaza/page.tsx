@@ -38,20 +38,22 @@ export default function CumFunctioneazaPage() {
             </p>
 
             <section className="mt-8 border-t border-[var(--gray-100)] pt-6">
-              <h2 className="font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]">
-                Scor (0–100) — v1.3.0 „Tank-Proof”
+              <h2 className=”font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--gray-500)]”>
+                Scor (0–100) — v1.4.0 „Asimetric”
               </h2>
-              <p className="mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]">
+              <p className=”mt-3 font-sans text-[15px] leading-relaxed text-[var(--gray-700)]”>
                 Scorul combină cinci componente cu ponderi fixe și publice:{' '}
-                <strong className="text-[var(--gray-900)]">promisiuni (25%)</strong>,{' '}
-                <strong className="text-[var(--gray-900)]">declarații materiale (12%)</strong>,{' '}
-                <strong className="text-[var(--gray-900)]">reacții (15%)</strong> — ponderate după încrederea
+                <strong className=”text-[var(--gray-900)]”>promisiuni (30%)</strong> — promisiunile încălcate
+                penalizează de 3× mai mult decât cele respectate recompensează —,{' '}
+                <strong className=”text-[var(--gray-900)]”>onestitate declarații (18%)</strong> — start 100, scade
+                sever la fiecare afirmație falsă —,{' '}
+                <strong className=”text-[var(--gray-900)]”>reacții (15%)</strong> — ponderate după încrederea
                 amprentei și plafon zilnic anti-spike —,{' '}
-                <strong className="text-[var(--gray-900)]">surse (28%)</strong> — inclusiv prospețime și bonus pentru
-                mai multe surse independente — și <strong className="text-[var(--gray-900)]">consistență (20%)</strong>{' '}
+                <strong className=”text-[var(--gray-900)]”>surse (22%)</strong> — prospețime și bonus surse
+                independente — și <strong className=”text-[var(--gray-900)]”>consistență (15%)</strong>{' '}
                 (contradicții în același mandat penalizate mai sever). Până la minimum{' '}
-                <strong className="text-[var(--gray-900)]">10 înregistrări verificate</strong>, scorul principal rămâne
-                ancorat la linia neutră <strong className="text-[var(--gray-900)]">50</strong>, ca să nu pară „precis”
+                <strong className=”text-[var(--gray-900)]”>10 înregistrări verificate</strong>, scorul principal rămâne
+                ancorat la linia neutră <strong className=”text-[var(--gray-900)]”>50</strong>, ca să nu pară „precis”
                 pe eșantion mic.
               </p>
               <p className="mt-4 font-mono text-[12px]">

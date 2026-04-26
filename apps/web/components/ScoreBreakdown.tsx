@@ -11,11 +11,11 @@ interface ScoreBreakdownProps {
 type RowKey = 'promises' | 'declaratii' | 'sources' | 'consistency' | 'reactions'
 
 const ROWS: { label: string; weight: string; key: RowKey }[] = [
-  { label: 'Promisiuni', weight: '28%', key: 'promises' },
-  { label: 'Declarații', weight: '12%', key: 'declaratii' },
+  { label: 'Promisiuni', weight: '30%', key: 'promises' },
+  { label: 'Declarații', weight: '18%', key: 'declaratii' },
   { label: 'Surse', weight: '22%', key: 'sources' },
-  { label: 'Consistență', weight: '20%', key: 'consistency' },
-  { label: 'Reacții', weight: '18%', key: 'reactions' },
+  { label: 'Consistență', weight: '15%', key: 'consistency' },
+  { label: 'Reacții', weight: '15%', key: 'reactions' },
 ]
 
 export default function ScoreBreakdown({
